@@ -32,3 +32,14 @@ class RobotsChecker:
         parsed = urlparse(url)
         parser = self.get_parser(parsed.netloc)
         return parser.can_fetch(self.user_agent, url)
+
+    def can_fetch_detail(self, url: str) -> tuple[bool, str | None]:
+        parsed = urlparse(url)
+        parser = self.get_parser(parsed.netloc)
+        disallow_all = getattr(parser, "disallow_all", False)
+        if disallow_all:
+            return False, "Disallow: /"
+        allowed = parser.can_fetch(self.user_agent, url)
+        if not allowed:
+            return False, "blocked_by_robots"
+        return True, None

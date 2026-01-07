@@ -15,6 +15,7 @@ from .ats import detect_ats, fetch_ats_jobs
 from .discovery import DiscoveryResult, discover_paths, parse_sitemap, filter_discovery_results
 from .extract import extract_jobs_from_jsonld, extract_jobs_generic
 from .fetch import fetch_url
+from .constants import ROBOTS_DISALLOW_ALL, ROBOTS_DISALLOW_URL
 from .model import JobPosting
 from .robots import RobotsChecker
 from .storage import jobs_to_dataframe
@@ -92,19 +93,21 @@ def crawl_domain(
 
     # Fetch base page for ATS detection
     base_url = f"https://{domain}"
+    allowed, rule = robots_checker.can_fetch_detail(base_url)
+    if not allowed:
+        stats.skipped_reason = ROBOTS_DISALLOW_ALL if rule == "Disallow: /" else ROBOTS_DISALLOW_URL
+        stats.robots_rule_hit = rule
+        stats.first_blocked_url = base_url
+        return [], stats
     res, reason = fetch_url(
         session,
         base_url,
         rate_limit_state=rate_limit_state,
         req_per_second_per_domain=req_per_second,
         debug_html_dir=debug_html_dir,
-        robots=robots_checker,
     )
     if res is None:
         stats.skipped_reason = reason or "base_fetch_failed"
-        if reason == "robots_disallow":
-            stats.robots_rule_hit = "robots_disallow"
-            stats.first_blocked_url = base_url
         return [], stats
 
     stats.pages_fetched += 1
@@ -124,14 +127,18 @@ def crawl_domain(
     seeds = discover_paths(domain)
     # try sitemap
     sitemap_url = f"https://{domain}/sitemap.xml"
-    sm_res, _ = fetch_url(
-        session,
-        sitemap_url,
-        rate_limit_state=rate_limit_state,
-        req_per_second_per_domain=req_per_second,
-        debug_html_dir=debug_html_dir,
-        robots=robots_checker,
-    )
+    sm_allowed, sm_rule = robots_checker.can_fetch_detail(sitemap_url)
+    sm_res = None
+    if sm_allowed:
+        sm_res, _ = fetch_url(
+            session,
+            sitemap_url,
+            rate_limit_state=rate_limit_state,
+            req_per_second_per_domain=req_per_second,
+            debug_html_dir=debug_html_dir,
+        )
+    else:
+        stats.errors.append("robots_disallow_sitemap")
     if sm_res and sm_res.status == 200:
         stats.pages_fetched += 1
         seeds.extend(parse_sitemap(sm_res.html, base_url, max_urls=200))
@@ -142,19 +149,27 @@ def crawl_domain(
     for seed in seeds:
         if stats.pages_fetched >= max_pages:
             break
+        allowed, rule = robots_checker.can_fetch_detail(seed)
+        if not allowed:
+            stats.errors.append(ROBOTS_DISALLOW_URL)
+            if not stats.first_blocked_url:
+                stats.first_blocked_url = seed
+                stats.robots_rule_hit = rule
+                stats.skipped_reason = stats.skipped_reason or ROBOTS_DISALLOW_URL
+            continue
         res, reason = fetch_url(
             session,
             seed,
             rate_limit_state=rate_limit_state,
             req_per_second_per_domain=req_per_second,
             debug_html_dir=debug_html_dir,
-            robots=robots_checker,
         )
         if res is None:
             stats.errors.append(reason or f"fetch_failed:{seed}")
-            if reason == "robots_disallow" and not stats.first_blocked_url:
+            if reason in (ROBOTS_DISALLOW_ALL, ROBOTS_DISALLOW_URL) and not stats.first_blocked_url:
                 stats.first_blocked_url = seed
-                stats.robots_rule_hit = "robots_disallow"
+                stats.robots_rule_hit = reason
+                stats.skipped_reason = stats.skipped_reason or reason
             continue
         stats.pages_fetched += 1
         html = res.html
@@ -297,15 +312,21 @@ def summarize_activity(jobs_df: pd.DataFrame) -> pd.DataFrame:
             ]
         )
     jobs_df = jobs_df.copy()
-    jobs_df["posted_date_parsed"] = pd.to_datetime(jobs_df["posted_date"], errors="coerce")
-    now = pd.Timestamp.utcnow()
+    jobs_df["posted_date_parsed"] = pd.to_datetime(jobs_df["posted_date"], errors="coerce", utc=True).dt.tz_localize(
+        None
+    )
+    now = pd.Timestamp.utcnow().tz_localize(None)
     last_30 = now - pd.Timedelta(days=30)
 
     summaries = []
     for bid, group in jobs_df.groupby("company_business_id"):
         total = len(group)
         recent = group[group["posted_date_parsed"] >= last_30]
-        new_since_last = group[group.get("is_new", False) == True]  # noqa: E712
+        if "is_new" in group.columns:
+            new_mask = group["is_new"] == True  # noqa: E712
+        else:
+            new_mask = pd.Series(False, index=group.index)
+        new_since_last = group[new_mask]
         # Tag counts
         def count_tag(tag):
             return sum(1 for tags in group["tags"] if isinstance(tags, list) and tag in tags)
