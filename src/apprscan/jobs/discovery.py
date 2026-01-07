@@ -43,7 +43,10 @@ def parse_sitemap(xml_text: str, base_url: str, max_urls: int = 200) -> List[str
     try:
         soup = BeautifulSoup(xml_text, "lxml-xml")
     except FeatureNotFound:
-        soup = BeautifulSoup(xml_text, "xml")
+        try:
+            soup = BeautifulSoup(xml_text, "xml")
+        except FeatureNotFound:
+            soup = BeautifulSoup(xml_text, "html.parser")
     urls = []
     for loc in soup.find_all("loc"):
         if len(urls) >= max_urls:
