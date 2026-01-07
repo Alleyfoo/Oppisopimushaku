@@ -624,7 +624,8 @@ def domains_command(args: argparse.Namespace) -> int:
         print(f"Companies file not found: {companies_path}")
         return 1
     if companies_path.suffix.lower() in [".xlsx", ".xls"]:
-        df = pd.read_excel(companies_path, sheet_name="Shortlist" if args.only_shortlist else None)
+        sheet = "Shortlist" if args.only_shortlist else 0
+        df = pd.read_excel(companies_path, sheet_name=sheet)
     elif companies_path.suffix.lower() == ".csv":
         df = pd.read_csv(companies_path)
     elif companies_path.suffix.lower() == ".parquet":
@@ -662,11 +663,17 @@ def domains_command(args: argparse.Namespace) -> int:
     if "name" not in df.columns:
         df["name"] = names
 
-    out_df = df[["business_id", "name"]].copy()
-    out_df["domain"] = ""
+    filtered = []
+    for _, row in df.iterrows():
+        name = str(row.get("name") or "").lower()
+        if "asunto" in name:
+            continue  # drop housing companies from domain template
+        filtered.append({"business_id": row.get("business_id"), "name": row.get("name"), "domain": ""})
+
+    out_df = pd.DataFrame(filtered)
     out_path = Path(args.out)
     out_df.to_csv(out_path, index=False)
-    print(f"Domain template written: {out_path} ({len(out_df)} rows)")
+    print(f"Domain template written: {out_path} ({len(out_df)} rows, housing names filtered out)")
     return 0
 
 
