@@ -638,6 +638,30 @@ def domains_command(args: argparse.Namespace) -> int:
     if "name" not in df.columns and "company_name" in df.columns:
         df = df.rename(columns={"company_name": "name"})
 
+    names = []
+    import ast
+
+    for _, row in df.iterrows():
+        if "name" in df.columns and pd.notna(row.get("name")):
+            names.append(row["name"])
+            continue
+        if "names.0.name" in df.columns and pd.notna(row.get("names.0.name")):
+            names.append(row["names.0.name"])
+            continue
+        raw = row.get("names")
+        if isinstance(raw, str) and raw.startswith("["):
+            try:
+                parsed = ast.literal_eval(raw)
+                if isinstance(parsed, list) and parsed and isinstance(parsed[0], dict):
+                    names.append(parsed[0].get("name", ""))
+                    continue
+            except Exception:
+                pass
+        names.append("")
+
+    if "name" not in df.columns:
+        df["name"] = names
+
     out_df = df[["business_id", "name"]].copy()
     out_df["domain"] = ""
     out_path = Path(args.out)
