@@ -7,7 +7,7 @@ from dataclasses import dataclass, field
 from typing import Dict, List, Optional
 from urllib.parse import urljoin
 
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, FeatureNotFound
 
 COMMON_PATHS = [
     "/careers",
@@ -40,7 +40,10 @@ def discover_paths(domain: str, existing: Optional[List[str]] = None) -> List[st
 
 
 def parse_sitemap(xml_text: str, base_url: str, max_urls: int = 200) -> List[str]:
-    soup = BeautifulSoup(xml_text, "xml")
+    try:
+        soup = BeautifulSoup(xml_text, "lxml-xml")
+    except FeatureNotFound:
+        soup = BeautifulSoup(xml_text, "xml")
     urls = []
     for loc in soup.find_all("loc"):
         if len(urls) >= max_urls:
