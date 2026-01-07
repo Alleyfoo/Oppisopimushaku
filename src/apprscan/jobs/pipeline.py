@@ -32,6 +32,8 @@ class CrawlStats:
     ats_detected: str | None = None
     ats_fetch_ok: bool = False
     ats_fetch_reason: str | None = None
+    robots_rule_hit: str | None = None
+    first_blocked_url: str | None = None
 
     def to_dict(self) -> Dict[str, object]:
         return {
@@ -44,6 +46,8 @@ class CrawlStats:
             "ats_detected": self.ats_detected,
             "ats_fetch_ok": self.ats_fetch_ok,
             "ats_fetch_reason": self.ats_fetch_reason,
+            "robots_rule_hit": self.robots_rule_hit,
+            "first_blocked_url": self.first_blocked_url,
         }
 
 
@@ -98,6 +102,9 @@ def crawl_domain(
     )
     if res is None:
         stats.skipped_reason = reason or "base_fetch_failed"
+        if reason == "robots_disallow":
+            stats.robots_rule_hit = "robots_disallow"
+            stats.first_blocked_url = base_url
         return [], stats
 
     stats.pages_fetched += 1
@@ -145,6 +152,9 @@ def crawl_domain(
         )
         if res is None:
             stats.errors.append(reason or f"fetch_failed:{seed}")
+            if reason == "robots_disallow" and not stats.first_blocked_url:
+                stats.first_blocked_url = seed
+                stats.robots_rule_hit = "robots_disallow"
             continue
         stats.pages_fetched += 1
         html = res.html
@@ -183,41 +193,49 @@ def crawl_jobs_pipeline(
     debug_html: bool = False,
     out_raw_dir: Optional[Path] = None,
     tag_rules: Dict[str, List[str]] | None = None,
+    max_workers: int = 5,
 ) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
-    session = requests.Session()
-    rate_state: Dict[str, float] = {}
     crawl_ts = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
-
     jobs: List[JobPosting] = []
     stats_rows: List[Dict[str, object]] = []
 
-    processed = 0
-    for _, row in companies_df.iterrows():
-        if processed >= max_domains:
-            break
-        domain = build_domain(row, domain_map)
-        if not domain:
-            continue
-        company = {
-            "business_id": str(row.get("business_id") or ""),
-            "name": row.get("name", ""),
-            "domain": domain,
-        }
-        domain_raw_dir = out_raw_dir if debug_html else None
-        domain_jobs, stat = crawl_domain(
-            company,
-            domain,
-            max_pages=max_pages_per_domain,
-            req_per_second=req_per_second,
-            rate_limit_state=rate_state,
-            debug_html_dir=domain_raw_dir,
-            session=session,
-            crawl_ts=crawl_ts,
-            tag_rules=tag_rules,
-        )
-        jobs.extend(domain_jobs)
-        stats_rows.append(stat.to_dict())
-        processed += 1
+    from concurrent.futures import ThreadPoolExecutor, as_completed
+
+    tasks = []
+    with ThreadPoolExecutor(max_workers=max_workers) as executor:
+        processed = 0
+        for _, row in companies_df.iterrows():
+            if processed >= max_domains:
+                break
+            domain = build_domain(row, domain_map)
+            if not domain:
+                continue
+            company = {
+                "business_id": str(row.get("business_id") or ""),
+                "name": row.get("name", ""),
+                "domain": domain,
+            }
+            domain_raw_dir = out_raw_dir if debug_html else None
+            tasks.append(
+                executor.submit(
+                    crawl_domain,
+                    company,
+                    domain,
+                    max_pages=max_pages_per_domain,
+                    req_per_second=req_per_second,
+                    rate_limit_state={},
+                    debug_html_dir=domain_raw_dir,
+                    session=requests.Session(),
+                    crawl_ts=crawl_ts,
+                    tag_rules=tag_rules,
+                )
+            )
+            processed += 1
+
+        for fut in as_completed(tasks):
+            domain_jobs, stat = fut.result()
+            jobs.extend(domain_jobs)
+            stats_rows.append(stat.to_dict())
 
     jobs_df = jobs_to_dataframe(jobs)
     stats_df = pd.DataFrame(stats_rows)
@@ -228,10 +246,17 @@ def crawl_jobs_pipeline(
 def apply_diff(jobs_df: pd.DataFrame, known_path: Path) -> Tuple[pd.DataFrame, pd.DataFrame]:
     """Mark is_new and produce diff of new jobs."""
     def fingerprint(row):
-        title = str(row.get("job_title") or "").strip().lower()
-        loc = str(row.get("location_text") or "").strip().lower()
-        posted = str(row.get("posted_date") or "").strip().lower()
-        domain = str(row.get("company_domain") or "").strip().lower()
+        def norm(val: str) -> str:
+            import re
+            s = str(val or "").lower().strip()
+            s = re.sub(r"\s+", " ", s)
+            s = s.replace(", finland", "").replace(", suomi", "")
+            return s
+
+        title = norm(row.get("job_title"))
+        loc = norm(row.get("location_text"))
+        posted = norm(row.get("posted_date"))
+        domain = norm(row.get("company_domain"))
         return hash((title, loc, posted, domain))
 
     jobs_df = jobs_df.copy()

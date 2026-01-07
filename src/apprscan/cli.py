@@ -128,6 +128,30 @@ def build_parser() -> argparse.ArgumentParser:
         help="Yritysten rekryaktiivisuus (company_activity.xlsx) jobs-ajosta.",
     )
     run_parser.add_argument(
+        "--master-xlsx",
+        type=str,
+        default=None,
+        help="Kirjoita lopullinen master-työkirja (Shortlist, Excluded, Jobs_All, Jobs_New, Crawl_Stats, Activity).",
+    )
+    run_parser.add_argument(
+        "--jobs-jsonl",
+        type=str,
+        default=None,
+        help="Jobs JSONL polku master-työkirjaa varten (oletus: <out>/jobs/jobs.jsonl jos jätetty tyhjäksi).",
+    )
+    run_parser.add_argument(
+        "--jobs-diff",
+        type=str,
+        default=None,
+        help="Jobs diff XLSX polku master-työkirjaa varten (oletus: <out>/jobs/diff.xlsx jos jätetty tyhjäksi).",
+    )
+    run_parser.add_argument(
+        "--jobs-stats",
+        type=str,
+        default=None,
+        help="Jobs crawl_stats XLSX polku master-työkirjaa varten (oletus: <out>/jobs/crawl_stats.xlsx jos jätetty tyhjäksi).",
+    )
+    run_parser.add_argument(
         "--out",
         type=str,
         default="out",
@@ -379,6 +403,45 @@ def run_command(args: argparse.Namespace) -> int:
         excluded_df = df[df["excluded_reason"].notna()].copy()
 
     export_reports(shortlist, args.out, excluded=excluded_df)
+
+    # Master workbook (optional)
+    if args.master_xlsx:
+        from .jobs.storage import write_master_workbook
+
+        jobs_dir = Path(args.out) / "jobs"
+        jobs_jsonl = Path(args.jobs_jsonl) if args.jobs_jsonl else jobs_dir / "jobs.jsonl"
+        jobs_diff = Path(args.jobs_diff) if args.jobs_diff else jobs_dir / "diff.xlsx"
+        jobs_stats = Path(args.jobs_stats) if args.jobs_stats else jobs_dir / "crawl_stats.xlsx"
+
+        def read_optional_jsonl(path):
+            if path.exists():
+                return pd.read_json(path, lines=True)
+            return pd.DataFrame()
+
+        def read_optional_excel(path):
+            if path.exists():
+                return pd.read_excel(path)
+            return pd.DataFrame()
+
+        jobs_all = read_optional_jsonl(jobs_jsonl)
+        jobs_new = read_optional_excel(jobs_diff)
+        crawl_stats = read_optional_excel(jobs_stats)
+        activity_df = None
+        if args.activity_file and Path(args.activity_file).exists():
+            activity_df = pd.read_excel(args.activity_file)
+
+        master_path = Path(args.master_xlsx)
+        write_master_workbook(
+            master_path,
+            shortlist=shortlist,
+            excluded=excluded_df if args.include_excluded else None,
+            jobs_all=jobs_all,
+            jobs_new=jobs_new,
+            crawl_stats=crawl_stats,
+            activity=activity_df,
+        )
+        print(f"Master workbook kirjoitettu: {master_path}")
+
     print(f"Shortlist: {len(shortlist)}; excluded: {len(df) - len(shortlist)}; raportit: {args.out}")
     return 0
 
