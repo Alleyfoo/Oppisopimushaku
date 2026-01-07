@@ -56,6 +56,21 @@ def build_parser() -> argparse.ArgumentParser:
     )
     jobs_parser.set_defaults(func=jobs_command)
 
+    domains_parser = subparsers.add_parser(
+        "domains",
+        help="Luo domain-mapping -pohja companies tiedostosta.",
+        description="Lue companies (xlsx/csv/parquet) ja kirjoita CSV (business_id,name,domain) täytettäväksi.",
+    )
+    domains_parser.add_argument("--companies", type=str, required=True, help="Yritystiedosto (xlsx/csv/parquet).")
+    domains_parser.add_argument("--out", type=str, default="domains.csv", help="Output CSV polku.")
+    domains_parser.add_argument(
+        "--only-shortlist",
+        action="store_true",
+        default=True,
+        help="Lue vain Shortlist sheet xlsx-tiedostosta.",
+    )
+    domains_parser.set_defaults(func=domains_command)
+
     watch_parser = subparsers.add_parser(
         "watch",
         help="Tuota tekstiraportti uusista työpaikoista (diff).",
@@ -510,12 +525,16 @@ def jobs_command(args: argparse.Namespace) -> int:
 
     domain_map = {}
     if args.domains:
-        dom_df = pd.read_csv(args.domains)
-        for _, r in dom_df.iterrows():
-            bid = str(r.get("business_id") or r.get("businessId") or "").strip()
-            dom = str(r.get("domain") or "").strip()
-            if bid and dom:
-                domain_map[bid] = dom
+        dom_path = Path(args.domains)
+        if dom_path.exists():
+            dom_df = pd.read_csv(dom_path)
+            for _, r in dom_df.iterrows():
+                bid = str(r.get("business_id") or r.get("businessId") or "").strip()
+                dom = str(r.get("domain") or "").strip()
+                if bid and dom:
+                    domain_map[bid] = dom
+        else:
+            print(f"Domain mapping file not found: {dom_path} (continuing without domains)")
 
     try:
         companies_df = pipeline.load_companies(companies_path, only_shortlist=args.only_shortlist)
@@ -596,6 +615,34 @@ def watch_command(args: argparse.Namespace) -> int:
     jobs_diff = pd.read_excel(diff_path)
     generate_watch_report(shortlist_df, jobs_diff, Path(args.out), **kwargs)
     print(f"Watch report written to {args.out}")
+    return 0
+
+
+def domains_command(args: argparse.Namespace) -> int:
+    companies_path = Path(args.companies)
+    if not companies_path.exists():
+        print(f"Companies file not found: {companies_path}")
+        return 1
+    if companies_path.suffix.lower() in [".xlsx", ".xls"]:
+        df = pd.read_excel(companies_path, sheet_name="Shortlist" if args.only_shortlist else None)
+    elif companies_path.suffix.lower() == ".csv":
+        df = pd.read_csv(companies_path)
+    elif companies_path.suffix.lower() == ".parquet":
+        df = pd.read_parquet(companies_path)
+    else:
+        print("Unsupported companies file format (use xlsx/csv/parquet).")
+        return 1
+
+    if "business_id" not in df.columns and "businessId" in df.columns:
+        df = df.rename(columns={"businessId": "business_id"})
+    if "name" not in df.columns and "company_name" in df.columns:
+        df = df.rename(columns={"company_name": "name"})
+
+    out_df = df[["business_id", "name"]].copy()
+    out_df["domain"] = ""
+    out_path = Path(args.out)
+    out_df.to_csv(out_path, index=False)
+    print(f"Domain template written: {out_path} ({len(out_df)} rows)")
     return 0
 
 
