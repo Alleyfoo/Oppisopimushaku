@@ -40,6 +40,20 @@ def build_parser() -> argparse.ArgumentParser:
     jobs_parser.add_argument(
         "--max-pages-per-domain", type=int, default=30, help="Maksimi sivut per domain (guardrail)."
     )
+    jobs_parser.add_argument("--rate-limit", type=float, default=1.0, help="Pyyntöä per sekunti / domain.")
+    jobs_parser.add_argument("--debug-html", action="store_true", help="Tallenna raaka HTML out/jobs/raw/.")
+    jobs_parser.add_argument(
+        "--only-shortlist",
+        action="store_true",
+        default=True,
+        help="Lue vain Shortlist-välilehti companies-tiedostosta (xlsx).",
+    )
+    jobs_parser.add_argument(
+        "--known-jobs",
+        type=str,
+        default="out/jobs/known_jobs.parquet",
+        help="Polku aikaisempiin job_url-arvoihin diffiä varten.",
+    )
     jobs_parser.set_defaults(func=jobs_command)
 
     run_parser = subparsers.add_parser(
@@ -304,32 +318,58 @@ def run_command(args: argparse.Namespace) -> int:
 
 
 def jobs_command(args: argparse.Namespace) -> int:
-    from .jobs import crawl_jobs_for_companies, load_domain_mapping, write_jobs_outputs
+    from .jobs import pipeline
+    from .jobs.discovery import DiscoveryResult
+    from .jobs.storage import write_jobs_outputs
 
-    # Load companies
     companies_path = Path(args.companies)
     if not companies_path.exists():
         print(f"Companies file not found: {companies_path}")
         return 1
-    if companies_path.suffix.lower() in [".xlsx", ".xls"]:
-        companies_df = pd.read_excel(companies_path)
-    elif companies_path.suffix.lower() in [".csv"]:
-        companies_df = pd.read_csv(companies_path)
-    elif companies_path.suffix.lower() in [".parquet"]:
-        companies_df = pd.read_parquet(companies_path)
-    else:
-        print("Unsupported companies file format (use xlsx/csv/parquet).")
+
+    domain_map = {}
+    if args.domains:
+        dom_df = pd.read_csv(args.domains)
+        for _, r in dom_df.iterrows():
+            bid = str(r.get("business_id") or r.get("businessId") or "").strip()
+            dom = str(r.get("domain") or "").strip()
+            if bid and dom:
+                domain_map[bid] = dom
+
+    try:
+        companies_df = pipeline.load_companies(companies_path, only_shortlist=args.only_shortlist)
+    except ValueError as exc:
+        print(str(exc))
         return 1
 
-    domain_map = load_domain_mapping(args.domains)
-    jobs_df, stats_df = crawl_jobs_for_companies(
+    raw_dir = Path(args.out) / "raw" if args.debug_html else None
+    jobs_df, stats_df = pipeline.crawl_jobs_pipeline(
         companies_df,
         domain_map,
         max_domains=args.max_domains,
         max_pages_per_domain=args.max_pages_per_domain,
+        req_per_second=args.rate_limit,
+        debug_html=args.debug_html,
+        out_raw_dir=raw_dir,
     )
+
+    known_path = Path(args.known_jobs)
+    jobs_df, new_jobs = pipeline.apply_diff(jobs_df, known_path)
     write_jobs_outputs(jobs_df, stats_df, args.out)
-    print(f"Jobs found: {len(jobs_df)}; stats rows: {len(stats_df)}; output: {args.out}")
+
+    # Write diff
+    diff_path = Path(args.out) / "diff.xlsx"
+    new_jobs.to_excel(diff_path, index=False)
+
+    # Company activity
+    activity_df = pipeline.summarize_activity(jobs_df)
+    activity_path = Path(args.out) / "company_activity.xlsx"
+    activity_df.to_excel(activity_path, index=False)
+
+    print(
+        f"Jobs found: {len(jobs_df)} (new: {len(new_jobs)}); "
+        f"domains: {len(stats_df)}; output: {args.out}"
+    )
     return 0
 
 

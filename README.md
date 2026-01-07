@@ -18,8 +18,9 @@ Työkalu, joka kokoaa shortlistan työnantajista (Uusimaa + Lahti/Päijät-Häme
 ## Nopeasti alkuun
 - Tulosta apu: `python -m apprscan --help`
 - Esimerkki:\
-  `apprscan run --cities Helsinki,Espoo,Vantaa,Lahti --radius-km 1.0 --out out/ --max-pages 3 --include-excluded --whitelist koulutus --blacklist holding`
-  `apprscan run --cities Helsinki --employee-csv employees.csv --out out/`
+  `apprscan run --cities Helsinki,Espoo,Vantaa,Lahti --radius-km 1.0 --out out/ --max-pages 3 --include-excluded --whitelist koulutus --blacklist holding`\
+  `apprscan run --cities Helsinki --employee-csv employees.csv --out out/`\
+  `apprscan jobs --companies out/companies.xlsx --domains domains.csv --out out/jobs --max-domains 100 --max-pages-per-domain 20 --rate-limit 1.0`
 
 ## Konfiguraatio ja oletukset
 - Kaupungit: CSV-lista `--cities`-argumentissa (tuki config-tiedostolle tulossa).
