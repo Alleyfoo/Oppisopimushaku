@@ -524,7 +524,7 @@ def jobs_command(args: argparse.Namespace) -> int:
         return 1
 
     raw_dir = Path(args.out) / "raw" if args.debug_html else None
-    jobs_df, stats_df = pipeline.crawl_jobs_pipeline(
+    jobs_df, stats_df, activity_df = pipeline.crawl_jobs_pipeline(
         companies_df,
         domain_map,
         max_domains=args.max_domains,
@@ -543,7 +543,6 @@ def jobs_command(args: argparse.Namespace) -> int:
     new_jobs.to_excel(diff_path, index=False)
 
     # Company activity
-    activity_df = pipeline.summarize_activity(jobs_df)
     activity_path = Path(args.out) / "company_activity.xlsx"
     activity_df.to_excel(activity_path, index=False)
 
