@@ -280,11 +280,22 @@ def apply_diff(jobs_df: pd.DataFrame, known_path: Path) -> Tuple[pd.DataFrame, p
     known_urls: set[str] = set()
     known_fps: set[int] = set()
     if known_path.exists():
-        known_df = pd.read_parquet(known_path)
+        try:
+            known_df = pd.read_parquet(known_path)
+        except ImportError:
+            known_df = pd.read_csv(known_path)
         if "job_url" in known_df.columns:
             known_urls = set(known_df["job_url"].astype(str))
         if "job_fingerprint" in known_df.columns:
             known_fps = set(known_df["job_fingerprint"].astype(int))
+    else:
+        csv_alt = known_path.with_suffix(".csv")
+        if csv_alt.exists():
+            known_df = pd.read_csv(csv_alt)
+            if "job_url" in known_df.columns:
+                known_urls = set(known_df["job_url"].astype(str))
+            if "job_fingerprint" in known_df.columns:
+                known_fps = set(known_df["job_fingerprint"].astype(int))
 
     jobs_df["is_new"] = ~jobs_df["job_url"].astype(str).isin(known_urls) & ~jobs_df[
         "job_fingerprint"
@@ -292,7 +303,11 @@ def apply_diff(jobs_df: pd.DataFrame, known_path: Path) -> Tuple[pd.DataFrame, p
     new_jobs = jobs_df[jobs_df["is_new"]]
 
     known_path.parent.mkdir(parents=True, exist_ok=True)
-    jobs_df[["job_url", "job_fingerprint"]].to_parquet(known_path, index=False)
+    try:
+        jobs_df[["job_url", "job_fingerprint"]].to_parquet(known_path, index=False)
+    except ImportError:
+        csv_alt = known_path.with_suffix(".csv")
+        jobs_df[["job_url", "job_fingerprint"]].to_csv(csv_alt, index=False)
     return jobs_df, new_jobs
 
 
