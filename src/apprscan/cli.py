@@ -74,6 +74,27 @@ def build_parser() -> argparse.ArgumentParser:
         help="Jobs diff -tiedosto (uudet paikat).",
     )
     watch_parser.add_argument(
+        "--include-tags",
+        type=str,
+        default="",
+        help="Pilkuilla eroteltu tagilista, joita vaaditaan (esim. data,it_support,salesforce,oppisopimus).",
+    )
+    watch_parser.add_argument(
+        "--exclude-tags",
+        type=str,
+        default="",
+        help="Pilkuilla eroteltu avainsanojen lista, joita ei sallita title/snippetissä (esim. senior,lead,principal).",
+    )
+    watch_parser.add_argument("--max-items", type=int, default=0, help="Maksimi rivit raportissa (0=kaikki).")
+    watch_parser.add_argument("--min-score", type=float, default=None, help="Vähimmäisscore shortlististä.")
+    watch_parser.add_argument("--max-distance-km", type=float, default=None, help="Maksimietäisyys km shortlististä.")
+    watch_parser.add_argument(
+        "--stations",
+        type=str,
+        default="",
+        help="Pilkuilla eroteltu asemalista; jos annettu, raportoi vain nämä asemat.",
+    )
+    watch_parser.add_argument(
         "--out",
         type=str,
         default="out/watch_report.txt",
