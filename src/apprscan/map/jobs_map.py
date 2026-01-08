@@ -20,7 +20,7 @@ def _marker_color(row: pd.Series) -> str:
 
 
 def _marker_radius(count: float, *, max_count: float, scale: str = "log", size_mult: float = 1.0) -> float:
-    min_r, max_r = 3.0, 12.0
+    min_r, max_r = 3.0, 10.0
     if max_count <= 0:
         base = min_r
     else:
@@ -31,7 +31,7 @@ def _marker_radius(count: float, *, max_count: float, scale: str = "log", size_m
         t = max(0.0, min(1.0, t))
         base = min_r + (max_r - min_r) * t
     base = base * max(0.5, min(size_mult, 3.0))
-    return max(min_r, min(20.0, base))
+    return max(min_r, min(10.0, base))
 
 
 def render_jobs_map(

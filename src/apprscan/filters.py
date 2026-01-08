@@ -14,8 +14,9 @@ HOUSING_FORMS = {
 }
 
 NAME_PATTERNS_RAW = [
-    r"(?i)^\s*as\s*oy\b",
+    r"(?i)^\s*as\.?\s*oy\b",
     r"(?i)\basunto\s*oy\b",
+    r"(?i)\basunto[-\s]?oy\b",
     r"(?i)\basunto[-\s]?osakeyhtio\b",
     r"(?i)\bkiinteisto\s*oy\b",
 ]
