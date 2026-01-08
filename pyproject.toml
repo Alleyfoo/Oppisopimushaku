@@ -29,6 +29,7 @@ dev = [
     "mypy>=1.8.0",
     "responses>=0.25.0",
     "pytest-mock>=3.14.0",
+    "streamlit>=1.30.0",
 ]
 
 [project.scripts]

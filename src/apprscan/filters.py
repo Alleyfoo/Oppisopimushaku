@@ -7,17 +7,36 @@ import re
 from typing import Any, Dict, Iterable, Tuple
 
 HOUSING_FORMS = {
-    "ASUNTO-OSAKEYHTIÖ",
+    "ASUNTO-OSAKEYHTIO",
     "AS OY",
     "ASUNTO OY",
     "ASUNTO-OSUUSKUNTA",
 }
 
-NAME_PATTERNS = [
-    re.compile(r"(?i)^\s*as\s*oy\b"),
-    re.compile(r"(?i)\basunto[-\s]?osakeyhtiö\b"),
-    re.compile(r"(?i)\bkiinteistö\s*oy\b"),
+NAME_PATTERNS_RAW = [
+    r"(?i)^\s*as\s*oy\b",
+    r"(?i)\basunto\s*oy\b",
+    r"(?i)\basunto[-\s]?osakeyhtio\b",
+    r"(?i)\bkiinteisto\s*oy\b",
 ]
+NAME_PATTERNS = [re.compile(pat) for pat in NAME_PATTERNS_RAW]
+
+
+def is_housing_company(name: str | None) -> bool:
+    """Return True if company name looks like housing company."""
+    val = (name or "").strip()
+    if not val:
+        return False
+    val_norm = (
+        val.lower()
+        .replace("ö", "o")
+        .replace("ä", "a")
+        .replace("å", "a")
+    )
+    for pat in NAME_PATTERNS:
+        if pat.search(val_norm):
+            return True
+    return False
 
 
 def _extract_name(company: Dict[str, Any]) -> str:
@@ -67,14 +86,19 @@ def _extract_company_form(company: Dict[str, Any]) -> str:
 def exclude_company(company: Dict[str, Any]) -> Tuple[bool, str | None]:
     """Return (excluded_bool, reason)."""
     form_val = _extract_company_form(company)
+    form_norm = (
+        form_val.replace("Ö", "O")
+        .replace("Ä", "A")
+        .replace("Å", "A")
+        .replace("Õ", "O")
+    )
     name_val = _extract_name(company)
 
-    if form_val in HOUSING_FORMS:
+    if form_norm in HOUSING_FORMS:
         return True, f"company_form:{form_val}"
 
-    for pat in NAME_PATTERNS:
-        if pat.search(name_val):
-            return True, f"name_match:{pat.pattern}"
+    if is_housing_company(name_val):
+        return True, "name_match:housing"
 
     return False, None
 

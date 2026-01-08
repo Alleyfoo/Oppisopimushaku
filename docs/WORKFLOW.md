@@ -1,29 +1,28 @@
-# Workflow (browse first, crawl optional)
+# Workflow (kenttäopas, 1 sivu)
 
-## 1) Browse (no crawling)
-- Run once to create artifacts (cities and radius as needed):  
-  `python -m apprscan run --cities "Helsinki,Espoo,Vantaa,Kerava,Mäntsälä,Lahti" --radius-km 1.0 --max-pages 3 --include-excluded --out out/run_YYYYMMDD --master-xlsx out/master_YYYYMMDD.xlsx`
-- Artifacts you open:
-  - `out/master_YYYYMMDD.xlsx` → Shortlist (pisteet, etäisyys, industry)
-  - `out/run_YYYYMMDD/jobs/diff.xlsx` → uudet työpaikat (jos jobs ajettu)
-  - `out/run_YYYYMMDD/jobs/jobs.xlsx` → kaikki jobit (jos jobs ajettu)
-- Kartta ja analytiikka ilman uutta crawlia:  
-  `python -m apprscan map --mode companies --sheet all --industries it,marketing --max-distance-km 1.5`  
-  `python -m apprscan analytics --master-xlsx out/master_YYYYMMDD.xlsx --jobs-xlsx out/run_YYYYMMDD/jobs/jobs.xlsx --jobs-diff out/run_YYYYMMDD/jobs/diff.xlsx --out out/analytics_YYYYMMDD.xlsx`
+## 0) Perusajatus
+Browse → Curate → Act → Publish. Crawlia tarvitaan vain, kun haluat tuoreet job-signaalit.
 
-## 2) Shortlist (human in the loop)
-- Shortlist on sopimus: jobs-crawl lukee oletuksena vain Shortlist-sheetin.  
-- Käytä master.xlsx:ää (Shortlist) ja karttaa/analyticsia päättääksesi ketkä ovat kiinnostavia.
-- Industry-ryhmät ovat muokattavissa: `config/industry_groups.yaml`.
+## A) Browse & curate (ei verkkoa)
+- Avaa editori: `streamlit run streamlit_app.py` (käyttää automaattisesti `out/`-hakemiston uusimpia master/diff/curation-artefakteja, tai anna polut käsin).
+- Käytä presettejä ja filttereitä, lisää note/tagit, shortlist/exclude/hide.
+- Dry-run summary näyttää muutokset; Commit kirjoittaa overlayn backupilla. Undo löytyy Audit-tabista.
 
-## 3) Outreach (manuaalinen)
-- Avaa kartta (HTML) ja analytics, klikkaa job/website-linkkejä ja tee outreach työkalun ulkopuolella.
-- Kopioi business_id + linkki popupista; Top_Companies/Industry_Summary auttaa priorisoimaan.
+## B) Act (export)
+- Nappi “Export outreach.xlsx” vie nykyisen filtterinäkymän (Outreach + Meta sheet: polut, päivämäärät, filtterit).
 
-## 4) (Optional) Crawl jobs
-- Heavier step, aja vain kun haluat tuoreita job-signaaleja:  
-  `python -m apprscan jobs --companies out/run_YYYYMMDD/companies.xlsx --domains domains.csv --suggested domains_suggested.csv --out out/run_YYYYMMDD/jobs --max-domains 20 --max-pages-per-domain 5`
-- Päivitä master & raportit:  
-  `python -m apprscan run --cities ... --activity-file out/run_YYYYMMDD/jobs/company_activity.xlsx --master-xlsx out/master_YYYYMMDD.xlsx --out out/run_YYYYMMDD`  
-  `python -m apprscan watch` (automaattisesti uusin master/diff)  
-  `python -m apprscan map` (automaattisesti uusin master/diff)
+## C) Publish (map/watch)
+- Tarvitset jaettavan näkymän? Aja:
+  - `python -m apprscan map` → HTML-kartta (käyttää uusimpia artefakteja automaattisesti).
+  - `python -m apprscan watch` → teksti-/raporttinäkymä (jos käytössä).
+
+## D) Optional: refresh data (crawl)
+- Kun haluat päivittää lähdedatan:
+  - `python -m apprscan run --cities "Helsinki,Espoo,Vantaa,Kerava,Mäntsälä,Lahti" --radius-km 1.0 --max-pages 3 --include-excluded --out out/run_YYYYMMDD --master-xlsx out/master_YYYYMMDD.xlsx`
+  - (valinnainen) jobs-crawl: `python -m apprscan jobs --companies out/run_YYYYMMDD/companies.xlsx --domains domains.csv --suggested domains_suggested.csv --out out/run_YYYYMMDD/jobs --max-domains 20 --max-pages-per-domain 5`
+  - Päivitä master + raportit: `python -m apprscan run ... --activity-file out/run_YYYYMMDD/jobs/company_activity.xlsx --master-xlsx out/master_YYYYMMDD.xlsx --out out/run_YYYYMMDD`
+
+## Troubleshooting
+- Master/diff mismatch: anna polut eksplisiittisesti tai käytä samaa run-id:tä.
+- Commit blocked: masterin `business_id` puuttuu/ei ole uniikki → korjaa masterin lähteessä ja aja run uudelleen.
+- Kartta ei vastaa editoria: varmista että käytät viimeisintä masteria ja ettei preview pending -tila ole päällä.

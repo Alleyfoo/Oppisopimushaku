@@ -19,9 +19,19 @@ def _marker_color(row: pd.Series) -> str:
     return "blue"
 
 
-def _marker_radius(row: pd.Series) -> float:
-    count = row.get("job_count_total", 0) or 0
-    return max(4, min(18, 4 + 4 * math.log1p(count)))
+def _marker_radius(count: float, *, max_count: float, scale: str = "log", size_mult: float = 1.0) -> float:
+    min_r, max_r = 3.0, 12.0
+    if max_count <= 0:
+        base = min_r
+    else:
+        if scale == "linear":
+            t = count / max_count
+        else:
+            t = math.log1p(count) / math.log1p(max_count)
+        t = max(0.0, min(1.0, t))
+        base = min_r + (max_r - min_r) * t
+    base = base * max(0.5, min(size_mult, 3.0))
+    return max(min_r, min(20.0, base))
 
 
 def render_jobs_map(
@@ -31,10 +41,14 @@ def render_jobs_map(
     *,
     mode: str = "jobs",
     nace_prefix: Optional[list[str]] = None,
+    industries: Optional[list[str]] = None,
     sheet: str = "Shortlist",
     only_recruiting: bool = False,
     min_score: Optional[float] = None,
     max_distance_km: Optional[float] = None,
+    skip_housing: bool = True,
+    pin_scale: str = "log",
+    pin_size: float = 1.0,
 ) -> None:
     if shortlist.empty:
         raise ValueError("Shortlist is empty; cannot render map.")
@@ -42,6 +56,11 @@ def render_jobs_map(
     out_path.parent.mkdir(parents=True, exist_ok=True)
 
     nace_prefix = [p.strip() for p in (nace_prefix or []) if p.strip()]
+    industries = [i.strip() for i in (industries or []) if i.strip()]
+    if "industry_effective" in shortlist.columns and "industry" not in shortlist.columns:
+        shortlist["industry"] = shortlist["industry_effective"]
+    if industries and "industry" in shortlist.columns:
+        shortlist = shortlist[shortlist["industry"].astype(str).str.lower().isin([i.lower() for i in industries])]
     if nace_prefix:
         def keep_row(r):
             val = r.get("main_business_line") or r.get("mainBusinessLine") or ""
@@ -74,18 +93,33 @@ def render_jobs_map(
     cluster = MarkerCluster()
 
     points = []
+    max_count = float(shortlist.get("job_count_total", pd.Series([0])).max() or 0)
     for _, row in shortlist.iterrows():
         lat, lon = row.get("lat"), row.get("lon")
         if pd.isna(lat) or pd.isna(lon):
             continue
+        if skip_housing:
+            try:
+                from apprscan.filters import is_housing_company
+            except Exception:
+                is_housing_company = None
+            if is_housing_company and is_housing_company(row.get("name")):
+                continue
         bid = str(row.get("business_id") or "")
+        company_name = row.get("name") or row.get("company_name") or ""
+        if company_name is None or (isinstance(company_name, float) and pd.isna(company_name)) or not str(company_name).strip():
+            company_name = row.get("company_domain") or bid
         popup_lines = []
-        popup_lines.append(f"<b>{row.get('name','')} ({bid})</b>")
+        popup_lines.append(f"<b>{company_name} ({bid})</b>")
         if row.get("main_business_line"):
             popup_lines.append(f"Main business line: {row.get('main_business_line')}")
         popup_lines.append(
             f"Score: {row.get('score')}, Distance km: {row.get('distance_km')}, Station: {row.get('nearest_station')}"
         )
+        note = str(row.get("note") or "")
+        if note:
+            short_note = (note[:117] + "...") if len(note) > 120 else note
+            popup_lines.append(f"Note: {short_note}")
         popup_lines.append(
             f"Jobs total: {row.get('job_count_total', 0)}, New since last: {row.get('job_count_new_since_last', 0)}"
         )
@@ -107,18 +141,21 @@ def render_jobs_map(
         popup_html = "<br>".join(str(x) for x in popup_lines)
         marker = folium.CircleMarker(
             location=[lat, lon],
-            radius=_marker_radius(row),
+            radius=_marker_radius(row.get("job_count_total", 0) or 0, max_count=max_count, scale=pin_scale, size_mult=pin_size),
             color=_marker_color(row),
             fill=True,
             fill_opacity=0.7,
             popup=folium.Popup(popup_html, max_width=350),
-            tooltip=f"{row.get('name','')} (new: {row.get('job_count_new_since_last', 0)})",
+            tooltip=f"{company_name} (status: {row.get('status')}, new: {row.get('job_count_new_since_last', 0)})",
         )
         cluster.add_child(marker)
         if row.get("job_count_new_since_last", 0) and row.get("job_count_new_since_last", 0) > 0:
             new_layer.add_child(marker)
         if row.get("recruiting_active"):
             active_layer.add_child(marker)
+        if row.get("status") == "shortlist":
+            # Show shortlist layer via active/new_layer membership; keep all in all_layer
+            pass
         all_layer.add_child(marker)
         points.append((lat, lon))
 
@@ -127,6 +164,17 @@ def render_jobs_map(
     m.add_child(active_layer)
     m.add_child(new_layer)
     m.add_child(folium.LayerControl(collapsed=False))
+
+    legend_html = """
+    <div style="position: fixed; bottom: 20px; left: 20px; z-index: 9999;
+    background: white; padding: 10px; border: 2px solid #777; border-radius: 6px;">
+    <b>Legend</b><br>
+    <span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:red;"></span> New jobs<br>
+    <span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:green;"></span> Recruiting active<br>
+    <span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:blue;"></span> Other<br>
+    </div>
+    """
+    m.get_root().html.add_child(folium.Element(legend_html))
 
     if points:
         m.fit_bounds(points)
