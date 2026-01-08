@@ -102,14 +102,14 @@ def build_parser() -> argparse.ArgumentParser:
     watch_parser.add_argument(
         "--run-xlsx",
         type=str,
-        default="out/master.xlsx",
+        default=None,
         help="Master-työkirja, josta luetaan Shortlist (score/distance).",
     )
     watch_parser.add_argument(
         "--jobs-diff",
         type=str,
-        default="out/jobs/diff.xlsx",
-        help="Jobs diff -tiedosto (uudet paikat).",
+        default=None,
+        help="Jobs diff -tiedosto (uudet paikat). Oletus: uusin out/run_*/jobs/diff.xlsx.",
     )
     watch_parser.add_argument(
         "--profile",
@@ -161,24 +161,18 @@ def build_parser() -> argparse.ArgumentParser:
 
     map_parser = subparsers.add_parser(
         "map",
-        help="Renderöi jobs_map.html Shortlistista ja diffistä.",
+        help="Render?i jobs_map.html Shortlistista ja diffist?.",
         description="Tekee interaktiivisen kartan ilman uutta crawlia.",
     )
-    map_parser.add_argument("--master-xlsx", type=str, required=True, help="Polku master.xlsx:ään (Shortlist).")
-    map_parser.add_argument("--jobs-diff", type=str, required=False, help="Polku diff-tiedostoon (uudet työpaikat).")
+    map_parser.add_argument("--master-xlsx", type=str, required=False, default=None, help="Polku master.xlsx:??n (Shortlist).")
+    map_parser.add_argument("--jobs-diff", type=str, required=False, help="Polku diff-tiedostoon (uudet ty?paikat).")
     map_parser.add_argument("--out", type=str, default="out/jobs_map.html", help="Output HTML -kartta.")
-    map_parser.add_argument(
-        "--mode",
-        type=str,
-        default="jobs",
-        choices=["jobs", "companies"],
-        help="Karttatila: jobs=diff + shortlist, companies=yritykset.",
-    )
+    map_parser.add_argument("--mode", type=str, default="jobs", choices=["jobs", "companies"], help="Karttatila: jobs=diff + shortlist, companies=yritykset.")
     map_parser.add_argument("--sheet", type=str, default="Shortlist", help="Sheet masterista (Shortlist/Excluded/all).")
     map_parser.add_argument("--nace-prefix", type=str, default="", help="Pilkutetut TOL/NACE-prefixit (esim. 62,63).")
-    map_parser.add_argument("--only-recruiting", action="store_true", help="Näytä vain recruiting_active=TRUE.")
-    map_parser.add_argument("--min-score", type=float, default=None, help="Vähimmäisscore kartalle.")
-    map_parser.add_argument("--max-distance-km", type=float, default=None, help="Maksimietäisyys km kartalle.")
+    map_parser.add_argument("--only-recruiting", action="store_true", help="N?yt? vain recruiting_active=TRUE.")
+    map_parser.add_argument("--min-score", type=float, default=None, help="V?himm?isscore kartalle.")
+    map_parser.add_argument("--max-distance-km", type=float, default=None, help="Maksimiet?isyys km kartalle.")
     map_parser.set_defaults(func=map_command)
 
     run_parser = subparsers.add_parser(
@@ -653,11 +647,15 @@ def jobs_command(args: argparse.Namespace) -> int:
 def watch_command(args: argparse.Namespace) -> int:
     from .watch import generate_watch_report
     from .profiles import load_profiles, apply_profile
+    from .artifacts import find_latest_master, find_latest_diff
 
-    run_path = Path(args.run_xlsx)
-    diff_path = Path(args.jobs_diff)
-    if not diff_path.exists():
-        print(f"Jobs diff not found: {diff_path}")
+    run_path = Path(args.run_xlsx) if args.run_xlsx else find_latest_master("out")
+    diff_path = Path(args.jobs_diff) if args.jobs_diff else find_latest_diff("out")
+    if diff_path is None or not diff_path.exists():
+        print("Jobs diff not found. Etsi uusin: out/run_*/jobs/diff.xlsx tai anna --jobs-diff.")
+        return 1
+    if run_path is None or not run_path.exists():
+        print("Master.xlsx not found. Etsi uusin: out/master_*.xlsx tai anna --run-xlsx.")
         return 1
 
     profile_args = {}
@@ -755,11 +753,12 @@ def analytics_command(args: argparse.Namespace) -> int:
 
 def map_command(args: argparse.Namespace) -> int:
     from .map import render_jobs_map
+    from .artifacts import find_latest_master, find_latest_diff
 
-    master_path = Path(args.master_xlsx)
-    diff_path = Path(args.jobs_diff) if args.jobs_diff else None
-    if not master_path.exists():
-        print(f"master.xlsx not found: {master_path}")
+    master_path = Path(args.master_xlsx) if args.master_xlsx else find_latest_master("out")
+    diff_path = Path(args.jobs_diff) if args.jobs_diff else find_latest_diff("out")
+    if master_path is None or not master_path.exists():
+        print("master.xlsx not found. Etsi uusin: out/master_*.xlsx tai anna --master-xlsx.")
         return 1
     sheet_name = args.sheet if args.sheet.lower() != "all" else None
     shortlist = pd.read_excel(master_path, sheet_name=sheet_name or None)

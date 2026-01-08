@@ -1,50 +1,44 @@
 # Apprenticeship Employer Scanner (Oppisopimushaku)
 
-Työkalu, joka kokoaa shortlistan työnantajista (Uusimaa + Lahti/Päijät-Häme) oppisopimusmahdollisuuksia varten. Lähtökohtana on PRH/YTJ API:n data, geokoodaus Nominatimilla ja raportointi Excel/GeoJSON/HTML-karttana.
+“Browse first, crawl optional.” Työkalu, joka tekee shortlistauksen, kartan ja analytiikan PRH/YTJ-datasta; jobs-crawl on lisäbonus, ei oletus.
 
-## Mitä tämä tekee / ei tee
-- Hakee yrityksiä PRH/YTJ:stä, geokoodaa osoitteet ja pisteyttää sijainnin mukaan.
-- Suodattaa pois taloyhtiöt ja muut ei-työnantaja -muodot; tukee toimialan whitelist/blacklist -rajausta.
-- Tukee työntekijämäärän kynnystä, jos data on saatavilla erillisestä CSV:stä.
-- (V2+) Etsii kevyesti “oppisopimus” -signaaleja shortlistatuista yrityksistä rajatulla ja kohteliaalla crawlilla.
-- Ei yritä listata kaikkia oppisopimuspaikkoja “totuutena”, eikä tee aggressiivista web-scrapea.
+## 3-step workflow
+1) **Browse**  
+   - Aja run, avaa master.xlsx (Shortlist) + kartta/analytics.  
+   - Esim. `python -m apprscan run --cities "Helsinki,Espoo,Vantaa,Kerava,Mäntsälä,Lahti" --radius-km 1.0 --max-pages 3 --include-excluded --out out/run_YYYYMMDD --master-xlsx out/master_YYYYMMDD.xlsx`
+   - Kartta/analytics ilman lisä-crawlia: `apprscan map` ja `apprscan analytics` käyttävät uusimpia artefakteja automaattisesti.
+2) **Shortlist (human)**  
+   - Shortlist-sheet on se mitä kuratoit; jobs-crawl lukee oletuksena vain Shortlistin.  
+   - Industry-ryhmät muokattavissa: `config/industry_groups.yaml`.
+3) **Outreach (manual)**  
+   - Avaa HTML-kartta, klikkaa job/website-linkkejä, tee yhteydenotot työkalun ulkopuolella. Crawl on lisäbonus, ei pakollinen.
+
+Optional: jobs-crawl (raskas) jos haluat tuoreet job-signaalit. Pipeline (run → jobs → run activity → watch/map/analytics) on valmiina.
+
+## Artefaktit
+- `out/master_YYYYMMDD.xlsx` (Shortlist + haluttaessa Excluded, includes industry)  
+- `out/run_YYYYMMDD/jobs/diff.xlsx` (uudet jobit)  
+- `out/run_YYYYMMDD/jobs/jobs.xlsx` (kaikki jobit)
 
 ## Asennus
-1) Luo ja aktivoi virtuaaliympäristö (esim. `python -m venv .venv && .\.venv\Scripts\activate` tai `source .venv/bin/activate`).
-2) Asenna riippuvuudet:
-   - `pip install -e .[dev]` (sisältää ruff + pytest) tai
-   - `pip install -r requirements-dev.txt`
+1) `python -m venv .venv && .\.venv\Scripts\activate` (tai `source .venv/bin/activate`)  
+2) `pip install -e .[dev]` (tai `pip install -r requirements-dev.txt`)
 
 ## Nopeasti alkuun
-- Tulosta apu: `python -m apprscan --help`
-- Esimerkki:\
-  `apprscan run --cities Helsinki,Espoo,Vantaa,Lahti --radius-km 1.0 --out out/ --max-pages 3 --include-excluded --whitelist koulutus --blacklist holding`\
-  `apprscan run --cities Helsinki --employee-csv employees.csv --out out/`\
-  `apprscan jobs --companies out/companies.xlsx --domains domains.csv --out out/jobs --max-domains 100 --max-pages-per-domain 20 --rate-limit 1.0`\
-  `python scripts/pipeline.py --cities Helsinki,Espoo,Vantaa,Lahti --include-excluded` (ajaa run -> jobs -> run activityllä -> master.xlsx -> watch_report.txt)
-- Profiilit: `config/profiles.yaml` (esim. commute_default, data_junior, apprenticeship); käytä `--profile` pipeline/watch -komennoissa.
+- Apu: `python -m apprscan --help`
+- Kartta (uusiin artefakteihin automaattisesti): `python -m apprscan map`
+- Watch (uusiin artefakteihin automaattisesti): `python -m apprscan watch`
+- Jobs-crawl: `python -m apprscan jobs --companies out/run_YYYYMMDD/companies.xlsx --domains domains.csv --suggested domains_suggested.csv --out out/run_YYYYMMDD/jobs --max-domains 20 --max-pages-per-domain 5`
 
-## Konfiguraatio ja oletukset
-- Kaupungit: CSV-lista `--cities`-argumentissa (tuki config-tiedostolle tulossa).
-- Sijainti: geokoodaus Nominatimilla, jossa on 1 s rate limit; SQLite-välimuisti (`data/geocode_cache.sqlite`, polku konfiguroitavissa `--geocode-cache`) estää turhat kyselyt. Cache on .gitignore:ssa.
-- Asemadata: Trainline CSV tai paikallinen `data/stations_fi.csv`, jos halutaan deterministinen ja nopea ajo.
-- Toimialasuodatus: whitelist + blacklist TOL-koodeille tai teksti-osumille.
-- Työntekijämäärä: erillinen CSV enrichment (`businessId,employee_count/employee_band`), jonka lähde tallennetaan raporttiin.
-- Job-diff fingerprint normalisoi yleistä kohinaa (case/whitespace ja esim. “, Finland”) vähentääkseen turhia “new job” -hälytyksiä.
-
-## Outputit
-- Excel (Shortlist + haluttaessa Excluded), GeoJSON ja HTML-kartta (folium) kansioon `--out` (oletus `out/`).
-- Vakiosarakkeet (tyhjä sallittu): business_id, name, company_form, main_business_line, domicile_city/_source_city, street, post_code, city, full_address, lat, lon, nearest_station, distance_km, score, score_reasons, excluded_reason, employee_count, employee_band, employee_source, employee_gate, oppisopimus_hit, oppisopimus_class, evidence_url, evidence_snippet.
+## Konfiguraatio
+- Industry-ryhmät: `config/industry_groups.yaml` (pisin prefix voittaa).  
+- Profiilit: `config/profiles.yaml` (valitse yksi ja käytä `--profile`).  
+- Geokoodaus cache: `--geocode-cache` (oletus data/geocode_cache.sqlite, .gitignore:ssa).  
+- Asemadata: `data/stations_fi.csv` tai oma `--stations-file`.
 
 ## Kehitys ja testit
-- Lint: `ruff check .` ja format: `ruff format .`
-- Testit: `pytest`
+- Lint: `ruff check .` (format: `ruff format .`)  
+- Testit: `pytest`  
 - Tavoite: `python -m apprscan --help` toimii ja testit ajettavissa.
 
-## Analytics ja kartta (offline)
-- Analytics ilman uutta crawlia: `apprscan analytics --master-xlsx out/master_YYYYMMDD.xlsx --jobs-xlsx out/run_YYYYMMDD/jobs/jobs.xlsx --jobs-diff out/run_YYYYMMDD/jobs/diff.xlsx --out out/analytics_YYYYMMDD.xlsx` (tuottaa KPI/Stations/Tags-välilehdet).
-- Kartta: `apprscan map --master-xlsx out/master_YYYYMMDD.xlsx --jobs-diff out/run_YYYYMMDD/jobs/diff.xlsx --out out/jobs_map_YYYYMMDD.html`
-
-## Muistiinpanot
-- Nominatimilla on tiukat käyttöehdot; käytä välimuistia ja pidä viive vähintään 1 s.
-- Tutkimusmateriaali: alkuperäinen Colab-export sijoitetaan tiedostoon `research/work_commute_scanner_original.py` (ei sisälly repoihin).
+Lisäohje: katso myös `docs/WORKFLOW.md` (kenttäopas, <2 min lukuaika).
