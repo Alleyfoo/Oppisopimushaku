@@ -144,6 +144,12 @@ def resolve_place_id(maps_url: str) -> str | None:
     return None
 
 
+def _maps_host_allowed(maps_url: str) -> bool:
+    expanded = _expand_maps_url(maps_url)
+    parsed = urlparse(expanded)
+    return parsed.netloc in ALLOWED_HOSTS
+
+
 def resolve_website(place_id: str, api_key: str | None = None) -> str:
     key = api_key or get_api_key()
     details = fetch_place_details(place_id, api_key=key, field_mask="id,websiteUri")
@@ -187,7 +193,7 @@ def _build_evidence(snippets: list[str], urls: list[str]) -> list[dict[str, str]
 
 
 def _enforce_hiring_evidence(
-    status: str, evidence_urls: list[str], snippet_count: int, domain: str
+    status: str, evidence_urls: list[str], domain: str
 ) -> tuple[str, float, list[str]]:
     if status != "yes":
         return status, 0.0, []
@@ -198,11 +204,7 @@ def _enforce_hiring_evidence(
     unique_urls = sorted(set(eligible))
     if len(unique_urls) >= 2:
         return status, 0.0, []
-    if len(unique_urls) >= 1 and snippet_count >= 2:
-        return status, 0.0, []
     if len(unique_urls) == 1:
-        return "maybe", 0.5, ["insufficient_evidence_urls"]
-    if snippet_count >= 2:
         return "maybe", 0.5, ["insufficient_evidence_urls"]
     return "uncertain", 0.2, ["insufficient_evidence_urls"]
 
@@ -272,6 +274,9 @@ def render_company_markdown(package: dict[str, Any]) -> str:
     errors = safety.get("errors") or []
     unknowns.extend([f"Skipped: {val}" for val in skipped if val])
     unknowns.extend([f"Error: {val}" for val in errors if val])
+    next_action = package.get("next_action") or ""
+    if next_action:
+        unknowns.append(f"Next action: {next_action}")
     if not unknowns:
         unknowns = ["No major caveats recorded."]
     lines.append("## Unknowns & Caveats")
@@ -294,6 +299,9 @@ def render_company_markdown(package: dict[str, Any]) -> str:
     lines.append(f"- version: {package.get('tool_version')}")
     lines.append(f"- timestamp: {package.get('created_at')}")
     lines.append(f"- git_sha: {package.get('git_sha')}")
+    source = package.get("source", {})
+    if source.get("website_source"):
+        lines.append(f"- website_source: {source.get('website_source')}")
     lines.append("")
     return "\n".join(lines)
 
@@ -305,6 +313,8 @@ def build_company_package(
     place_id: str | None,
     website_url: str,
     domain: str,
+    website_source: str,
+    resolver_notes: str,
     scan_config: ScanConfig,
     scan_result: dict[str, Any],
     checked_urls: list[str],
@@ -313,6 +323,8 @@ def build_company_package(
     pages_fetched: int,
     note: str,
     tags: list[str],
+    pipeline_status: str = "ok",
+    next_action: str = "",
 ) -> dict[str, Any]:
     signal = str(scan_result.get("signal") or scan_result.get("hiring_signal") or "unclear").lower()
     status_map = {"yes": "yes", "no": "no", "unclear": "uncertain"}
@@ -323,14 +335,13 @@ def build_company_package(
     signals = []
     if scan_result.get("evidence"):
         signals.append(str(scan_result.get("evidence")))
-    downgrade_status, confidence_cap, downgrade_reasons = _enforce_hiring_evidence(
-        status, urls, len(snippets), domain
-    )
+    downgrade_status, confidence_cap, downgrade_reasons = _enforce_hiring_evidence(status, urls, domain)
     if downgrade_status != status:
         status = downgrade_status
         signals.extend(downgrade_reasons)
 
     package = {
+        "status": pipeline_status,
         "schema_version": SCHEMA_VERSION,
         "run_id": run_id,
         "created_at": _now_iso(),
@@ -340,6 +351,8 @@ def build_company_package(
             "source_ref": maps_url,
             "place_id": place_id or "",
             "canonical_domain": domain,
+            "website_source": website_source,
+            "resolver_notes": resolver_notes,
         },
         "hiring": {
             "status": status,
@@ -366,6 +379,7 @@ def build_company_package(
             "ats_urls": [],
             "contact_url": "",
         },
+        "next_action": next_action or "",
         "safety": {
             "robots_respected": "unknown",
             "pages_fetched": pages_fetched,
@@ -411,19 +425,67 @@ def process_maps_ingest(
 ) -> dict[str, Any]:
     run_id = run_id or new_run_id()
     tags = tags or []
-    place_id = resolve_place_id(maps_url)
-    if not place_id:
+    next_action = ""
+    if not _maps_host_allowed(maps_url):
         package = {
+            "status": "error",
             "schema_version": SCHEMA_VERSION,
             "run_id": run_id,
             "created_at": _now_iso(),
             "tool_version": __version__,
             "git_sha": _resolve_git_sha(_repo_root()),
-            "source": {"source_ref": maps_url, "place_id": "", "canonical_domain": ""},
+            "source": {
+                "source_ref": maps_url,
+                "place_id": "",
+                "canonical_domain": "",
+                "website_source": "unknown",
+                "resolver_notes": "Invalid Maps URL host.",
+            },
             "hiring": {"status": "uncertain", "confidence": 0.0, "signals": [], "evidence": []},
             "industry": {"labels": [], "confidence": 0.0, "evidence": []},
             "roles": {"detected": [], "fit": {"score": 0, "green_flags": [], "red_flags": [], "evidence": []}},
             "links": {"maps_url": maps_url, "website_url": "", "careers_urls": [], "ats_urls": [], "contact_url": ""},
+            "next_action": "",
+            "safety": {
+                "robots_respected": "unknown",
+                "pages_fetched": 0,
+                "skipped_reasons": [],
+                "errors": ["invalid_maps_url"],
+                "checked_urls": [],
+                "llm_used": False,
+                "prompt_version": "",
+                "ollama_model": "",
+                "ollama_temperature": 0.0,
+                "deterministic": False,
+            },
+            "notes": {"note": note or "", "tags": tags or []},
+            "error": {"code": "invalid_maps_url", "message": "Maps URL host is not supported."},
+        }
+        write_company_package(run_id, package)
+        return {"run_id": run_id, "status": "error"}
+
+    place_id = resolve_place_id(maps_url)
+    if not place_id:
+        next_action = "Paste official website URL to proceed."
+        package = {
+            "status": "degraded",
+            "schema_version": SCHEMA_VERSION,
+            "run_id": run_id,
+            "created_at": _now_iso(),
+            "tool_version": __version__,
+            "git_sha": _resolve_git_sha(_repo_root()),
+            "source": {
+                "source_ref": maps_url,
+                "place_id": "",
+                "canonical_domain": "",
+                "website_source": "unknown",
+                "resolver_notes": "Could not resolve place_id from Maps URL.",
+            },
+            "hiring": {"status": "uncertain", "confidence": 0.0, "signals": [], "evidence": []},
+            "industry": {"labels": [], "confidence": 0.0, "evidence": []},
+            "roles": {"detected": [], "fit": {"score": 0, "green_flags": [], "red_flags": [], "evidence": []}},
+            "links": {"maps_url": maps_url, "website_url": "", "careers_urls": [], "ats_urls": [], "contact_url": ""},
+            "next_action": next_action,
             "safety": {
                 "robots_respected": "unknown",
                 "pages_fetched": 0,
@@ -440,22 +502,30 @@ def process_maps_ingest(
             "error": {"code": "place_id_not_found", "message": "Could not resolve place_id from Maps URL."},
         }
         write_company_package(run_id, package)
-        return {"run_id": run_id, "status": "error"}
+        return {"run_id": run_id, "status": "degraded"}
 
     try:
         website_url = resolve_website(place_id)
     except Exception as exc:
         package = {
+            "status": "error",
             "schema_version": SCHEMA_VERSION,
             "run_id": run_id,
             "created_at": _now_iso(),
             "tool_version": __version__,
             "git_sha": _resolve_git_sha(_repo_root()),
-            "source": {"source_ref": maps_url, "place_id": place_id, "canonical_domain": ""},
+            "source": {
+                "source_ref": maps_url,
+                "place_id": place_id,
+                "canonical_domain": "",
+                "website_source": "places",
+                "resolver_notes": "Places lookup failed.",
+            },
             "hiring": {"status": "uncertain", "confidence": 0.0, "signals": [], "evidence": []},
             "industry": {"labels": [], "confidence": 0.0, "evidence": []},
             "roles": {"detected": [], "fit": {"score": 0, "green_flags": [], "red_flags": [], "evidence": []}},
             "links": {"maps_url": maps_url, "website_url": "", "careers_urls": [], "ats_urls": [], "contact_url": ""},
+            "next_action": "",
             "safety": {
                 "robots_respected": "unknown",
                 "pages_fetched": 0,
@@ -475,17 +545,26 @@ def process_maps_ingest(
         return {"run_id": run_id, "status": "error"}
 
     if not website_url:
+        next_action = "Paste official website URL to proceed."
         package = {
+            "status": "degraded",
             "schema_version": SCHEMA_VERSION,
             "run_id": run_id,
             "created_at": _now_iso(),
             "tool_version": __version__,
             "git_sha": _resolve_git_sha(_repo_root()),
-            "source": {"source_ref": maps_url, "place_id": place_id, "canonical_domain": ""},
+            "source": {
+                "source_ref": maps_url,
+                "place_id": place_id,
+                "canonical_domain": "",
+                "website_source": "places",
+                "resolver_notes": "Places had no websiteUri.",
+            },
             "hiring": {"status": "uncertain", "confidence": 0.0, "signals": [], "evidence": []},
             "industry": {"labels": [], "confidence": 0.0, "evidence": []},
             "roles": {"detected": [], "fit": {"score": 0, "green_flags": [], "red_flags": [], "evidence": []}},
             "links": {"maps_url": maps_url, "website_url": "", "careers_urls": [], "ats_urls": [], "contact_url": ""},
+            "next_action": next_action,
             "safety": {
                 "robots_respected": "unknown",
                 "pages_fetched": 0,
@@ -502,7 +581,7 @@ def process_maps_ingest(
             "error": {"code": "website_missing", "message": "Place has no websiteUri."},
         }
         write_company_package(run_id, package)
-        return {"run_id": run_id, "status": "error"}
+        return {"run_id": run_id, "status": "degraded"}
 
     domain = _clean_domain(website_url)
     scan_config = load_scan_config()
@@ -527,6 +606,8 @@ def process_maps_ingest(
         place_id=place_id,
         website_url=website_url,
         domain=domain,
+        website_source="places",
+        resolver_notes="Resolved via Places websiteUri.",
         scan_config=scan_config,
         scan_result=scan_outcome.selected,
         checked_urls=scan_outcome.checked_urls,
@@ -535,6 +616,8 @@ def process_maps_ingest(
         pages_fetched=scan_outcome.pages_fetched,
         note=note,
         tags=tags,
+        pipeline_status="ok",
+        next_action="",
     )
     write_company_package(run_id, package)
     return {"run_id": run_id, "status": "ok"}

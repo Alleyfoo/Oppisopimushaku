@@ -49,6 +49,22 @@ EVIDENCE_KEYWORDS = [
     "avoin tehtava",
     "hae tahan",
 ]
+COOKIE_WALL_KEYWORDS = [
+    "cookie",
+    "cookies",
+    "we use cookies",
+    "accept all",
+    "reject all",
+    "manage preferences",
+    "consent",
+    "gdpr",
+    "eväste",
+    "evästeet",
+    "hyväksy evästeet",
+    "salli kaikki",
+    "hylkää kaikki",
+    "tietosuoj",
+]
 NEGATIVE_KEYWORDS = [
     "no open positions",
     "no openings",
@@ -165,6 +181,16 @@ def _extract_snippets(text: str, keywords: list[str], max_snippets: int = 4, win
     return snippets
 
 
+def _is_cookie_wall(title: str, text: str) -> bool:
+    combined = f"{title} {text}".lower()
+    hits = sum(1 for key in COOKIE_WALL_KEYWORDS if key in combined)
+    if hits >= 3 and len(text) < 2000:
+        return True
+    if hits >= 5:
+        return True
+    return False
+
+
 def _load_allowlist(path: Path | None) -> set[str]:
     if not path or not path.exists():
         return set()
@@ -241,6 +267,10 @@ def scan_domain(
             continue
         pages_fetched += 1
         checked_urls.append(res.final_url)
+        title, text = _extract_text(res.html)
+        if _is_cookie_wall(title, text):
+            errors.append(f"{res.final_url}:cookie_wall")
+            continue
         heuristic = evaluate_html(res.html, res.final_url)
         if heuristic["signal"] == "yes":
             results.append(
@@ -253,9 +283,8 @@ def scan_domain(
                     "next_url_hint": "",
                     "url_checked": res.final_url,
                 }
-            )
+                )
             continue
-        title, text = _extract_text(res.html)
         if use_llm and ollama_model:
             try:
                 result = _evaluate_page(

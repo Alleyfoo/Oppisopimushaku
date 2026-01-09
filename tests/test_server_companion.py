@@ -15,16 +15,24 @@ from apprscan.server import service
 
 def _minimal_package(run_id: str) -> dict:
     return {
+        "status": "ok",
         "schema_version": "0.1",
         "run_id": run_id,
         "created_at": "2026-01-01T00:00:00Z",
         "tool_version": "0.0.0",
         "git_sha": "",
-        "source": {"source_ref": "https://www.google.com/maps", "place_id": "", "canonical_domain": ""},
+        "source": {
+            "source_ref": "https://www.google.com/maps",
+            "place_id": "",
+            "canonical_domain": "",
+            "website_source": "unknown",
+            "resolver_notes": "",
+        },
         "hiring": {"status": "uncertain", "confidence": 0.0, "signals": [], "evidence": []},
         "industry": {"labels": [], "confidence": 0.0, "evidence": []},
         "roles": {"detected": [], "fit": {"score": 0, "green_flags": [], "red_flags": [], "evidence": []}},
         "links": {"maps_url": "", "website_url": "", "careers_urls": [], "ats_urls": [], "contact_url": ""},
+        "next_action": "",
         "safety": {
             "robots_respected": "unknown",
             "pages_fetched": 0,

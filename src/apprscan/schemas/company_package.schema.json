@@ -3,6 +3,7 @@
   "title": "CompanyPackage",
   "type": "object",
   "required": [
+    "status",
     "schema_version",
     "run_id",
     "created_at",
@@ -11,10 +12,12 @@
     "source",
     "hiring",
     "links",
+    "next_action",
     "safety",
     "notes"
   ],
   "properties": {
+    "status": { "type": "string", "enum": ["ok", "degraded", "error"] },
     "schema_version": { "type": "string" },
     "run_id": { "type": "string" },
     "created_at": { "type": "string" },
@@ -22,11 +25,16 @@
     "git_sha": { "type": "string" },
     "source": {
       "type": "object",
-      "required": ["source_ref", "place_id", "canonical_domain"],
+      "required": ["source_ref", "place_id", "canonical_domain", "website_source", "resolver_notes"],
       "properties": {
         "source_ref": { "type": "string" },
         "place_id": { "type": "string" },
-        "canonical_domain": { "type": "string" }
+        "canonical_domain": { "type": "string" },
+        "website_source": {
+          "type": "string",
+          "enum": ["user", "places", "inferred_search", "unknown"]
+        },
+        "resolver_notes": { "type": "string" }
       }
     },
     "hiring": {
@@ -83,6 +91,7 @@
         "contact_url": { "type": "string" }
       }
     },
+    "next_action": { "type": "string" },
     "safety": {
       "type": "object",
       "required": [
