@@ -63,6 +63,7 @@ and delivered a working scan in a short turnaround from the git baseline.
   - `POST /ingest/maps` with `{ "maps_url": "https://www.google.com/maps/..." }`
   - `GET /result/{run_id}`
 - Company package schema: `src/apprscan/schemas/company_package.schema.json`
+- Output files per run: `out/runs/<run_id>/company_package.json` and `company_package.md`
 
 ## Requirements
 - Python environment (see install below)

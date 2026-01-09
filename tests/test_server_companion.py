@@ -77,6 +77,8 @@ def test_ingest_result_flow(monkeypatch):
 
     package = _minimal_package(run_id)
     service.write_company_package(run_id, package)
+    md_path = Path("out") / "runs" / run_id / "company_package.md"
+    assert md_path.exists()
 
     done = client.get(f"/result/{run_id}", headers={"X-APPRSCAN-TOKEN": "test-token"})
     assert done.status_code == 200

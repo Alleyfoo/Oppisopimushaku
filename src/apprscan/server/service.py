@@ -22,6 +22,18 @@ from ..places_api import fetch_place_details, get_api_key
 
 SCHEMA_VERSION = "0.1"
 ALLOWED_HOSTS = {"www.google.com", "google.com", "maps.google.com", "maps.app.goo.gl", "goo.gl"}
+ATS_HOSTS = {
+    "greenhouse.io",
+    "lever.co",
+    "workable.com",
+    "smartrecruiters.com",
+    "recruitee.com",
+    "teamtailor.com",
+    "jobylon.com",
+    "talentadore.com",
+    "sympa.com",
+    "jazzhr.com",
+}
 
 
 @dataclass
@@ -144,6 +156,27 @@ def _clean_domain(website_url: str) -> str:
     return host.split("/")[0].strip()
 
 
+def _is_first_party(url: str, domain: str) -> bool:
+    if not url:
+        return False
+    parsed = urlparse(url if "://" in url else f"https://{url}")
+    host = parsed.netloc.lower()
+    if not host or not domain:
+        return False
+    domain = domain.lower()
+    return host == domain or host.endswith(f".{domain}")
+
+
+def _is_ats_host(url: str) -> bool:
+    if not url:
+        return False
+    parsed = urlparse(url if "://" in url else f"https://{url}")
+    host = parsed.netloc.lower()
+    if not host:
+        return False
+    return any(host == ats or host.endswith(f".{ats}") for ats in ATS_HOSTS)
+
+
 def _build_evidence(snippets: list[str], urls: list[str]) -> list[dict[str, str]]:
     evidence = []
     for idx, snippet in enumerate(snippets):
@@ -151,6 +184,112 @@ def _build_evidence(snippets: list[str], urls: list[str]) -> list[dict[str, str]
         if snippet or url:
             evidence.append({"snippet": snippet, "url": url})
     return evidence
+
+
+def _enforce_hiring_evidence(status: str, evidence_urls: list[str], domain: str) -> tuple[str, float, list[str]]:
+    if status != "yes":
+        return status, 0.0, []
+    eligible = []
+    for url in evidence_urls:
+        if _is_first_party(url, domain) or _is_ats_host(url):
+            eligible.append(url)
+    unique_urls = sorted(set(eligible))
+    if len(unique_urls) >= 2:
+        return status, 0.0, []
+    if len(unique_urls) == 1:
+        return "maybe", 0.5, ["insufficient_evidence_urls"]
+    return "uncertain", 0.2, ["insufficient_evidence_urls"]
+
+
+def _markdown_links(title: str, url: str) -> str:
+    if not url:
+        return ""
+    return f"[{title}]({url})"
+
+
+def render_company_markdown(package: dict[str, Any]) -> str:
+    source = package.get("source", {})
+    links = package.get("links", {})
+    hiring = package.get("hiring", {})
+    safety = package.get("safety", {})
+    notes = package.get("notes", {})
+    domain = source.get("canonical_domain") or ""
+    maps_url = links.get("maps_url") or source.get("source_ref") or ""
+    website_url = links.get("website_url") or ""
+    title = domain or "Unknown company"
+
+    lines = [f"# {title}"]
+    if domain:
+        lines.append(f"Domain: `{domain}`")
+    if website_url:
+        lines.append(f"Website: {_markdown_links(website_url, website_url)}")
+    if maps_url:
+        lines.append(f"Maps: {_markdown_links('Open in Google Maps', maps_url)}")
+    lines.append("")
+
+    status = hiring.get("status") or "uncertain"
+    confidence = hiring.get("confidence") or 0.0
+    lines.append(f"**Decision:** {str(status).upper()} (confidence {confidence:.2f})")
+    lines.append("")
+
+    signals = hiring.get("signals") or []
+    why = [str(s) for s in signals if str(s).strip()]
+    if not why:
+        why = ["No strong deterministic signals found."]
+    lines.append("## Why")
+    for item in why[:5]:
+        lines.append(f"- {item}")
+    lines.append("")
+
+    def _evidence_section(title_text: str, evidence_list: list[dict[str, str]]) -> None:
+        lines.append(f"## Evidence - {title_text}")
+        if not evidence_list:
+            lines.append("- No evidence captured.")
+        else:
+            for entry in evidence_list:
+                snippet = entry.get("snippet") or ""
+                url = entry.get("url") or ""
+                if snippet and url:
+                    lines.append(f"- {snippet} ({url})")
+                elif url:
+                    lines.append(f"- {url}")
+                elif snippet:
+                    lines.append(f"- {snippet}")
+        lines.append("")
+
+    _evidence_section("Hiring", hiring.get("evidence") or [])
+    _evidence_section("Industry", package.get("industry", {}).get("evidence") or [])
+    _evidence_section("Roles", package.get("roles", {}).get("fit", {}).get("evidence") or [])
+
+    unknowns = []
+    skipped = safety.get("skipped_reasons") or []
+    errors = safety.get("errors") or []
+    unknowns.extend([f"Skipped: {val}" for val in skipped if val])
+    unknowns.extend([f"Error: {val}" for val in errors if val])
+    if not unknowns:
+        unknowns = ["No major caveats recorded."]
+    lines.append("## Unknowns & Caveats")
+    for item in unknowns:
+        lines.append(f"- {item}")
+    lines.append("")
+
+    note = notes.get("note") or ""
+    tags = notes.get("tags") or []
+    if note or tags:
+        lines.append("## Notes")
+        if note:
+            lines.append(f"- {note}")
+        if tags:
+            lines.append(f"- Tags: {', '.join(tags)}")
+        lines.append("")
+
+    lines.append("## Provenance")
+    lines.append(f"- run_id: {package.get('run_id')}")
+    lines.append(f"- version: {package.get('tool_version')}")
+    lines.append(f"- timestamp: {package.get('created_at')}")
+    lines.append(f"- git_sha: {package.get('git_sha')}")
+    lines.append("")
+    return "\n".join(lines)
 
 
 def build_company_package(
@@ -178,6 +317,10 @@ def build_company_package(
     signals = []
     if scan_result.get("evidence"):
         signals.append(str(scan_result.get("evidence")))
+    downgrade_status, confidence_cap, downgrade_reasons = _enforce_hiring_evidence(status, urls, domain)
+    if downgrade_status != status:
+        status = downgrade_status
+        signals.extend(downgrade_reasons)
 
     package = {
         "schema_version": SCHEMA_VERSION,
@@ -192,7 +335,9 @@ def build_company_package(
         },
         "hiring": {
             "status": status,
-            "confidence": float(scan_result.get("confidence") or 0.0),
+            "confidence": min(float(scan_result.get("confidence") or 0.0), confidence_cap)
+            if confidence_cap
+            else float(scan_result.get("confidence") or 0.0),
             "signals": signals,
             "evidence": evidence,
         },
@@ -236,6 +381,8 @@ def write_company_package(run_id: str, package: dict[str, Any], out_root: Path |
     out_dir.mkdir(parents=True, exist_ok=True)
     out_path = out_dir / "company_package.json"
     out_path.write_text(json.dumps(package, indent=2, ensure_ascii=False), encoding="utf-8")
+    md_path = out_dir / "company_package.md"
+    md_path.write_text(render_company_markdown(package), encoding="utf-8")
     return out_path
 
 
