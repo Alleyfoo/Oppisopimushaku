@@ -23,6 +23,7 @@ def test_degraded_website_missing_fixture():
     assert package["degraded_reason"] == "website_missing"
     assert package["hiring"]["evidence"] == []
     assert package["next_action"]
+    assert package["safety"]["cookie_wall"]["detected"] is False
     md = service.render_company_markdown(package)
     assert "Next action" in md
 
@@ -35,5 +36,7 @@ def test_degraded_cookie_wall_fixture():
     assert package["degraded_reason"] == "cookie_wall"
     assert package["hiring"]["evidence"] == []
     assert package["next_action"]
+    assert package["safety"]["cookie_wall"]["detected"] is True
+    assert package["safety"]["cookie_wall"]["signals"]
     md = service.render_company_markdown(package)
     assert "cookie wall" in md.lower()

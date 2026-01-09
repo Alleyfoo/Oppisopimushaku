@@ -36,8 +36,17 @@
     "robots_respected": "unknown",
     "pages_fetched": 1,
     "skipped_reasons": [],
-    "errors": ["https://example.com:cookie_wall:3:0.60:cookie,consent,gdpr"],
+    "errors": [],
     "checked_urls": ["https://example.com"],
+    "cookie_wall": {
+      "detected": true,
+      "score": 0.6,
+      "hit_count": 3,
+      "signals": ["cookie_banner", "consent_manager"],
+      "threshold": { "hits_min": 2, "score_min": 0.4, "text_max_len": 2000, "hits_hard": 5 },
+      "sample_title": "Cookie settings",
+      "matches": ["cookie", "consent", "gdpr"]
+    },
     "llm_used": false,
     "prompt_version": "",
     "ollama_model": "",

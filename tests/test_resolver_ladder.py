@@ -11,6 +11,16 @@ class DummyScanOutcome:
         self.errors = []
         self.skipped_reasons = []
         self.pages_fetched = 1
+        self.results_found = bool(selected)
+        self.cookie_wall = {
+            "detected": False,
+            "score": 0.0,
+            "hit_count": 0,
+            "signals": [],
+            "threshold": {"hits_min": 2, "score_min": 0.4, "text_max_len": 2000, "hits_hard": 5},
+            "sample_title": "",
+            "matches": [],
+        }
 
 
 def _capture_package(monkeypatch):

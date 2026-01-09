@@ -38,6 +38,15 @@
     "skipped_reasons": [],
     "errors": ["website_missing"],
     "checked_urls": [],
+    "cookie_wall": {
+      "detected": false,
+      "score": 0.0,
+      "hit_count": 0,
+      "signals": [],
+      "threshold": { "hits_min": 2, "score_min": 0.4, "text_max_len": 2000, "hits_hard": 5 },
+      "sample_title": "",
+      "matches": []
+    },
     "llm_used": false,
     "prompt_version": "",
     "ollama_model": "",

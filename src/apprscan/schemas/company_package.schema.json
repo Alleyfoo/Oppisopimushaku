@@ -113,6 +113,7 @@
         "skipped_reasons",
         "errors",
         "checked_urls",
+        "cookie_wall",
         "llm_used",
         "prompt_version",
         "ollama_model",
@@ -125,6 +126,28 @@
         "skipped_reasons": { "type": "array", "items": { "type": "string" } },
         "errors": { "type": "array", "items": { "type": "string" } },
         "checked_urls": { "type": "array", "items": { "type": "string" } },
+        "cookie_wall": {
+          "type": "object",
+          "required": ["detected", "score", "hit_count", "signals", "threshold", "matches"],
+          "properties": {
+            "detected": { "type": "boolean" },
+            "score": { "type": "number" },
+            "hit_count": { "type": "integer" },
+            "signals": { "type": "array", "items": { "type": "string" } },
+            "threshold": {
+              "type": "object",
+              "required": ["hits_min", "score_min", "text_max_len", "hits_hard"],
+              "properties": {
+                "hits_min": { "type": "integer" },
+                "score_min": { "type": "number" },
+                "text_max_len": { "type": "integer" },
+                "hits_hard": { "type": "integer" }
+              }
+            },
+            "sample_title": { "type": "string" },
+            "matches": { "type": "array", "items": { "type": "string" } }
+          }
+        },
         "llm_used": { "type": "boolean" },
         "prompt_version": { "type": "string" },
         "ollama_model": { "type": "string" },

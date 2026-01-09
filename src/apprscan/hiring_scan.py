@@ -110,6 +110,7 @@ class DomainScanResult:
     skipped_reasons: list[str]
     pages_fetched: int
     results_found: bool
+    cookie_wall: Dict[str, Any]
 
 
 def _load_env_file(path: Path | None) -> Dict[str, str]:
@@ -181,13 +182,31 @@ def _extract_snippets(text: str, keywords: list[str], max_snippets: int = 4, win
     return snippets
 
 
-def _cookie_wall_signals(title: str, text: str) -> tuple[bool, int, float, list[str]]:
+def _cookie_wall_threshold() -> dict[str, float | int]:
+    return {"hits_min": 2, "score_min": 0.4, "text_max_len": 2000, "hits_hard": 5}
+
+
+def _cookie_wall_signals(
+    title: str, text: str
+) -> tuple[bool, int, float, list[str], list[str], dict[str, float | int]]:
     combined = f"{title} {text}".lower()
     matches = [key for key in COOKIE_WALL_KEYWORDS if key in combined]
     hits = len(matches)
     score = min(1.0, hits / 5.0) if hits else 0.0
-    is_wall = (hits >= 2 and len(text) < 2000) or hits >= 5
-    return is_wall, hits, score, matches
+    threshold = _cookie_wall_threshold()
+    is_wall = (
+        hits >= threshold["hits_min"]
+        and score >= threshold["score_min"]
+        and len(text) < threshold["text_max_len"]
+    ) or hits >= threshold["hits_hard"]
+    signals = []
+    if any(key in combined for key in ("cookie", "cookies", "we use cookies", "eväste", "evästeet")):
+        signals.append("cookie_banner")
+    if any(key in combined for key in ("consent", "gdpr", "manage preferences", "tietosuoj")):
+        signals.append("consent_manager")
+    if any(key in combined for key in ("accept all", "reject all", "salli kaikki", "hylkää kaikki")):
+        signals.append("cookie_actions")
+    return is_wall, hits, score, matches, signals, threshold
 
 
 def _load_allowlist(path: Path | None) -> set[str]:
@@ -239,6 +258,15 @@ def scan_domain(
     skip_reasons: list[str] = []
     results: list[Dict[str, Any]] = []
     pages_fetched = 0
+    cookie_wall = {
+        "detected": False,
+        "score": 0.0,
+        "hit_count": 0,
+        "signals": [],
+        "threshold": _cookie_wall_threshold(),
+        "sample_title": "",
+        "matches": [],
+    }
 
     for url in candidates:
         robots_override = robots_mode == "allowlist" and domain.lower() in allowlist
@@ -267,10 +295,22 @@ def scan_domain(
         pages_fetched += 1
         checked_urls.append(res.final_url)
         title, text = _extract_text(res.html)
-        is_wall, hits, score, matches = _cookie_wall_signals(title, text)
+        is_wall, hits, score, matches, signals, threshold = _cookie_wall_signals(title, text)
         if is_wall:
             matched = ",".join(matches[:5])
             errors.append(f"{res.final_url}:cookie_wall:{hits}:{score:.2f}:{matched}")
+            if not cookie_wall["detected"] or score > cookie_wall["score"]:
+                cookie_wall.update(
+                    {
+                        "detected": True,
+                        "score": score,
+                        "hit_count": hits,
+                        "signals": signals,
+                        "threshold": threshold,
+                        "sample_title": title[:120],
+                        "matches": matches[:5],
+                    }
+                )
             continue
         heuristic = evaluate_html(res.html, res.final_url)
         if heuristic["signal"] == "yes":
@@ -329,6 +369,7 @@ def scan_domain(
         skipped_reasons=skip_reasons,
         pages_fetched=pages_fetched,
         results_found=bool(results),
+        cookie_wall=cookie_wall,
     )
 
 

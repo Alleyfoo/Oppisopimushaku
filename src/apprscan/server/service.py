@@ -192,6 +192,37 @@ def _build_evidence(snippets: list[str], urls: list[str]) -> list[dict[str, str]
     return evidence
 
 
+def _default_cookie_wall() -> dict[str, Any]:
+    return {
+        "detected": False,
+        "score": 0.0,
+        "hit_count": 0,
+        "signals": [],
+        "threshold": {"hits_min": 2, "score_min": 0.4, "text_max_len": 2000, "hits_hard": 5},
+        "sample_title": "",
+        "matches": [],
+    }
+
+
+def _merge_cookie_wall(cookie_wall: dict[str, Any] | None) -> dict[str, Any]:
+    merged = _default_cookie_wall()
+    if not cookie_wall:
+        return merged
+    merged.update({key: value for key, value in cookie_wall.items() if value is not None})
+    if isinstance(cookie_wall.get("threshold"), dict):
+        merged["threshold"] = {**merged["threshold"], **cookie_wall["threshold"]}
+    return merged
+
+
+def _sanitize_errors(errors: list[str]) -> list[str]:
+    sanitized = []
+    for err in errors:
+        if ":cookie_wall:" in err:
+            continue
+        sanitized.append(err)
+    return sanitized
+
+
 def _enforce_hiring_evidence(
     status: str, evidence_urls: list[str], domain: str
 ) -> tuple[str, float, list[str]]:
@@ -278,6 +309,11 @@ def render_company_markdown(package: dict[str, Any]) -> str:
     unknowns = []
     skipped = safety.get("skipped_reasons") or []
     errors = safety.get("errors") or []
+    cookie_wall = safety.get("cookie_wall") or {}
+    if cookie_wall.get("detected"):
+        signals = cookie_wall.get("signals") or []
+        detail = f" (signals: {', '.join(signals)})" if signals else ""
+        unknowns.append(f"Cookie wall detected{detail}.")
     unknowns.extend([f"Skipped: {val}" for val in skipped if val])
     unknowns.extend([f"Error: {val}" for val in errors if val])
     next_action = package.get("next_action") or ""
@@ -331,6 +367,7 @@ def build_company_package(
     tags: list[str],
     pipeline_status: str = "ok",
     degraded_reason: str = "none",
+    cookie_wall: dict[str, Any] | None = None,
     next_action: str = "",
 ) -> dict[str, Any]:
     signal = str(scan_result.get("signal") or scan_result.get("hiring_signal") or "unclear").lower()
@@ -347,6 +384,8 @@ def build_company_package(
         status = downgrade_status
         signals.extend(downgrade_reasons)
 
+    safe_errors = _sanitize_errors(errors)
+    cookie_wall = _merge_cookie_wall(cookie_wall)
     package = {
         "status": pipeline_status,
         "degraded_reason": degraded_reason,
@@ -392,8 +431,9 @@ def build_company_package(
             "robots_respected": "unknown",
             "pages_fetched": pages_fetched,
             "skipped_reasons": skipped_reasons,
-            "errors": errors,
+            "errors": safe_errors,
             "checked_urls": checked_urls,
+            "cookie_wall": cookie_wall,
             "llm_used": scan_config.use_llm,
             "prompt_version": scan_config.prompt_version,
             "ollama_model": scan_config.ollama_model,
@@ -458,12 +498,13 @@ def process_maps_ingest(
             "safety": {
                 "robots_respected": "unknown",
                 "pages_fetched": 0,
-                "skipped_reasons": [],
-                "errors": ["invalid_maps_url"],
-                "checked_urls": [],
-                "llm_used": False,
-                "prompt_version": "",
-                "ollama_model": "",
+            "skipped_reasons": [],
+            "errors": ["invalid_maps_url"],
+            "checked_urls": [],
+            "cookie_wall": _default_cookie_wall(),
+            "llm_used": False,
+            "prompt_version": "",
+            "ollama_model": "",
                 "ollama_temperature": 0.0,
                 "deterministic": False,
             },
@@ -499,12 +540,13 @@ def process_maps_ingest(
             "safety": {
                 "robots_respected": "unknown",
                 "pages_fetched": 0,
-                "skipped_reasons": [],
-                "errors": ["place_id_not_found"],
-                "checked_urls": [],
-                "llm_used": False,
-                "prompt_version": "",
-                "ollama_model": "",
+            "skipped_reasons": [],
+            "errors": ["place_id_not_found"],
+            "checked_urls": [],
+            "cookie_wall": _default_cookie_wall(),
+            "llm_used": False,
+            "prompt_version": "",
+            "ollama_model": "",
                 "ollama_temperature": 0.0,
                 "deterministic": False,
             },
@@ -540,12 +582,13 @@ def process_maps_ingest(
             "safety": {
                 "robots_respected": "unknown",
                 "pages_fetched": 0,
-                "skipped_reasons": [],
-                "errors": [f"places_lookup_failed:{exc}"],
-                "checked_urls": [],
-                "llm_used": False,
-                "prompt_version": "",
-                "ollama_model": "",
+            "skipped_reasons": [],
+            "errors": [f"places_lookup_failed:{exc}"],
+            "checked_urls": [],
+            "cookie_wall": _default_cookie_wall(),
+            "llm_used": False,
+            "prompt_version": "",
+            "ollama_model": "",
                 "ollama_temperature": 0.0,
                 "deterministic": False,
             },
@@ -580,12 +623,13 @@ def process_maps_ingest(
             "safety": {
                 "robots_respected": "unknown",
                 "pages_fetched": 0,
-                "skipped_reasons": [],
-                "errors": ["website_missing"],
-                "checked_urls": [],
-                "llm_used": False,
-                "prompt_version": "",
-                "ollama_model": "",
+            "skipped_reasons": [],
+            "errors": ["website_missing"],
+            "checked_urls": [],
+            "cookie_wall": _default_cookie_wall(),
+            "llm_used": False,
+            "prompt_version": "",
+            "ollama_model": "",
                 "ollama_temperature": 0.0,
                 "deterministic": False,
             },
@@ -615,8 +659,7 @@ def process_maps_ingest(
     pipeline_status = "ok"
     degraded_reason = "none"
     next_action = ""
-    cookie_hits = [err for err in scan_outcome.errors if "cookie_wall" in err]
-    if cookie_hits and not scan_outcome.results_found:
+    if scan_outcome.cookie_wall.get("detected") and not scan_outcome.results_found:
         pipeline_status = "degraded"
         degraded_reason = "cookie_wall"
         next_action = "Cookie wall detected. Open site manually and retry."
@@ -639,7 +682,8 @@ def process_maps_ingest(
         tags=tags,
         pipeline_status=pipeline_status,
         degraded_reason=degraded_reason,
+        cookie_wall=scan_outcome.cookie_wall,
         next_action=next_action,
     )
     write_company_package(run_id, package)
-    return {"run_id": run_id, "status": "ok"}
+    return {"run_id": run_id, "status": pipeline_status}
