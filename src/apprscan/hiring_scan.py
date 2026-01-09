@@ -20,6 +20,7 @@ from bs4 import BeautifulSoup
 from . import __version__
 from .domains_discovery import COMMON_PATHS, contains_job_signal
 from .jobs.ats import detect_ats
+from .jobs.constants import ROBOTS_DISALLOW_ALL, ROBOTS_DISALLOW_URL
 from .jobs.fetch import fetch_url
 from .jobs.robots import RobotsChecker
 
@@ -164,6 +165,16 @@ def _load_allowlist(path: Path | None) -> set[str]:
             continue
         items.append(line.lower())
     return set(items)
+
+
+def _normalize_skip_reason(reason: str | None) -> str:
+    if not reason:
+        return ""
+    if reason == "Disallow: /":
+        return ROBOTS_DISALLOW_ALL
+    if reason in {"blocked_by_robots", "robots_disallow"}:
+        return ROBOTS_DISALLOW_URL
+    return reason
 
 
 def _ensure_evidence(result: Dict[str, Any]) -> Dict[str, Any]:
@@ -484,8 +495,9 @@ def run_scan(config: ScanConfig) -> int:
                 allowed, reason = robots.can_fetch_detail(url)
                 if not allowed:
                     checked_urls.append(url)
-                    skip_reasons.append(reason or "blocked_by_robots")
-                    errors.append(f"{url}:{reason}")
+                    normalized = _normalize_skip_reason(reason or "blocked_by_robots")
+                    skip_reasons.append(normalized)
+                    errors.append(f"{url}:{normalized}")
                     continue
             res, fetch_reason = fetch_url(
                 session,
@@ -497,8 +509,9 @@ def run_scan(config: ScanConfig) -> int:
             )
             if res is None:
                 checked_urls.append(url)
-                skip_reasons.append(fetch_reason or "fetch_failed")
-                errors.append(f"{url}:{fetch_reason}")
+                normalized = _normalize_skip_reason(fetch_reason or "fetch_failed")
+                skip_reasons.append(normalized)
+                errors.append(f"{url}:{normalized}")
                 continue
             checked_urls.append(res.final_url)
             heuristic = evaluate_html(res.html, res.final_url)
@@ -554,6 +567,7 @@ def run_scan(config: ScanConfig) -> int:
         skipped_reason = ""
         if not results and skip_reasons:
             skipped_reason = ";".join(sorted(set(skip_reasons)))
+            print(f"Skipped {domain}: {skipped_reason}")
         selected = _select_result(results)
         rows.append(
             {

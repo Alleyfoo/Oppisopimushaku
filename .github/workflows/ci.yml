@@ -21,7 +21,7 @@ jobs:
       - name: Pytest
         run: python -m pytest -q
       - name: Hiring signal fixtures
-        run: python -m apprscan.evaluate_hiring_signal
+        run: python -m apprscan.evaluate_hiring_signal --min-precision 0.9 --min-recall 0.5 --max-uncertain 0.8
       - name: Version consistency
         run: python tools/check_version.py
       - name: CLI help smoke
