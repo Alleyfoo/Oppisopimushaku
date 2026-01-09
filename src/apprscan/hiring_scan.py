@@ -86,6 +86,16 @@ class ScanConfig:
     run_id: str
 
 
+@dataclass
+class DomainScanResult:
+    selected: Dict[str, Any]
+    checked_urls: list[str]
+    errors: list[str]
+    skipped_reasons: list[str]
+    pages_fetched: int
+    results_found: bool
+
+
 def _load_env_file(path: Path | None) -> Dict[str, str]:
     env: Dict[str, str] = {}
     if not path or not path.exists():
@@ -175,6 +185,121 @@ def _normalize_skip_reason(reason: str | None) -> str:
     if reason in {"blocked_by_robots", "robots_disallow"}:
         return ROBOTS_DISALLOW_URL
     return reason
+
+
+def scan_domain(
+    *,
+    domain: str,
+    name: str,
+    website_url: str | None,
+    max_urls: int,
+    sleep_s: float,
+    robots_mode: str,
+    robots_allowlist: Path | None,
+    session: requests.Session | None,
+    rate_limit_state: Dict[str, float] | None,
+    ollama_host: str,
+    ollama_model: str,
+    ollama_options: Dict[str, Any],
+    use_llm: bool,
+) -> DomainScanResult:
+    allowlist = _load_allowlist(robots_allowlist)
+    robots = None if robots_mode == "off" else RobotsChecker(user_agent="apprscan-scan")
+    rate_limit_state = rate_limit_state or {}
+    session = session or requests.Session()
+
+    candidates = _build_candidates(domain, website_url)[: int(max_urls)]
+    checked_urls: list[str] = []
+    errors: list[str] = []
+    skip_reasons: list[str] = []
+    results: list[Dict[str, Any]] = []
+    pages_fetched = 0
+
+    for url in candidates:
+        robots_override = robots_mode == "allowlist" and domain.lower() in allowlist
+        if robots and not robots_override:
+            allowed, reason = robots.can_fetch_detail(url)
+            if not allowed:
+                checked_urls.append(url)
+                normalized = _normalize_skip_reason(reason or "blocked_by_robots")
+                skip_reasons.append(normalized)
+                errors.append(f"{url}:{normalized}")
+                continue
+        res, fetch_reason = fetch_url(
+            session,
+            url,
+            rate_limit_state=rate_limit_state,
+            req_per_second_per_domain=0.5,
+            robots=None if robots_override else robots,
+            max_bytes=2_000_000,
+        )
+        if res is None:
+            checked_urls.append(url)
+            normalized = _normalize_skip_reason(fetch_reason or "fetch_failed")
+            skip_reasons.append(normalized)
+            errors.append(f"{url}:{normalized}")
+            continue
+        pages_fetched += 1
+        checked_urls.append(res.final_url)
+        heuristic = evaluate_html(res.html, res.final_url)
+        if heuristic["signal"] == "yes":
+            results.append(
+                {
+                    "hiring_signal": "yes",
+                    "confidence": heuristic["confidence"],
+                    "evidence": heuristic["evidence"],
+                    "evidence_snippets": heuristic.get("evidence_snippets") or [],
+                    "evidence_urls": heuristic.get("evidence_urls") or [res.final_url],
+                    "next_url_hint": "",
+                    "url_checked": res.final_url,
+                }
+            )
+            continue
+        title, text = _extract_text(res.html)
+        if use_llm and ollama_model:
+            try:
+                result = _evaluate_page(
+                    res.final_url,
+                    title,
+                    text,
+                    company_name=name,
+                    host=ollama_host,
+                    model=ollama_model,
+                    options=ollama_options,
+                )
+                if not result.get("evidence_urls"):
+                    result["evidence_urls"] = [res.final_url]
+                if "evidence_snippets" not in result:
+                    result["evidence_snippets"] = _extract_snippets(text, EVIDENCE_KEYWORDS, max_snippets=3)
+                result["url_checked"] = res.final_url
+                result = _ensure_evidence(result)
+                results.append(result)
+            except Exception as exc:
+                errors.append(f"{res.final_url}:{exc}")
+        else:
+            results.append(
+                {
+                    "hiring_signal": "unclear",
+                    "confidence": 0.0,
+                    "evidence": "",
+                    "evidence_snippets": [],
+                    "evidence_urls": [res.final_url],
+                    "next_url_hint": "",
+                    "url_checked": res.final_url,
+                }
+            )
+        if sleep_s:
+            time.sleep(sleep_s)
+
+    selected = _select_result(results)
+    return DomainScanResult(
+        selected=selected,
+        checked_urls=checked_urls,
+        errors=errors,
+        skipped_reasons=skip_reasons,
+        pages_fetched=pages_fetched,
+        results_found=bool(results),
+    )
 
 
 def _ensure_evidence(result: Dict[str, Any]) -> Dict[str, Any]:
@@ -471,8 +596,6 @@ def run_scan(config: ScanConfig) -> int:
         return 1
 
     target = filtered.head(int(config.limit))
-    allowlist = _load_allowlist(config.robots_allowlist)
-    robots = None if config.robots_mode == "off" else RobotsChecker(user_agent="apprscan-scan")
     rate_limit_state: Dict[str, float] = {}
     crawl_ts = _now_iso()
     git_sha = _resolve_git_sha(_repo_root())
@@ -484,91 +607,26 @@ def run_scan(config: ScanConfig) -> int:
         name = str(row.get("name") or "")
         domain = str(row.get("domain") or "").strip()
         website_url = row.get("website.url")
-        candidates = _build_candidates(domain, website_url)[: int(config.max_urls)]
-        checked_urls = []
-        errors = []
-        skip_reasons = []
-        results = []
-        for url in candidates:
-            robots_override = config.robots_mode == "allowlist" and domain.lower() in allowlist
-            if robots and not robots_override:
-                allowed, reason = robots.can_fetch_detail(url)
-                if not allowed:
-                    checked_urls.append(url)
-                    normalized = _normalize_skip_reason(reason or "blocked_by_robots")
-                    skip_reasons.append(normalized)
-                    errors.append(f"{url}:{normalized}")
-                    continue
-            res, fetch_reason = fetch_url(
-                session,
-                url,
-                rate_limit_state=rate_limit_state,
-                req_per_second_per_domain=0.5,
-                robots=None if robots_override else robots,
-                max_bytes=2_000_000,
-            )
-            if res is None:
-                checked_urls.append(url)
-                normalized = _normalize_skip_reason(fetch_reason or "fetch_failed")
-                skip_reasons.append(normalized)
-                errors.append(f"{url}:{normalized}")
-                continue
-            checked_urls.append(res.final_url)
-            heuristic = evaluate_html(res.html, res.final_url)
-            if heuristic["signal"] == "yes":
-                results.append(
-                    {
-                        "hiring_signal": "yes",
-                        "confidence": heuristic["confidence"],
-                        "evidence": heuristic["evidence"],
-                        "evidence_snippets": heuristic.get("evidence_snippets") or [],
-                        "evidence_urls": heuristic.get("evidence_urls") or [res.final_url],
-                        "next_url_hint": "",
-                        "url_checked": res.final_url,
-                    }
-                )
-                continue
-            title, text = _extract_text(res.html)
-            if config.use_llm:
-                try:
-                    result = _evaluate_page(
-                        res.final_url,
-                        title,
-                        text,
-                        company_name=name,
-                        host=config.ollama_host,
-                        model=config.ollama_model,
-                        options=config.ollama_options,
-                    )
-                    if not result.get("evidence_urls"):
-                        result["evidence_urls"] = [res.final_url]
-                    if "evidence_snippets" not in result:
-                        result["evidence_snippets"] = _extract_snippets(text, EVIDENCE_KEYWORDS, max_snippets=3)
-                    result["url_checked"] = res.final_url
-                    result = _ensure_evidence(result)
-                    results.append(result)
-                except Exception as exc:
-                    errors.append(f"{res.final_url}:{exc}")
-            else:
-                results.append(
-                    {
-                        "hiring_signal": "unclear",
-                        "confidence": 0.0,
-                        "evidence": "",
-                        "evidence_snippets": [],
-                        "evidence_urls": [res.final_url],
-                        "next_url_hint": "",
-                        "url_checked": res.final_url,
-                    }
-                )
-            if config.sleep_s:
-                time.sleep(config.sleep_s)
-        selected = _select_result(results)
+        scan_result = scan_domain(
+            domain=domain,
+            name=name,
+            website_url=website_url,
+            max_urls=config.max_urls,
+            sleep_s=config.sleep_s,
+            robots_mode=config.robots_mode,
+            robots_allowlist=config.robots_allowlist,
+            session=session,
+            rate_limit_state=rate_limit_state,
+            ollama_host=config.ollama_host,
+            ollama_model=config.ollama_model,
+            ollama_options=config.ollama_options,
+            use_llm=config.use_llm,
+        )
+        selected = scan_result.selected
         skipped_reason = ""
-        if not results and skip_reasons:
-            skipped_reason = ";".join(sorted(set(skip_reasons)))
+        if not scan_result.results_found and scan_result.skipped_reasons:
+            skipped_reason = ";".join(sorted(set(scan_result.skipped_reasons)))
             print(f"Skipped {domain}: {skipped_reason}")
-        selected = _select_result(results)
         rows.append(
             {
                 "run_id": config.run_id,
@@ -586,9 +644,9 @@ def run_scan(config: ScanConfig) -> int:
                 "evidence_snippets": selected.get("evidence_snippets") or [],
                 "evidence_urls": selected.get("evidence_urls") or [],
                 "signal_url": selected.get("url_checked") or "",
-                "checked_urls": ";".join(checked_urls),
+                "checked_urls": ";".join(scan_result.checked_urls),
                 "next_url_hint": selected.get("next_url_hint") or "",
-                "errors": ";".join(errors),
+                "errors": ";".join(scan_result.errors),
                 "skipped_reason": skipped_reason,
                 "ollama_model": config.ollama_model or "",
                 "ollama_temperature": config.ollama_temperature,

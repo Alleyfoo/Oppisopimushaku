@@ -23,3 +23,7 @@ data/geocode_cache.sqlite
 out/
 data/output/
 repo_export.txt
+domains.csv
+domains_updated.csv
+out/master_places*.xlsx
+out/places_*.csv

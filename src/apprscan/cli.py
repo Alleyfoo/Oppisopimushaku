@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import os
 from pathlib import Path
 from typing import Sequence
 from urllib.parse import urlparse
@@ -136,6 +137,19 @@ def add_check_parser(subparsers: argparse._SubParsersAction) -> argparse.Argumen
     return p
 
 
+def add_serve_parser(subparsers: argparse._SubParsersAction) -> argparse.ArgumentParser:
+    p = subparsers.add_parser(
+        "serve",
+        help="Run companion service for Maps ingest (localhost only).",
+        description="Starts a local FastAPI server for URL-only ingest from Google Maps.",
+    )
+    p.add_argument("--host", type=str, default="127.0.0.1", help="Bind host (default 127.0.0.1).")
+    p.add_argument("--port", type=int, default=8787, help="Bind port (default 8787).")
+    p.add_argument("--token", type=str, default="", help="Optional API token (else random).")
+    p.set_defaults(func=serve_command)
+    return p
+
+
 def _load_domain_map(path: Path | None) -> dict[str, str]:
     if path is None or not path.exists():
         return {}
@@ -249,6 +263,7 @@ def build_parser() -> argparse.ArgumentParser:
     add_watch_parser(subparsers)
     add_scan_parser(subparsers)
     add_check_parser(subparsers)
+    add_serve_parser(subparsers)
 
     analytics_parser = subparsers.add_parser(
         "analytics",
@@ -638,6 +653,25 @@ def check_command(args: argparse.Namespace) -> int:
 
     env_file = Path(args.env_file) if args.env_file else None
     return run_checks(env_file)
+
+
+def serve_command(args: argparse.Namespace) -> int:
+    try:
+        from .server.app import create_app
+    except Exception:
+        print("Companion service requires server extras: pip install .[server]")
+        return 2
+    try:
+        import uvicorn
+    except Exception:
+        print("uvicorn not available. Install with: pip install .[server]")
+        return 2
+
+    token = args.token or os.getenv("APPRSCAN_TOKEN") or ""
+    app = create_app(token=token if token else None)
+    print(f"APPRSCAN token: {app.state.token}")
+    uvicorn.run(app, host=args.host, port=int(args.port))
+    return 0
 
 
 def run_command(args: argparse.Namespace) -> int:

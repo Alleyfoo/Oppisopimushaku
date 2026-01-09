@@ -1,0 +1,129 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CompanyPackage",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "run_id",
+    "created_at",
+    "tool_version",
+    "git_sha",
+    "source",
+    "hiring",
+    "links",
+    "safety",
+    "notes"
+  ],
+  "properties": {
+    "schema_version": { "type": "string" },
+    "run_id": { "type": "string" },
+    "created_at": { "type": "string" },
+    "tool_version": { "type": "string" },
+    "git_sha": { "type": "string" },
+    "source": {
+      "type": "object",
+      "required": ["source_ref", "place_id", "canonical_domain"],
+      "properties": {
+        "source_ref": { "type": "string" },
+        "place_id": { "type": "string" },
+        "canonical_domain": { "type": "string" }
+      }
+    },
+    "hiring": {
+      "type": "object",
+      "required": ["status", "confidence", "signals", "evidence"],
+      "properties": {
+        "status": { "type": "string", "enum": ["yes", "no", "maybe", "uncertain"] },
+        "confidence": { "type": "number" },
+        "signals": { "type": "array", "items": { "type": "string" } },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["snippet", "url"],
+            "properties": {
+              "snippet": { "type": "string" },
+              "url": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "industry": {
+      "type": "object",
+      "properties": {
+        "labels": { "type": "array", "items": { "type": "string" } },
+        "confidence": { "type": "number" },
+        "evidence": { "type": "array", "items": { "type": "object" } }
+      }
+    },
+    "roles": {
+      "type": "object",
+      "properties": {
+        "detected": { "type": "array", "items": { "type": "string" } },
+        "fit": {
+          "type": "object",
+          "properties": {
+            "score": { "type": "number" },
+            "green_flags": { "type": "array", "items": { "type": "string" } },
+            "red_flags": { "type": "array", "items": { "type": "string" } },
+            "evidence": { "type": "array", "items": { "type": "object" } }
+          }
+        }
+      }
+    },
+    "links": {
+      "type": "object",
+      "required": ["maps_url", "website_url", "careers_urls", "ats_urls", "contact_url"],
+      "properties": {
+        "maps_url": { "type": "string" },
+        "website_url": { "type": "string" },
+        "careers_urls": { "type": "array", "items": { "type": "string" } },
+        "ats_urls": { "type": "array", "items": { "type": "string" } },
+        "contact_url": { "type": "string" }
+      }
+    },
+    "safety": {
+      "type": "object",
+      "required": [
+        "robots_respected",
+        "pages_fetched",
+        "skipped_reasons",
+        "errors",
+        "checked_urls",
+        "llm_used",
+        "prompt_version",
+        "ollama_model",
+        "ollama_temperature",
+        "deterministic"
+      ],
+      "properties": {
+        "robots_respected": { "type": "string", "enum": ["true", "false", "unknown"] },
+        "pages_fetched": { "type": "integer" },
+        "skipped_reasons": { "type": "array", "items": { "type": "string" } },
+        "errors": { "type": "array", "items": { "type": "string" } },
+        "checked_urls": { "type": "array", "items": { "type": "string" } },
+        "llm_used": { "type": "boolean" },
+        "prompt_version": { "type": "string" },
+        "ollama_model": { "type": "string" },
+        "ollama_temperature": { "type": "number" },
+        "deterministic": { "type": "boolean" }
+      }
+    },
+    "notes": {
+      "type": "object",
+      "required": ["note", "tags"],
+      "properties": {
+        "note": { "type": "string" },
+        "tags": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "error": {
+      "type": "object",
+      "properties": {
+        "code": { "type": "string" },
+        "message": { "type": "string" }
+      }
+    }
+  }
+}

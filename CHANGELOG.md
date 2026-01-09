@@ -15,6 +15,7 @@
 - Hiring scan downgrades decisions without evidence snippets + URLs to "unclear".
 - CI enforces minimum precision/recall and max-uncertain thresholds for the hiring fixtures.
 - Added `deterministic` flag to outputs and documented the output contract.
+- Added optional companion service (`apprscan serve`) with URL-only Maps ingest and company package schema.
 
 Migration notes:
 - Hiring scan outputs include evidence arrays, provenance fields, and optional `deterministic`.

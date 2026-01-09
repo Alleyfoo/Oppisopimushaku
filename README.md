@@ -47,6 +47,17 @@ and delivered a working scan in a short turnaround from the git baseline.
 - Use `--deterministic` to set temperature to 0 for more reproducible LLM output.
 - Output provenance includes `ollama_model`, `ollama_temperature`, `prompt_version`, and `tool_version`.
 
+## Companion service (optional)
+- Install server dependencies:
+  - `pip install -e .[server]`
+- Run the local service (localhost-only by default):
+  - `apprscan serve --host 127.0.0.1 --port 8787`
+- The service prints `APPRSCAN token: ...` which must be sent as `X-APPRSCAN-TOKEN`.
+- Endpoints:
+  - `POST /ingest/maps` with `{ "maps_url": "https://www.google.com/maps/..." }`
+  - `GET /result/{run_id}`
+- Company package schema: `src/apprscan/schemas/company_package.schema.json`
+
 ## Requirements
 - Python environment (see install below)
 - Local Ollama running

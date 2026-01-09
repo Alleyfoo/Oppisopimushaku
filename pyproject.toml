@@ -31,6 +31,10 @@ dev = [
     "pytest-mock>=3.14.0",
     "streamlit>=1.30.0",
 ]
+server = [
+    "fastapi>=0.115.0",
+    "uvicorn>=0.29.0",
+]
 
 [project.scripts]
 apprscan = "apprscan.cli:main"
