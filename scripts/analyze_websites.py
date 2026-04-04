@@ -15,7 +15,7 @@ can be stopped and resumed.
 Usage
 -----
   # Install Ollama: https://ollama.com  then pull a model:
-  #   ollama pull gemma3:12b
+  #   ollama pull gemma4
   #
   # Analyse Kerava/Savio/Haarajoki companies (default):
   python scripts/analyze_websites.py
@@ -24,7 +24,7 @@ Usage
   python scripts/analyze_websites.py --areas all
 
   # Custom model and area:
-  python scripts/analyze_websites.py --model gemma3:27b --areas Lahti Kerava
+  python scripts/analyze_websites.py --model gemma4:27b --areas Lahti Kerava
 
   # Limit to N companies (for testing):
   python scripts/analyze_websites.py --limit 10
@@ -53,7 +53,7 @@ CSV_PATH   = _ROOT / "out" / "companies.csv"
 CACHE_PATH = _ROOT / "data" / "website_analysis.sqlite"
 
 OLLAMA_URL   = "http://localhost:11434/api/generate"
-DEFAULT_MODEL = "gemma3:12b"
+DEFAULT_MODEL = "gemma4"
 DEFAULT_AREAS = ["Haarajoki", "Savio", "Kerava"]
 
 FETCH_TIMEOUT  = 15   # seconds for homepage fetch
