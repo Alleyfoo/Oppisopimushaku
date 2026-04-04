@@ -61,7 +61,7 @@ OLLAMA_TIMEOUT = 120  # seconds for LLM response
 
 PROMPT_TEMPLATE = textwrap.dedent("""\
     Olet yritysanalyytikko. Analysoi alla oleva yrityksen kotisivu ja vastaa
-    AINOASTAAN yhdellä JSON-objektilla, ei muuta tekstiä.
+    AINOASTAAN yhdellä JSON-objektilla, ei muuta tekstiä. Älä käytä emojeja.
 
     JSON-rakenne:
     {{
@@ -149,6 +149,14 @@ def _fetch_page_text(url: str, max_chars: int = 3000) -> str | None:
 # ---------------------------------------------------------------------------
 # LLM
 # ---------------------------------------------------------------------------
+
+def _strip_emoji(text: str | None) -> str | None:
+    """Remove emoji and other non-BMP characters from a string."""
+    if not text:
+        return text
+    import re
+    return re.sub(r"[^\u0000-\uFFFF]", "", text).strip()
+
 
 def _call_ollama(page_text: str, model: str) -> dict | None:
     prompt = PROMPT_TEMPLATE.format(page_text=page_text)
@@ -241,6 +249,10 @@ def main() -> None:
         if result is None:
             print("— LLM failed, skip")
             continue
+
+        # Sanitise text fields
+        for field in ("platform", "headcount", "sells", "description"):
+            result[field] = _strip_emoji(result.get(field))
 
         _cache_set(conn, url, result)
         results[row.business_id] = result
