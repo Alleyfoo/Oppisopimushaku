@@ -286,6 +286,9 @@ def main() -> None:
                 "llm_platform", "llm_headcount", "llm_sells", "llm_description"]:
         if col not in df.columns:
             df[col] = pd.NA
+        # Ensure text columns stay as object so string values can be assigned
+        if col in ("llm_platform", "llm_headcount", "llm_sells", "llm_description"):
+            df[col] = df[col].astype(object)
 
     def _clean(val):
         if isinstance(val, str) and val.strip().lower() in ("null", "none", "n/a", "-", ""):
