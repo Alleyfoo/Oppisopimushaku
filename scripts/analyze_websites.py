@@ -252,9 +252,12 @@ def main() -> None:
             print("— LLM failed, skip")
             continue
 
-        # Sanitise text fields
+        # Normalise LLM quirks: string "null" → None, then strip emoji
         for field in ("platform", "headcount", "sells", "description"):
-            result[field] = _strip_emoji(result.get(field))
+            val = result.get(field)
+            if isinstance(val, str) and val.strip().lower() in ("null", "none", "n/a", "-", ""):
+                val = None
+            result[field] = _strip_emoji(val)
 
         _cache_set(conn, url, result)
         results[row.business_id] = result
@@ -282,17 +285,22 @@ def main() -> None:
     for col in ["llm_has_shop", "llm_has_online_sales", "llm_is_hiring",
                 "llm_platform", "llm_headcount", "llm_sells", "llm_description"]:
         if col not in df.columns:
-            df[col] = None
+            df[col] = pd.NA
+
+    def _clean(val):
+        if isinstance(val, str) and val.strip().lower() in ("null", "none", "n/a", "-", ""):
+            return pd.NA
+        return val
 
     for biz_id, res in results.items():
         mask = df["business_id"] == biz_id
         df.loc[mask, "llm_has_shop"]         = res.get("has_shop")
         df.loc[mask, "llm_has_online_sales"] = res.get("has_online_sales")
         df.loc[mask, "llm_is_hiring"]        = res.get("is_hiring")
-        df.loc[mask, "llm_platform"]         = res.get("platform")
-        df.loc[mask, "llm_headcount"]        = res.get("headcount")
-        df.loc[mask, "llm_sells"]            = res.get("sells")
-        df.loc[mask, "llm_description"]      = res.get("description")
+        df.loc[mask, "llm_platform"]         = _clean(res.get("platform"))
+        df.loc[mask, "llm_headcount"]        = _clean(res.get("headcount"))
+        df.loc[mask, "llm_sells"]            = _clean(res.get("sells"))
+        df.loc[mask, "llm_description"]      = _clean(res.get("description"))
 
     df.drop(columns=["best_website"], errors="ignore").to_csv(
         CSV_PATH, index=False, encoding="utf-8-sig"
