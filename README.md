@@ -5,6 +5,26 @@ The data backbone is the PRH business registry (open data, permanent), enriched 
 Photon geocoding and optionally Google Places. Companies are classified by industry
 using Finnish TOI (NACE Rev2) codes.
 
+## Public dashboard
+
+A ready-to-use Streamlit dashboard is included (`dashboard.py`). Anyone can:
+- Choose a city / railway station
+- Set how far they are willing to travel (km)
+- Filter by industry
+- Browse companies on an interactive map and download results as CSV
+
+### Run locally
+```
+pip install -r requirements.txt
+streamlit run dashboard.py
+```
+
+### Deploy to Streamlit Community Cloud (free)
+1. Fork this repo on GitHub
+2. Go to [share.streamlit.io](https://share.streamlit.io) → "New app"
+3. Select your fork, branch `master`, main file `dashboard.py`
+4. Click Deploy — no configuration needed, data is committed in `out/companies.csv`
+
 ## Covered areas
 Lahti, Kerava, Savio, Pasila — ~1.5 km radius from each railway station.
 
