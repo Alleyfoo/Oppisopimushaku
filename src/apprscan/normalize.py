@@ -125,7 +125,7 @@ def normalize_companies(rows: Iterable[dict], *, industry_groups: Mapping[str, l
     ]
     df["business_id"] = business_ids
     df["name"] = names_out
-    df["industry_raw"] = [rows_list[i].get("main_business_line", "") if isinstance(rows_list[i], dict) else industries[i] for i in range(len(rows_list))]
+    df["industry_raw"] = industries
     from .industry import classify_industry, load_industry_groups
 
     groups = industry_groups or load_industry_groups("config/industry_groups.yaml")
