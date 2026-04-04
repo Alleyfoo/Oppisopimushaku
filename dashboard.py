@@ -76,6 +76,11 @@ def load_data() -> pd.DataFrame:
     df = pd.read_csv(DATA_PATH, encoding="utf-8-sig")
     df["distance_km"] = df["distance_km"].round(2)
     df["registered"] = pd.to_numeric(df["registered"].astype(str).str[:4], errors="coerce")
+    # Merge PRH website + DDG-discovered website into one column
+    if "found_website" in df.columns:
+        df["best_website"] = df["website"].combine_first(df["found_website"])
+    else:
+        df["best_website"] = df["website"]
     df["color"] = df["industry"].map(lambda x: INDUSTRY_COLORS.get(x, [160, 160, 160]))
     return df
 
@@ -153,7 +158,7 @@ df = df[df["industry"].isin(selected_industries)]
 df = df[df["registered"].between(reg_range[0], reg_range[1], inclusive="both")]
 
 if only_with_website:
-    df = df[df["website"].notna()]
+    df = df[df["best_website"].notna()]
 
 # ---------------------------------------------------------------------------
 # Main content
@@ -168,7 +173,7 @@ if df.empty:
 # Metric cards
 col1, col2, col3, col4 = st.columns(4)
 col1.metric("Yrityksiä yhteensä", len(df))
-col2.metric("Joilla verkkosivut", df["website"].notna().sum())
+col2.metric("Joilla verkkosivut", df["best_website"].notna().sum())
 col3.metric("Eri toimialoja", df["industry"].nunique())
 col4.metric("Alueita", df["nearest_station"].nunique())
 
@@ -185,7 +190,7 @@ with tab_map:
         # Company scatter layer
         scatter = pdk.Layer(
             "ScatterplotLayer",
-            data=valid_coords[["lat", "lon", "name", "industry", "distance_km", "website", "color"]].copy(),
+            data=valid_coords[["lat", "lon", "name", "industry", "distance_km", "best_website", "color"]].copy(),
             get_position=["lon", "lat"],
             get_color="color",
             get_radius=80,
@@ -216,7 +221,7 @@ with tab_map:
             layers=[scatter, station_layer],
             initial_view_state=view,
             tooltip={
-                "text": "{name}\nToimiala: {industry}\nEtäisyys: {distance_km} km\n{website}"
+                "text": "{name}\nToimiala: {industry}\nEtäisyys: {distance_km} km\n{best_website}"
             },
             map_style="mapbox://styles/mapbox/light-v10",
         )
@@ -228,7 +233,7 @@ with tab_table:
     # Build a display-friendly frame
     display = df[[
         "name", "industry", "toi_description", "nearest_station",
-        "distance_km", "address", "website", "registered"
+        "distance_km", "address", "best_website", "registered"
     ]].copy()
     display.columns = [
         "Yritys", "Toimiala", "TOI-kuvaus", "Asema",
