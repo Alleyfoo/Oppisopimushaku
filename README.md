@@ -1,22 +1,65 @@
-# Hiring signal scanner (Places -> domains -> Ollama)
+# Tyopaikka-tutka — hiring signal scanner
 
-This repo focuses on finding hiring signals from company websites near a station.
-We start from Google Places CSV exports, build a master list, map domains, and
-run a lightweight Ollama scan that checks a couple of pages per company.
+This repo finds hiring signals from company websites near Finnish railway stations.
+The data backbone is the PRH business registry (open data, permanent), enriched with
+Photon geocoding and optionally Google Places. Companies are classified by industry
+using Finnish TOI (NACE Rev2) codes.
 
-## Recap
-We simplified a complex data-cleaning pipeline by using local agents to classify hiring signals,
-and delivered a working scan in a short turnaround from the git baseline.
+## Covered areas
+Lahti, Kerava, Savio, Pasila — ~1.5 km radius from each railway station.
 
-## Current flow (Lahti example)
+## Pipeline
+
+### 1. Street discovery (one-time, cached)
+Fetches named roads within the station radius from OpenStreetMap via Overpass API.
+```
+python scripts/discover_streets.py
+```
+Output: `data/area_streets.json`
+
+### 2. PRH registry fetch
+Downloads all active companies from the PRH open-data API filtered by station area streets.
+Passive shell companies (Asunto Oy, Kiinteistö Oy, TOI 6820x) are excluded automatically.
+```
+python scripts/fetch_prh_area.py --areas Lahti Kerava Savio Pasila --out data/prh_registry.parquet
+```
+Output: `data/prh_registry.parquet` (~13,600 raw companies)
+
+### 3. Geocode & filter
+Resolves company postcodes to coordinates via Photon (no API key needed), filters by
+distance to station, and writes the enriched dataset. Use `--no-filter-passive` to keep
+housing companies.
+```
+python scripts/enrich_google.py --max-distance-km 1.5
+```
+Output: `out/companies.csv` (~8,050 companies with industry labels and coordinates)
+
+### 4. Analysis
+```
+python scripts/analyze_companies.py
+```
+
+### 5. Hiring-signal scan (Ollama)
+Scans company websites for active hiring signals using a local LLM.
+```
+python -m apprscan scan --station Lahti --max-distance-km 1.0 --limit 50 --out out/hiring_signal_lahti_50.csv
+```
+
+## Key output: `out/companies.csv`
+Columns: `name`, `business_id`, `industry`, `toi_code`, `toi_description`, `nearest_station`,
+`distance_km`, `address`, `website`, `status`, `registered`, `lat`, `lon`
+
+Industry groups: `it`, `construction`, `wholesale`, `marketing`, `health`, `manufacturing`,
+`logistics`, `finance`, `retail`, `hospitality`, `education`, `engineering`, `staffing`,
+`real_estate`, `other`
+
+## Legacy flow (Google Places based)
 1) Build a master from Places CSVs
    - `python scripts/places_to_master.py --station "Lahti,60.9836,25.6577,out/places_lahti.csv" --out out/master_places.xlsx`
-2) Optional: curate in Streamlit (hide housing-like names, add tags)
+2) Optional: curate in Streamlit
    - `streamlit run streamlit_app.py`
 3) Build domains from Places websites
    - `python -m apprscan domains --companies out/master_places.xlsx --out domains.csv`
-4) Ollama hiring-signal scan (1 km radius, 10-50 companies)
-   - `python -m apprscan scan --station Lahti --max-distance-km 1.0 --limit 50 --out out/hiring_signal_lahti_50.csv`
 
 ## Quality gate
 - Run the one-button check before shipping or sharing outputs:
