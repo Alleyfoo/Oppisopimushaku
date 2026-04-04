@@ -180,7 +180,7 @@ col4.metric("Alueita", df["nearest_station"].nunique())
 st.divider()
 
 # ---- Map ----------------------------------------------------------------
-tab_map, tab_table, tab_stats = st.tabs(["🗺️ Kartta", "📋 Yritykset", "📊 Tilastot"])
+tab_map, tab_table, tab_stats, tab_leads = st.tabs(["🗺️ Kartta", "📋 Yritykset", "📊 Tilastot", "🎯 Liidit"])
 
 with tab_map:
     valid_coords = df.dropna(subset=["lat", "lon"])
@@ -269,6 +269,72 @@ with tab_table:
         file_name="tyonantajat.csv",
         mime="text/csv",
     )
+
+# ---- Leads -------------------------------------------------------------
+# Lead scoring — runs on the already-filtered df
+_WEBSHOP = {"47":4,"46":3,"45":2,"10":2,"11":2,"13":2,"14":2,"20":2,"22":2,
+            "23":2,"24":2,"25":2,"26":2,"27":2,"28":2,"29":2,"31":2,"32":2,"33":1,"49":1,"52":1}
+_PIM     = {"4684":5,"4641":5,"4642":5,"4664":5,"4663":5,"4665":4,"4649":4,"4646":4,
+            "464":3,"463":3,"46":2,"47":2,"28":3,"29":3,"25":3,"26":3,"27":3,"20":2,"22":2}
+_DATA    = {"52":4,"49":4,"64":3,"65":3,"33":3,"71":3,"86":3,"28":2,"25":2,"26":2,"46":2,"85":1,"35":2}
+
+def _pscore(toi, smap):
+    code = str(toi).split(".")[0].strip() if pd.notna(toi) else ""
+    return max((v for k, v in smap.items() if code.startswith(k)), default=0)
+
+with tab_leads:
+    st.subheader("🎯 Liidipisteytys — keiden kannattaa ensin soittaa?")
+    st.caption(
+        "Pisteet perustuvat TOI-toimialakoodiin, yrityksen ikään (vanha = päivitystarve) "
+        "ja verkkosivujen olemassaoloon (digitaalisesti valmis). "
+        "Valitse kategoria joka kiinnostaa sinua eniten."
+    )
+
+    scored = df.copy()
+    scored["s_webshop"] = scored["toi_code"].apply(lambda t: _pscore(t, _WEBSHOP))
+    scored["s_pim"]     = scored["toi_code"].apply(lambda t: _pscore(t, _PIM))
+    scored["s_data"]    = scored["toi_code"].apply(lambda t: _pscore(t, _DATA))
+    legacy = (pd.to_numeric(scored["registered"], errors="coerce").fillna(2020) <= 2010).astype(int)
+    has_web = scored["best_website"].notna().astype(int)
+    for col in ["s_webshop", "s_pim", "s_data"]:
+        scored[col] += legacy + has_web
+
+    lead_axis = st.radio(
+        "Palvelutyyppi",
+        options=["Verkkokauppa / webshop", "PIM / tuotekataloogi", "Data-analyysi"],
+        horizontal=True,
+    )
+    axis_col = {"Verkkokauppa / webshop": "s_webshop",
+                "PIM / tuotekataloogi": "s_pim",
+                "Data-analyysi": "s_data"}[lead_axis]
+
+    n_leads = st.slider("Näytä top-N", 5, 30, 10)
+    top = scored.sort_values(axis_col, ascending=False).head(n_leads)
+
+    lead_display = top[[
+        "name", "toi_description", "nearest_station", "distance_km",
+        "best_website", "registered", axis_col
+    ]].copy()
+    lead_display.columns = [
+        "Yritys", "Toimiala (tarkennettu)", "Asema", "Etäisyys (km)",
+        "Verkkosivut", "Perustettu", "Pisteet"
+    ]
+    lead_display["Perustettu"] = pd.to_numeric(lead_display["Perustettu"], errors="coerce").astype("Int64")
+
+    st.dataframe(
+        lead_display.reset_index(drop=True),
+        width="stretch",
+        column_config={
+            "Verkkosivut": st.column_config.LinkColumn("Verkkosivut"),
+            "Etäisyys (km)": st.column_config.NumberColumn(format="%.2f km"),
+            "Pisteet": st.column_config.ProgressColumn("Pisteet", min_value=0, max_value=8),
+        },
+        height=420,
+    )
+
+    csv_leads = lead_display.to_csv(index=False, encoding="utf-8-sig").encode("utf-8-sig")
+    st.download_button("⬇️ Lataa liidit CSV", data=csv_leads,
+                       file_name="liidit.csv", mime="text/csv")
 
 # ---- Stats --------------------------------------------------------------
 with tab_stats:
