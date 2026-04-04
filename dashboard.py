@@ -272,8 +272,20 @@ with tab_table:
 
 # ---- Leads -------------------------------------------------------------
 # Lead scoring — runs on the already-filtered df
-_WEBSHOP = {"47":4,"46":3,"45":2,"10":2,"11":2,"13":2,"14":2,"20":2,"22":2,
-            "23":2,"24":2,"25":2,"26":2,"27":2,"28":2,"29":2,"31":2,"32":2,"33":1,"49":1,"52":1}
+# Specialty retail (games, sports, hobbies, books, electronics, fashion, optics) → highest
+# General retail (grocery, hypermarket, food specialists) → lower; petrol/kiosk → lowest
+_WEBSHOP = {
+    "4754":6,"4763":6,"4764":6,"4761":6,"4762":6,"4752":6,"4741":6,  # ICT,games/toys,sports,books,music,hardware,optics
+    "4753":5,"4759":5,"4771":5,"4772":5,"4775":5,"4776":5,"4774":5,  # carpets,other home,clothing,footwear,cosmetics,flowers/pets,eyewear
+    "4779":5,"4781":5,"4782":5,"4789":5,"4791":5,                    # 2nd hand, market stalls, specialty
+    "474":5,"475":5,"476":5,"477":5,"478":5,"479":5,                 # other specialty retail subcategories
+    "47":4,                                                            # general catch-all retail
+    "472":3,"471":3,                                                   # food/grocery specialist and hypermarket
+    "473":2,                                                           # petrol stations
+    "46":3,"45":2,
+    "10":2,"11":2,"13":2,"14":2,"20":2,"22":2,"23":2,"24":2,
+    "25":2,"26":2,"27":2,"28":2,"29":2,"31":2,"32":2,"33":1,"49":1,"52":1,
+}
 _PIM     = {"4684":5,"4641":5,"4642":5,"4664":5,"4663":5,"4665":4,"4649":4,"4646":4,
             "464":3,"463":3,"46":2,"47":2,"28":3,"29":3,"25":3,"26":3,"27":3,"20":2,"22":2}
 _DATA    = {"52":4,"49":4,"64":3,"65":3,"33":3,"71":3,"86":3,"28":2,"25":2,"26":2,"46":2,"85":1,"35":2}
@@ -294,7 +306,7 @@ with tab_leads:
     scored["s_webshop"] = scored["toi_code"].apply(lambda t: _pscore(t, _WEBSHOP))
     scored["s_pim"]     = scored["toi_code"].apply(lambda t: _pscore(t, _PIM))
     scored["s_data"]    = scored["toi_code"].apply(lambda t: _pscore(t, _DATA))
-    legacy = (pd.to_numeric(scored["registered"], errors="coerce").fillna(2020) <= 2010).astype(int)
+    legacy = (pd.to_datetime(scored["registered"], errors="coerce").dt.year.fillna(2020) <= 2010).astype(int)
     has_web = scored["best_website"].notna().astype(int)
     for col in ["s_webshop", "s_pim", "s_data"]:
         scored[col] += legacy + has_web
@@ -309,7 +321,7 @@ with tab_leads:
                 "Data-analyysi": "s_data"}[lead_axis]
 
     n_leads = st.slider("Näytä top-N", 5, 30, 10)
-    top = scored.sort_values(axis_col, ascending=False).head(n_leads)
+    top = scored.sort_values([axis_col, "distance_km"], ascending=[False, True]).head(n_leads)
 
     lead_display = top[[
         "name", "toi_description", "nearest_station", "distance_km",
