@@ -65,11 +65,13 @@ PROMPT_TEMPLATE = textwrap.dedent("""\
 
     JSON-rakenne:
     {{
-      "has_shop": true/false,        // onko verkkokaupp tai tilausmahdollisuus
-      "platform": "string or null",  // teknologia-alusta jos näkyy (esim. Shopify, WooCommerce, Magento, custom)
-      "headcount": "string or null", // henkilöstömäärä tai -arvio jos mainitaan, muuten null
-      "sells": "string",             // lyhyt kuvaus mitä myyvät tai tekevät (max 15 sanaa, suomeksi)
-      "description": "string"        // yksi lause yrityksestä suomeksi, myyntikelpoinen kuvaus
+      "has_shop": true/false,          // onko verkkokauppa tai ostoskorimahdollisuus
+      "has_online_sales": true/false,  // voiko sivulta ostaa tai tilata jotain (myös tarjouspyyntö, kalenteri, jne.)
+      "is_hiring": true/false,         // onko sivulla avoimia työpaikkoja tai rekrytointiosio
+      "platform": "string or null",    // teknologia-alusta jos näkyy (esim. Shopify, WooCommerce, Magento, custom)
+      "headcount": "string or null",   // henkilöstömäärä tai -arvio jos mainitaan, muuten null
+      "sells": "string",               // lyhyt kuvaus mitä myyvät tai tekevät (max 15 sanaa, suomeksi)
+      "description": "string"          // yksi lause yrityksestä suomeksi, myyntikelpoinen kuvaus
     }}
 
     Kotisivu (max 3000 merkkiä):
@@ -257,10 +259,11 @@ def main() -> None:
         _cache_set(conn, url, result)
         results[row.business_id] = result
 
-        shop_flag = "🛒" if result.get("has_shop") else "  "
-        platform  = result.get("platform") or ""
-        sells     = result.get("sells", "")[:60]
-        print(f"{shop_flag} {sells}  [{platform}]")
+        shop_flag   = "🛒" if result.get("has_shop") else ("💶" if result.get("has_online_sales") else "  ")
+        hire_flag   = " 📢" if result.get("is_hiring") else ""
+        platform    = result.get("platform") or ""
+        sells       = result.get("sells", "")[:60]
+        print(f"{shop_flag}{hire_flag} {sells}  [{platform}]")
 
         time.sleep(args.sleep)
 
@@ -276,18 +279,20 @@ def main() -> None:
         df["found_website"] if "found_website" in df.columns else pd.Series(dtype=str)
     )
 
-    for col in ["llm_has_shop", "llm_platform", "llm_headcount",
-                "llm_sells", "llm_description"]:
+    for col in ["llm_has_shop", "llm_has_online_sales", "llm_is_hiring",
+                "llm_platform", "llm_headcount", "llm_sells", "llm_description"]:
         if col not in df.columns:
             df[col] = None
 
     for biz_id, res in results.items():
         mask = df["business_id"] == biz_id
-        df.loc[mask, "llm_has_shop"]    = res.get("has_shop")
-        df.loc[mask, "llm_platform"]    = res.get("platform")
-        df.loc[mask, "llm_headcount"]   = res.get("headcount")
-        df.loc[mask, "llm_sells"]       = res.get("sells")
-        df.loc[mask, "llm_description"] = res.get("description")
+        df.loc[mask, "llm_has_shop"]         = res.get("has_shop")
+        df.loc[mask, "llm_has_online_sales"] = res.get("has_online_sales")
+        df.loc[mask, "llm_is_hiring"]        = res.get("is_hiring")
+        df.loc[mask, "llm_platform"]         = res.get("platform")
+        df.loc[mask, "llm_headcount"]        = res.get("headcount")
+        df.loc[mask, "llm_sells"]            = res.get("sells")
+        df.loc[mask, "llm_description"]      = res.get("description")
 
     df.drop(columns=["best_website"], errors="ignore").to_csv(
         CSV_PATH, index=False, encoding="utf-8-sig"
