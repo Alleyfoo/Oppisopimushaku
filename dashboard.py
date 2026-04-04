@@ -231,14 +231,17 @@ with tab_map:
 # ---- Table --------------------------------------------------------------
 with tab_table:
     # Build a display-friendly frame
+    llm_cols = [c for c in ["llm_description", "llm_has_shop", "llm_is_hiring"] if c in df.columns]
     display = df[[
         "name", "industry", "toi_description", "nearest_station",
         "distance_km", "address", "best_website", "registered"
-    ]].copy()
-    display.columns = [
+    ] + llm_cols].copy()
+    base_cols = [
         "Yritys", "Toimiala", "TOI-kuvaus", "Asema",
         "Etäisyys (km)", "Osoite", "Verkkosivut", "Perustettu"
     ]
+    rename_map = {"llm_description": "AI-kuvaus", "llm_has_shop": "Verkkokauppa", "llm_is_hiring": "Rekrytoi"}
+    display.columns = base_cols + [rename_map[c] for c in llm_cols]
     display["Toimiala"] = display["Toimiala"].map(lambda x: INDUSTRY_LABELS.get(x, x))
     display["Perustettu"] = display["Perustettu"].astype("Int64")
 
@@ -326,11 +329,13 @@ with tab_leads:
     lead_display = top[[
         "name", "toi_description", "nearest_station", "distance_km",
         "best_website", "registered", axis_col
-    ]].copy()
-    lead_display.columns = [
+    ] + [c for c in ["llm_description", "llm_has_shop", "llm_is_hiring"] if c in top.columns]].copy()
+    base_lead_cols = [
         "Yritys", "Toimiala (tarkennettu)", "Asema", "Etäisyys (km)",
         "Verkkosivut", "Perustettu", "Pisteet"
     ]
+    llm_lead_rename = {"llm_description": "AI-kuvaus", "llm_has_shop": "Verkkokauppa", "llm_is_hiring": "Rekrytoi"}
+    lead_display.columns = base_lead_cols + [llm_lead_rename[c] for c in llm_lead_rename if c in top.columns]
     lead_display["Perustettu"] = pd.to_numeric(lead_display["Perustettu"], errors="coerce").astype("Int64")
 
     st.dataframe(
