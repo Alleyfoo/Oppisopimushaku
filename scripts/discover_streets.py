@@ -26,11 +26,11 @@ OVERPASS_MIRRORS = [
 
 # Target station areas: (label, lat, lon, municipality_for_PRH)
 STATIONS = [
-    {"label": "Lahti",        "lat": 60.9836, "lon": 25.6553, "municipality": "Lahti"},
-    {"label": "Kerava",       "lat": 60.4032, "lon": 25.0985, "municipality": "Kerava"},
-    {"label": "Savio",        "lat": 60.3839, "lon": 25.0861, "municipality": "Kerava"},
-    {"label": "Pasila",       "lat": 60.1994, "lon": 24.9338, "municipality": "Helsinki"},
-    {"label": "Tikkurila",    "lat": 60.2929, "lon": 25.0452, "municipality": "Vantaa"},
+    {"label": "Lahti", "lat": 60.9836, "lon": 25.6553, "municipality": "Lahti"},
+    {"label": "Kerava", "lat": 60.4032, "lon": 25.0985, "municipality": "Kerava"},
+    {"label": "Savio", "lat": 60.3839, "lon": 25.0861, "municipality": "Kerava"},
+    {"label": "Pasila", "lat": 60.1994, "lon": 24.9338, "municipality": "Helsinki"},
+    {"label": "Tikkurila", "lat": 60.2929, "lon": 25.0452, "municipality": "Vantaa"},
 ]
 
 
@@ -38,7 +38,7 @@ def _overpass_streets(lat: float, lon: float, radius_m: int) -> list[str]:
     """Return sorted unique street names within radius of (lat, lon)."""
     query = (
         f"[out:json][timeout:60];"
-        f"way[\"highway\"][\"name\"](around:{radius_m},{lat},{lon});"
+        f'way["highway"]["name"](around:{radius_m},{lat},{lon});'
         f"out tags;"
     )
     last_exc: Exception | None = None
@@ -61,8 +61,15 @@ def _overpass_streets(lat: float, lon: float, radius_m: int) -> list[str]:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Discover streets near target stations via Overpass API.")
-    parser.add_argument("--radius-m", type=int, default=1500, help="Search radius in metres (default: 1500)")
+    parser = argparse.ArgumentParser(
+        description="Discover streets near target stations via Overpass API."
+    )
+    parser.add_argument(
+        "--radius-m",
+        type=int,
+        default=1500,
+        help="Search radius in metres (default: 1500)",
+    )
     parser.add_argument("--out", default=None, help="Optional JSON output file path")
     args = parser.parse_args()
 
@@ -75,7 +82,7 @@ def main() -> None:
         print(f"\n{'='*60}")
         print(f"  {st['label']}  ({st['lat']}, {st['lon']})  radius={args.radius_m}m")
         print(f"  PRH municipality: {st['municipality']}")
-        print("="*60)
+        print("=" * 60)
 
         try:
             streets = _overpass_streets(st["lat"], st["lon"], args.radius_m)
@@ -87,19 +94,24 @@ def main() -> None:
         for s in streets:
             print(f"    - {s}")
 
-        results.append({
-            "label": st["label"],
-            "lat": st["lat"],
-            "lon": st["lon"],
-            "municipality": st["municipality"],
-            "radius_m": args.radius_m,
-            "streets": streets,
-        })
+        results.append(
+            {
+                "label": st["label"],
+                "lat": st["lat"],
+                "lon": st["lon"],
+                "municipality": st["municipality"],
+                "radius_m": args.radius_m,
+                "streets": streets,
+            }
+        )
 
     if args.out:
         import pathlib
+
         pathlib.Path(args.out).parent.mkdir(parents=True, exist_ok=True)
-        pathlib.Path(args.out).write_text(json.dumps(results, ensure_ascii=False, indent=2), encoding="utf-8")
+        pathlib.Path(args.out).write_text(
+            json.dumps(results, ensure_ascii=False, indent=2), encoding="utf-8"
+        )
         print(f"\nSaved to {args.out}")
     else:
         print("\n\n--- JSON summary ---")

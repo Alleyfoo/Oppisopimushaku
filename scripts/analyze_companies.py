@@ -1,4 +1,5 @@
 """Quick analysis of out/companies.csv."""
+
 import pandas as pd
 
 df = pd.read_csv("out/companies.csv", encoding="utf-8-sig")

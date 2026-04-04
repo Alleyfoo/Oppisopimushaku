@@ -49,14 +49,14 @@ import httpx
 import pandas as pd
 
 _ROOT = Path(__file__).resolve().parent.parent
-CSV_PATH   = _ROOT / "out" / "companies.csv"
+CSV_PATH = _ROOT / "out" / "companies.csv"
 CACHE_PATH = _ROOT / "data" / "website_analysis.sqlite"
 
-OLLAMA_URL   = "http://localhost:11434/api/generate"
+OLLAMA_URL = "http://localhost:11434/api/generate"
 DEFAULT_MODEL = "gemma4"
 DEFAULT_AREAS = ["Haarajoki", "Savio", "Kerava"]
 
-FETCH_TIMEOUT  = 15   # seconds for homepage fetch
+FETCH_TIMEOUT = 15  # seconds for homepage fetch
 OLLAMA_TIMEOUT = 120  # seconds for LLM response
 
 PROMPT_TEMPLATE = textwrap.dedent("""\
@@ -81,6 +81,7 @@ PROMPT_TEMPLATE = textwrap.dedent("""\
 # ---------------------------------------------------------------------------
 # Cache
 # ---------------------------------------------------------------------------
+
 
 def _open_cache(path: Path) -> sqlite3.Connection:
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -118,6 +119,7 @@ def _cache_set(conn: sqlite3.Connection, url: str, result: dict) -> None:
 # Fetching
 # ---------------------------------------------------------------------------
 
+
 def _ensure_scheme(url: str) -> str:
     if not url.startswith(("http://", "https://")):
         return "https://" + url
@@ -127,6 +129,7 @@ def _ensure_scheme(url: str) -> str:
 def _fetch_page_text(url: str, max_chars: int = 3000) -> str | None:
     """Fetch homepage and return visible text (stripped of HTML tags)."""
     import re
+
     try:
         resp = httpx.get(
             _ensure_scheme(url),
@@ -152,11 +155,13 @@ def _fetch_page_text(url: str, max_chars: int = 3000) -> str | None:
 # LLM
 # ---------------------------------------------------------------------------
 
+
 def _strip_emoji(text: str | None) -> str | None:
     """Remove emoji and other non-BMP characters from a string."""
     if not text:
         return text
     import re
+
     return re.sub(r"[^\u0000-\uFFFF]", "", text).strip()
 
 
@@ -175,7 +180,7 @@ def _call_ollama(page_text: str, model: str) -> dict | None:
         raw = resp.json().get("response", "")
         # Extract JSON from response
         start = raw.find("{")
-        end   = raw.rfind("}") + 1
+        end = raw.rfind("}") + 1
         if start == -1 or end == 0:
             return None
         return json.loads(raw[start:end])
@@ -188,15 +193,25 @@ def _call_ollama(page_text: str, model: str) -> dict | None:
 # Main
 # ---------------------------------------------------------------------------
 
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="Analyse company websites with Ollama")
-    parser.add_argument("--areas", nargs="+", default=DEFAULT_AREAS,
-                        help="Station names to process, or 'all'")
+    parser.add_argument(
+        "--areas",
+        nargs="+",
+        default=DEFAULT_AREAS,
+        help="Station names to process, or 'all'",
+    )
     parser.add_argument("--model", default=DEFAULT_MODEL, help="Ollama model name")
-    parser.add_argument("--limit", type=int, default=0, help="Max companies to process (0=all)")
-    parser.add_argument("--sleep", type=float, default=0.5, help="Seconds between requests")
-    parser.add_argument("--reanalyze", action="store_true",
-                        help="Re-analyse even if already cached")
+    parser.add_argument(
+        "--limit", type=int, default=0, help="Max companies to process (0=all)"
+    )
+    parser.add_argument(
+        "--sleep", type=float, default=0.5, help="Seconds between requests"
+    )
+    parser.add_argument(
+        "--reanalyze", action="store_true", help="Re-analyse even if already cached"
+    )
     args = parser.parse_args()
 
     # Check Ollama reachability
@@ -223,8 +238,10 @@ def main() -> None:
     if args.limit:
         subset = subset.head(args.limit)
 
-    print(f"Companies to analyse: {len(subset)} "
-          f"(areas: {', '.join(args.areas) if args.areas != ['all'] else 'all'})")
+    print(
+        f"Companies to analyse: {len(subset)} "
+        f"(areas: {', '.join(args.areas) if args.areas != ['all'] else 'all'})"
+    )
     print(f"Model: {args.model}\n")
 
     conn = _open_cache(CACHE_PATH)
@@ -255,17 +272,27 @@ def main() -> None:
         # Normalise LLM quirks: string "null" → None, then strip emoji
         for field in ("platform", "headcount", "sells", "description"):
             val = result.get(field)
-            if isinstance(val, str) and val.strip().lower() in ("null", "none", "n/a", "-", ""):
+            if isinstance(val, str) and val.strip().lower() in (
+                "null",
+                "none",
+                "n/a",
+                "-",
+                "",
+            ):
                 val = None
             result[field] = _strip_emoji(val)
 
         _cache_set(conn, url, result)
         results[row.business_id] = result
 
-        shop_flag   = "🛒" if result.get("has_shop") else ("💶" if result.get("has_online_sales") else "  ")
-        hire_flag   = " 📢" if result.get("is_hiring") else ""
-        platform    = result.get("platform") or ""
-        sells       = result.get("sells", "")[:60]
+        shop_flag = (
+            "🛒"
+            if result.get("has_shop")
+            else ("💶" if result.get("has_online_sales") else "  ")
+        )
+        hire_flag = " 📢" if result.get("is_hiring") else ""
+        platform = result.get("platform") or ""
+        sells = result.get("sells", "")[:60]
         print(f"{shop_flag}{hire_flag} {sells}  [{platform}]")
 
         time.sleep(args.sleep)
@@ -282,8 +309,15 @@ def main() -> None:
         df["found_website"] if "found_website" in df.columns else pd.Series(dtype=str)
     )
 
-    for col in ["llm_has_shop", "llm_has_online_sales", "llm_is_hiring",
-                "llm_platform", "llm_headcount", "llm_sells", "llm_description"]:
+    for col in [
+        "llm_has_shop",
+        "llm_has_online_sales",
+        "llm_is_hiring",
+        "llm_platform",
+        "llm_headcount",
+        "llm_sells",
+        "llm_description",
+    ]:
         if col not in df.columns:
             df[col] = pd.NA
         # Ensure text columns stay as object so string values can be assigned
@@ -291,19 +325,25 @@ def main() -> None:
             df[col] = df[col].astype(object)
 
     def _clean(val):
-        if isinstance(val, str) and val.strip().lower() in ("null", "none", "n/a", "-", ""):
+        if isinstance(val, str) and val.strip().lower() in (
+            "null",
+            "none",
+            "n/a",
+            "-",
+            "",
+        ):
             return pd.NA
         return val
 
     for biz_id, res in results.items():
         mask = df["business_id"] == biz_id
-        df.loc[mask, "llm_has_shop"]         = res.get("has_shop")
+        df.loc[mask, "llm_has_shop"] = res.get("has_shop")
         df.loc[mask, "llm_has_online_sales"] = res.get("has_online_sales")
-        df.loc[mask, "llm_is_hiring"]        = res.get("is_hiring")
-        df.loc[mask, "llm_platform"]         = _clean(res.get("platform"))
-        df.loc[mask, "llm_headcount"]        = _clean(res.get("headcount"))
-        df.loc[mask, "llm_sells"]            = _clean(res.get("sells"))
-        df.loc[mask, "llm_description"]      = _clean(res.get("description"))
+        df.loc[mask, "llm_is_hiring"] = res.get("is_hiring")
+        df.loc[mask, "llm_platform"] = _clean(res.get("platform"))
+        df.loc[mask, "llm_headcount"] = _clean(res.get("headcount"))
+        df.loc[mask, "llm_sells"] = _clean(res.get("sells"))
+        df.loc[mask, "llm_description"] = _clean(res.get("description"))
 
     df.drop(columns=["best_website"], errors="ignore").to_csv(
         CSV_PATH, index=False, encoding="utf-8-sig"

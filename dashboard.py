@@ -75,7 +75,9 @@ INDUSTRY_COLORS = {
 def load_data() -> pd.DataFrame:
     df = pd.read_csv(DATA_PATH, encoding="utf-8-sig")
     df["distance_km"] = df["distance_km"].round(2)
-    df["registered"] = pd.to_numeric(df["registered"].astype(str).str[:4], errors="coerce")
+    df["registered"] = pd.to_numeric(
+        df["registered"].astype(str).str[:4], errors="coerce"
+    )
     # Merge PRH website + DDG-discovered website into one column
     if "found_website" in df.columns:
         df["best_website"] = df["website"].combine_first(df["found_website"])
@@ -97,7 +99,11 @@ with st.sidebar:
 
     # Station selector
     st.subheader("📍 Asema / kaupunki")
-    station_options = {k: v["label"] for k, v in STATION_INFO.items() if k in df_raw["nearest_station"].unique()}
+    station_options = {
+        k: v["label"]
+        for k, v in STATION_INFO.items()
+        if k in df_raw["nearest_station"].unique()
+    }
     selected_keys = st.multiselect(
         "Valitse asemat",
         options=list(station_options.keys()),
@@ -131,7 +137,9 @@ with st.sidebar:
     only_with_website = st.toggle("Vain yritykset joilla on verkkosivut", value=False)
 
     # Registration year
-    min_year, max_year = int(df_raw["registered"].min()), int(df_raw["registered"].max())
+    min_year, max_year = int(df_raw["registered"].min()), int(
+        df_raw["registered"].max()
+    )
     reg_range = st.slider(
         "Rekisteröintivuosi",
         min_value=min_year,
@@ -180,7 +188,9 @@ col4.metric("Alueita", df["nearest_station"].nunique())
 st.divider()
 
 # ---- Map ----------------------------------------------------------------
-tab_map, tab_table, tab_stats, tab_leads = st.tabs(["🗺️ Kartta", "📋 Yritykset", "📊 Tilastot", "🎯 Liidit"])
+tab_map, tab_table, tab_stats, tab_leads = st.tabs(
+    ["🗺️ Kartta", "📋 Yritykset", "📊 Tilastot", "🎯 Liidit"]
+)
 
 with tab_map:
     valid_coords = df.dropna(subset=["lat", "lon"])
@@ -190,7 +200,17 @@ with tab_map:
         # Company scatter layer
         scatter = pdk.Layer(
             "ScatterplotLayer",
-            data=valid_coords[["lat", "lon", "name", "industry", "distance_km", "best_website", "color"]].copy(),
+            data=valid_coords[
+                [
+                    "lat",
+                    "lon",
+                    "name",
+                    "industry",
+                    "distance_km",
+                    "best_website",
+                    "color",
+                ]
+            ].copy(),
             get_position=["lon", "lat"],
             get_color="color",
             get_radius=80,
@@ -216,7 +236,9 @@ with tab_map:
         center_lon = valid_coords["lon"].mean()
         zoom = 12 if len(selected_keys) == 1 else 9
 
-        view = pdk.ViewState(latitude=center_lat, longitude=center_lon, zoom=zoom, pitch=0)
+        view = pdk.ViewState(
+            latitude=center_lat, longitude=center_lon, zoom=zoom, pitch=0
+        )
         chart = pdk.Deck(
             layers=[scatter, station_layer],
             initial_view_state=view,
@@ -231,16 +253,39 @@ with tab_map:
 # ---- Table --------------------------------------------------------------
 with tab_table:
     # Build a display-friendly frame
-    llm_cols = [c for c in ["llm_description", "llm_has_shop", "llm_is_hiring"] if c in df.columns]
-    display = df[[
-        "name", "industry", "toi_description", "nearest_station",
-        "distance_km", "address", "best_website", "registered"
-    ] + llm_cols].copy()
-    base_cols = [
-        "Yritys", "Toimiala", "TOI-kuvaus", "Asema",
-        "Etäisyys (km)", "Osoite", "Verkkosivut", "Perustettu"
+    llm_cols = [
+        c
+        for c in ["llm_description", "llm_has_shop", "llm_is_hiring"]
+        if c in df.columns
     ]
-    rename_map = {"llm_description": "AI-kuvaus", "llm_has_shop": "Verkkokauppa", "llm_is_hiring": "Rekrytoi"}
+    display = df[
+        [
+            "name",
+            "industry",
+            "toi_description",
+            "nearest_station",
+            "distance_km",
+            "address",
+            "best_website",
+            "registered",
+        ]
+        + llm_cols
+    ].copy()
+    base_cols = [
+        "Yritys",
+        "Toimiala",
+        "TOI-kuvaus",
+        "Asema",
+        "Etäisyys (km)",
+        "Osoite",
+        "Verkkosivut",
+        "Perustettu",
+    ]
+    rename_map = {
+        "llm_description": "AI-kuvaus",
+        "llm_has_shop": "Verkkokauppa",
+        "llm_is_hiring": "Rekrytoi",
+    }
     display.columns = base_cols + [rename_map[c] for c in llm_cols]
     display["Toimiala"] = display["Toimiala"].map(lambda x: INDUSTRY_LABELS.get(x, x))
     display["Perustettu"] = display["Perustettu"].astype("Int64")
@@ -248,10 +293,9 @@ with tab_table:
     # Search box
     search = st.text_input("🔎 Hae yrityksen nimellä tai osoitteella", "")
     if search:
-        mask = (
-            display["Yritys"].str.contains(search, case=False, na=False)
-            | display["Osoite"].str.contains(search, case=False, na=False)
-        )
+        mask = display["Yritys"].str.contains(search, case=False, na=False) | display[
+            "Osoite"
+        ].str.contains(search, case=False, na=False)
         display = display[mask]
 
     st.dataframe(
@@ -278,24 +322,98 @@ with tab_table:
 # Specialty retail (games, sports, hobbies, books, electronics, fashion, optics) → highest
 # General retail (grocery, hypermarket, food specialists) → lower; petrol/kiosk → lowest
 _WEBSHOP = {
-    "4754":6,"4763":6,"4764":6,"4761":6,"4762":6,"4752":6,"4741":6,  # ICT,games/toys,sports,books,music,hardware,optics
-    "4753":5,"4759":5,"4771":5,"4772":5,"4775":5,"4776":5,"4774":5,  # carpets,other home,clothing,footwear,cosmetics,flowers/pets,eyewear
-    "4779":5,"4781":5,"4782":5,"4789":5,"4791":5,                    # 2nd hand, market stalls, specialty
-    "474":5,"475":5,"476":5,"477":5,"478":5,"479":5,                 # other specialty retail subcategories
-    "47":4,                                                            # general catch-all retail
-    "472":3,"471":3,                                                   # food/grocery specialist and hypermarket
-    "473":2,                                                           # petrol stations
-    "46":3,"45":2,
-    "10":2,"11":2,"13":2,"14":2,"20":2,"22":2,"23":2,"24":2,
-    "25":2,"26":2,"27":2,"28":2,"29":2,"31":2,"32":2,"33":1,"49":1,"52":1,
+    "4754": 6,
+    "4763": 6,
+    "4764": 6,
+    "4761": 6,
+    "4762": 6,
+    "4752": 6,
+    "4741": 6,  # ICT,games/toys,sports,books,music,hardware,optics
+    "4753": 5,
+    "4759": 5,
+    "4771": 5,
+    "4772": 5,
+    "4775": 5,
+    "4776": 5,
+    "4774": 5,  # carpets,other home,clothing,footwear,cosmetics,flowers/pets,eyewear
+    "4779": 5,
+    "4781": 5,
+    "4782": 5,
+    "4789": 5,
+    "4791": 5,  # 2nd hand, market stalls, specialty
+    "474": 5,
+    "475": 5,
+    "476": 5,
+    "477": 5,
+    "478": 5,
+    "479": 5,  # other specialty retail subcategories
+    "47": 4,  # general catch-all retail
+    "472": 3,
+    "471": 3,  # food/grocery specialist and hypermarket
+    "473": 2,  # petrol stations
+    "46": 3,
+    "45": 2,
+    "10": 2,
+    "11": 2,
+    "13": 2,
+    "14": 2,
+    "20": 2,
+    "22": 2,
+    "23": 2,
+    "24": 2,
+    "25": 2,
+    "26": 2,
+    "27": 2,
+    "28": 2,
+    "29": 2,
+    "31": 2,
+    "32": 2,
+    "33": 1,
+    "49": 1,
+    "52": 1,
 }
-_PIM     = {"4684":5,"4641":5,"4642":5,"4664":5,"4663":5,"4665":4,"4649":4,"4646":4,
-            "464":3,"463":3,"46":2,"47":2,"28":3,"29":3,"25":3,"26":3,"27":3,"20":2,"22":2}
-_DATA    = {"52":4,"49":4,"64":3,"65":3,"33":3,"71":3,"86":3,"28":2,"25":2,"26":2,"46":2,"85":1,"35":2}
+_PIM = {
+    "4684": 5,
+    "4641": 5,
+    "4642": 5,
+    "4664": 5,
+    "4663": 5,
+    "4665": 4,
+    "4649": 4,
+    "4646": 4,
+    "464": 3,
+    "463": 3,
+    "46": 2,
+    "47": 2,
+    "28": 3,
+    "29": 3,
+    "25": 3,
+    "26": 3,
+    "27": 3,
+    "20": 2,
+    "22": 2,
+}
+_DATA = {
+    "52": 4,
+    "49": 4,
+    "64": 3,
+    "65": 3,
+    "33": 3,
+    "71": 3,
+    "86": 3,
+    "28": 2,
+    "25": 2,
+    "26": 2,
+    "46": 2,
+    "85": 1,
+    "35": 2,
+}
+
 
 def _pscore(toi, smap):
     code = str(toi).split(".")[0].strip() if pd.notna(toi) else ""
     return max((v for k, v in smap.items() if code.startswith(k)), default=0)
+
 
 with tab_leads:
     st.subheader("🎯 Liidipisteytys — keiden kannattaa ensin soittaa?")
@@ -307,9 +425,12 @@ with tab_leads:
 
     scored = df.copy()
     scored["s_webshop"] = scored["toi_code"].apply(lambda t: _pscore(t, _WEBSHOP))
-    scored["s_pim"]     = scored["toi_code"].apply(lambda t: _pscore(t, _PIM))
-    scored["s_data"]    = scored["toi_code"].apply(lambda t: _pscore(t, _DATA))
-    legacy = (pd.to_datetime(scored["registered"], errors="coerce").dt.year.fillna(2020) <= 2010).astype(int)
+    scored["s_pim"] = scored["toi_code"].apply(lambda t: _pscore(t, _PIM))
+    scored["s_data"] = scored["toi_code"].apply(lambda t: _pscore(t, _DATA))
+    legacy = (
+        pd.to_datetime(scored["registered"], errors="coerce").dt.year.fillna(2020)
+        <= 2010
+    ).astype(int)
     has_web = scored["best_website"].notna().astype(int)
     for col in ["s_webshop", "s_pim", "s_data"]:
         scored[col] += legacy + has_web
@@ -319,24 +440,53 @@ with tab_leads:
         options=["Verkkokauppa / webshop", "PIM / tuotekataloogi", "Data-analyysi"],
         horizontal=True,
     )
-    axis_col = {"Verkkokauppa / webshop": "s_webshop",
-                "PIM / tuotekataloogi": "s_pim",
-                "Data-analyysi": "s_data"}[lead_axis]
+    axis_col = {
+        "Verkkokauppa / webshop": "s_webshop",
+        "PIM / tuotekataloogi": "s_pim",
+        "Data-analyysi": "s_data",
+    }[lead_axis]
 
     n_leads = st.slider("Näytä top-N", 5, 30, 10)
-    top = scored.sort_values([axis_col, "distance_km"], ascending=[False, True]).head(n_leads)
+    top = scored.sort_values([axis_col, "distance_km"], ascending=[False, True]).head(
+        n_leads
+    )
 
-    lead_display = top[[
-        "name", "toi_description", "nearest_station", "distance_km",
-        "best_website", "registered", axis_col
-    ] + [c for c in ["llm_description", "llm_has_shop", "llm_is_hiring"] if c in top.columns]].copy()
+    lead_display = top[
+        [
+            "name",
+            "toi_description",
+            "nearest_station",
+            "distance_km",
+            "best_website",
+            "registered",
+            axis_col,
+        ]
+        + [
+            c
+            for c in ["llm_description", "llm_has_shop", "llm_is_hiring"]
+            if c in top.columns
+        ]
+    ].copy()
     base_lead_cols = [
-        "Yritys", "Toimiala (tarkennettu)", "Asema", "Etäisyys (km)",
-        "Verkkosivut", "Perustettu", "Pisteet"
+        "Yritys",
+        "Toimiala (tarkennettu)",
+        "Asema",
+        "Etäisyys (km)",
+        "Verkkosivut",
+        "Perustettu",
+        "Pisteet",
     ]
-    llm_lead_rename = {"llm_description": "AI-kuvaus", "llm_has_shop": "Verkkokauppa", "llm_is_hiring": "Rekrytoi"}
-    lead_display.columns = base_lead_cols + [llm_lead_rename[c] for c in llm_lead_rename if c in top.columns]
-    lead_display["Perustettu"] = pd.to_numeric(lead_display["Perustettu"], errors="coerce").astype("Int64")
+    llm_lead_rename = {
+        "llm_description": "AI-kuvaus",
+        "llm_has_shop": "Verkkokauppa",
+        "llm_is_hiring": "Rekrytoi",
+    }
+    lead_display.columns = base_lead_cols + [
+        llm_lead_rename[c] for c in llm_lead_rename if c in top.columns
+    ]
+    lead_display["Perustettu"] = pd.to_numeric(
+        lead_display["Perustettu"], errors="coerce"
+    ).astype("Int64")
 
     st.dataframe(
         lead_display.reset_index(drop=True),
@@ -344,14 +494,19 @@ with tab_leads:
         column_config={
             "Verkkosivut": st.column_config.LinkColumn("Verkkosivut"),
             "Etäisyys (km)": st.column_config.NumberColumn(format="%.2f km"),
-            "Pisteet": st.column_config.ProgressColumn("Pisteet", min_value=0, max_value=8),
+            "Pisteet": st.column_config.ProgressColumn(
+                "Pisteet", min_value=0, max_value=8
+            ),
         },
         height=420,
     )
 
-    csv_leads = lead_display.to_csv(index=False, encoding="utf-8-sig").encode("utf-8-sig")
-    st.download_button("⬇️ Lataa liidit CSV", data=csv_leads,
-                       file_name="liidit.csv", mime="text/csv")
+    csv_leads = lead_display.to_csv(index=False, encoding="utf-8-sig").encode(
+        "utf-8-sig"
+    )
+    st.download_button(
+        "⬇️ Lataa liidit CSV", data=csv_leads, file_name="liidit.csv", mime="text/csv"
+    )
 
 # ---- Stats --------------------------------------------------------------
 with tab_stats:

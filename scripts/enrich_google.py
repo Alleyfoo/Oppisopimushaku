@@ -58,19 +58,20 @@ sys.path.insert(0, str(_ROOT / "src"))
 from apprscan.distance import haversine_km  # noqa: E402
 
 DEFAULT_REGISTRY = _ROOT / "data" / "prh_registry.parquet"
-DEFAULT_STREETS  = _ROOT / "data" / "area_streets.json"
-DEFAULT_OUT      = _ROOT / "out" / "enriched_prh.parquet"
-GOOGLE_CACHE_DB  = _ROOT / "out" / "google_places_cache.sqlite"
-GEOCODE_CACHE    = _ROOT / "data" / "postcode_cache.sqlite"
+DEFAULT_STREETS = _ROOT / "data" / "area_streets.json"
+DEFAULT_OUT = _ROOT / "out" / "enriched_prh.parquet"
+GOOGLE_CACHE_DB = _ROOT / "out" / "google_places_cache.sqlite"
+GEOCODE_CACHE = _ROOT / "data" / "postcode_cache.sqlite"
 
-NOMINATIM_URL    = "https://photon.komoot.io/api/"
-NOMINATIM_DELAY  = 0.5   # Photon is more permissive than Nominatim
+NOMINATIM_URL = "https://photon.komoot.io/api/"
+NOMINATIM_DELAY = 0.5  # Photon is more permissive than Nominatim
 
-GOOGLE_TTL_DAYS  = 30
-GOOGLE_SLEEP_S   = 2.0
+GOOGLE_TTL_DAYS = 30
+GOOGLE_SLEEP_S = 2.0
 
 
 # ── Postcode geocoding cache (SQLite, permanent) ─────────────────────────────
+
 
 def _ensure_pc_db(conn: sqlite3.Connection) -> None:
     conn.execute("""
@@ -84,13 +85,19 @@ def _ensure_pc_db(conn: sqlite3.Connection) -> None:
     conn.commit()
 
 
-def _pc_cache_get(conn: sqlite3.Connection, postcode: str) -> tuple[float, float] | None:
-    cur = conn.execute("SELECT lat, lon FROM postcode_cache WHERE postcode = ?", (postcode,))
+def _pc_cache_get(
+    conn: sqlite3.Connection, postcode: str
+) -> tuple[float, float] | None:
+    cur = conn.execute(
+        "SELECT lat, lon FROM postcode_cache WHERE postcode = ?", (postcode,)
+    )
     row = cur.fetchone()
     return (float(row[0]), float(row[1])) if row else None
 
 
-def _pc_cache_set(conn: sqlite3.Connection, postcode: str, lat: float, lon: float) -> None:
+def _pc_cache_set(
+    conn: sqlite3.Connection, postcode: str, lat: float, lon: float
+) -> None:
     conn.execute(
         "INSERT OR REPLACE INTO postcode_cache(postcode, lat, lon, ts) VALUES (?,?,?,datetime('now'))",
         (postcode, lat, lon),
@@ -98,7 +105,9 @@ def _pc_cache_set(conn: sqlite3.Connection, postcode: str, lat: float, lon: floa
     conn.commit()
 
 
-def _nominatim_postcode(postcode: str, session: _requests.Session, city_fallback: str = "") -> tuple[float, float] | None:
+def _nominatim_postcode(
+    postcode: str, session: _requests.Session, city_fallback: str = ""
+) -> tuple[float, float] | None:
     """Query Photon (OSM-backed) for a Finnish postal code. Returns (lat, lon) or None."""
     headers = {"User-Agent": "apprscan-postcode-geocoder/1.0"}
     queries = [f"{postcode} Finland"]
@@ -106,7 +115,9 @@ def _nominatim_postcode(postcode: str, session: _requests.Session, city_fallback
         queries.append(f"{postcode} {city_fallback}")
     for q in queries:
         try:
-            resp = session.get(NOMINATIM_URL, params={"q": q, "limit": 5}, headers=headers, timeout=15)
+            resp = session.get(
+                NOMINATIM_URL, params={"q": q, "limit": 5}, headers=headers, timeout=15
+            )
             resp.raise_for_status()
             features = resp.json().get("features", [])
             # Keep only results within Finland's bounding box
@@ -161,6 +172,7 @@ def geocode_postcodes(
 
 # ── Google Places cache (SQLite, TTL-based) ──────────────────────────────────
 
+
 def _ensure_google_db(conn: sqlite3.Connection) -> None:
     conn.execute("""
         CREATE TABLE IF NOT EXISTS places_cache (
@@ -175,7 +187,9 @@ def _ensure_google_db(conn: sqlite3.Connection) -> None:
     conn.commit()
 
 
-def _google_cache_get(conn: sqlite3.Connection, business_id: str, ttl_days: int) -> dict | None:
+def _google_cache_get(
+    conn: sqlite3.Connection, business_id: str, ttl_days: int
+) -> dict | None:
     cur = conn.execute(
         """
         SELECT place_id, business_status, types, website_places, fetched_ts
@@ -189,10 +203,10 @@ def _google_cache_get(conn: sqlite3.Connection, business_id: str, ttl_days: int)
     if row is None:
         return None
     return {
-        "place_id":        row[0],
+        "place_id": row[0],
         "business_status": row[1],
-        "types":           row[2],
-        "website_places":  row[3],
+        "types": row[2],
+        "website_places": row[3],
     }
 
 
@@ -240,14 +254,15 @@ def _google_lookup(name: str, full_address: str, api_key: str) -> dict[str, Any]
         return {}
     place = results[0]
     return {
-        "place_id":        place.get("place_id") or "",
+        "place_id": place.get("place_id") or "",
         "business_status": place.get("business_status") or "",
-        "types":           json.dumps(place.get("types") or [], ensure_ascii=False),
-        "website_places":  place.get("website") or "",
+        "types": json.dumps(place.get("types") or [], ensure_ascii=False),
+        "website_places": place.get("website") or "",
     }
 
 
 # ── Municipality helper ───────────────────────────────────────────────────────
+
 
 def _load_municipality_map(streets_path: Path) -> dict[str, str]:
     """Return {station_label: municipality_name}."""
@@ -257,18 +272,42 @@ def _load_municipality_map(streets_path: Path) -> dict[str, str]:
 
 # ── Main ─────────────────────────────────────────────────────────────────────
 
+
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Enrich PRH registry with geocoords + optional Google Places.")
-    parser.add_argument("--registry",         default=str(DEFAULT_REGISTRY), help="Input parquet path")
-    parser.add_argument("--streets-file",     default=str(DEFAULT_STREETS))
-    parser.add_argument("--out",              default=str(DEFAULT_OUT),      help="Output parquet path")
-    parser.add_argument("--max-distance-km",  type=float, default=1.5,       help="Keep companies within this radius")
-    parser.add_argument("--geocode-buffer-km", type=float, default=0.5,       help="Extra buffer added to distance filter to account for postcode-centroid imprecision (default: 0.5)")
-    parser.add_argument("--google",           action="store_true",            help="Enrich with Google Places API (requires GOOGLE_MAPS_API_KEY)")
-    parser.add_argument("--google-ttl-days",  type=int, default=GOOGLE_TTL_DAYS)
-    parser.add_argument("--areas",            nargs="*", default=None,        help="Filter to specific area labels")
-    parser.add_argument("--no-filter-passive", action="store_true",
-                        help="Disable default filter that removes housing companies (Asunto Oy, Kiinteistö Oy) and TOI 6820x")
+    parser = argparse.ArgumentParser(
+        description="Enrich PRH registry with geocoords + optional Google Places."
+    )
+    parser.add_argument(
+        "--registry", default=str(DEFAULT_REGISTRY), help="Input parquet path"
+    )
+    parser.add_argument("--streets-file", default=str(DEFAULT_STREETS))
+    parser.add_argument("--out", default=str(DEFAULT_OUT), help="Output parquet path")
+    parser.add_argument(
+        "--max-distance-km",
+        type=float,
+        default=1.5,
+        help="Keep companies within this radius",
+    )
+    parser.add_argument(
+        "--geocode-buffer-km",
+        type=float,
+        default=0.5,
+        help="Extra buffer added to distance filter to account for postcode-centroid imprecision (default: 0.5)",
+    )
+    parser.add_argument(
+        "--google",
+        action="store_true",
+        help="Enrich with Google Places API (requires GOOGLE_MAPS_API_KEY)",
+    )
+    parser.add_argument("--google-ttl-days", type=int, default=GOOGLE_TTL_DAYS)
+    parser.add_argument(
+        "--areas", nargs="*", default=None, help="Filter to specific area labels"
+    )
+    parser.add_argument(
+        "--no-filter-passive",
+        action="store_true",
+        help="Disable default filter that removes housing companies (Asunto Oy, Kiinteistö Oy) and TOI 6820x",
+    )
     args = parser.parse_args()
 
     registry_path = Path(args.registry)
@@ -291,7 +330,8 @@ def main() -> None:
 
     def _extract_postcode(full_address: str) -> str:
         import re
-        m = re.search(r'\b(\d{5})\b', str(full_address or ""))
+
+        m = re.search(r"\b(\d{5})\b", str(full_address or ""))
         return m.group(1) if m else ""
 
     df = df.copy()
@@ -309,16 +349,24 @@ def main() -> None:
             station = pc_rows["nearest_station"].mode().iloc[0]
             city_by_postcode[pc] = muni_map.get(station, "")
 
-    coords_map = geocode_postcodes(unique_postcodes, GEOCODE_CACHE, city_by_postcode=city_by_postcode)
+    coords_map = geocode_postcodes(
+        unique_postcodes, GEOCODE_CACHE, city_by_postcode=city_by_postcode
+    )
 
     cached_count = sum(1 for v in coords_map.values() if v[0] is not None)
-    fail_count   = sum(1 for v in coords_map.values() if v[0] is None)
-    print(f"  Resolved: {cached_count}/{len(unique_postcodes)} postcodes (failed: {fail_count})")
+    fail_count = sum(1 for v in coords_map.values() if v[0] is None)
+    print(
+        f"  Resolved: {cached_count}/{len(unique_postcodes)} postcodes (failed: {fail_count})"
+    )
 
     df["lat"] = df["_postcode"].map(lambda pc: coords_map.get(pc, (None, None))[0])
     df["lon"] = df["_postcode"].map(lambda pc: coords_map.get(pc, (None, None))[1])
     df["geocode_source"] = df["_postcode"].apply(
-        lambda pc: "postcode_centroid" if coords_map.get(pc, (None, None))[0] is not None else "failed"
+        lambda pc: (
+            "postcode_centroid"
+            if coords_map.get(pc, (None, None))[0] is not None
+            else "failed"
+        )
     )
     df = df.drop(columns=["_postcode"])
 
@@ -328,9 +376,16 @@ def main() -> None:
 
     # ── Distance filter ───────────────────────────────────────────────────────
     effective_km = args.max_distance_km + args.geocode_buffer_km
-    print(f"\n[Distance filter: ≤{args.max_distance_km} km + {args.geocode_buffer_km} km buffer = {effective_km} km]")
+    print(
+        f"\n[Distance filter: ≤{args.max_distance_km} km + {args.geocode_buffer_km} km buffer = {effective_km} km]"
+    )
     df["distance_km"] = df.apply(
-        lambda r: haversine_km(float(r["station_lat"]), float(r["station_lon"]), float(r["lat"]), float(r["lon"])),
+        lambda r: haversine_km(
+            float(r["station_lat"]),
+            float(r["station_lon"]),
+            float(r["lat"]),
+            float(r["lon"]),
+        ),
         axis=1,
     )
     before = len(df)
@@ -345,6 +400,7 @@ def main() -> None:
     # ── Passive company filter (default on) ───────────────────────────────────
     if not args.no_filter_passive:
         import re as _re
+
         _PASSIVE_NAME = _re.compile(
             r"(?i)^(asunto[\s\-]?oy|as\.?\s*oy\b|asunto-osakeyhti|"
             r"kiinteist[oö][\s\-]?oy|keskin[aä]inen kiinteist|"
@@ -352,12 +408,14 @@ def main() -> None:
         )
         _PASSIVE_TOI = {"68201", "68202"}
         name_passive = df["name"].str.match(_PASSIVE_NAME, na=False)
-        toi_passive  = df["mainBusinessLine.type"].astype(str).isin(_PASSIVE_TOI)
+        toi_passive = df["mainBusinessLine.type"].astype(str).isin(_PASSIVE_TOI)
         before_p = len(df)
         df = df[~(name_passive | toi_passive)].copy()
-        print(f"\n[Passive filter] Removed {before_p - len(df)} housing/shell companies "
-              f"({before_p - len(df)} Asunto Oy / Kiinteistö Oy / TOI 6820x). "
-              f"Remaining: {len(df)}")
+        print(
+            f"\n[Passive filter] Removed {before_p - len(df)} housing/shell companies "
+            f"({before_p - len(df)} Asunto Oy / Kiinteistö Oy / TOI 6820x). "
+            f"Remaining: {len(df)}"
+        )
         print("\nCounts per area after passive filter:")
         print(df.groupby("nearest_station").size().to_string())
 
@@ -365,7 +423,9 @@ def main() -> None:
     if args.google:
         api_key = os.getenv("GOOGLE_MAPS_API_KEY", "")
         if not api_key:
-            print("\nWARNING: --google requested but GOOGLE_MAPS_API_KEY not set. Skipping Google enrichment.")
+            print(
+                "\nWARNING: --google requested but GOOGLE_MAPS_API_KEY not set. Skipping Google enrichment."
+            )
         else:
             print(f"\n[Google Places enrichment — TTL {args.google_ttl_days} days]")
             GOOGLE_CACHE_DB.parent.mkdir(parents=True, exist_ok=True)
@@ -390,16 +450,26 @@ def main() -> None:
                     g_hit += 1
                 else:
                     try:
-                        result = _google_lookup(str(row.get("name") or ""), str(row.get("full_address") or ""), api_key)
-                        pid        = result.get("place_id", "")
-                        status     = result.get("business_status", "")
-                        types_str  = result.get("types", "[]")
-                        web        = result.get("website_places", "")
+                        result = _google_lookup(
+                            str(row.get("name") or ""),
+                            str(row.get("full_address") or ""),
+                            api_key,
+                        )
+                        pid = result.get("place_id", "")
+                        status = result.get("business_status", "")
+                        types_str = result.get("types", "[]")
+                        web = result.get("website_places", "")
                         _google_cache_set(gconn, bid, pid, status, types_str, web)
-                        place_ids.append(pid); statuses.append(status); types_list.append(types_str); websites_places.append(web)
+                        place_ids.append(pid)
+                        statuses.append(status)
+                        types_list.append(types_str)
+                        websites_places.append(web)
                         g_miss += 1
                     except Exception as exc:
-                        place_ids.append(""); statuses.append(""); types_list.append("[]"); websites_places.append("")
+                        place_ids.append("")
+                        statuses.append("")
+                        types_list.append("[]")
+                        websites_places.append("")
                         g_fail += 1
                         if g_fail <= 5:
                             print(f"  Google lookup failed for {bid}: {exc}")
@@ -407,14 +477,16 @@ def main() -> None:
                     time.sleep(GOOGLE_SLEEP_S)
 
                 if (idx + 1) % 50 == 0:
-                    print(f"  {idx + 1}/{len(df)}  cache={g_hit}  new={g_miss}  fail={g_fail}")
+                    print(
+                        f"  {idx + 1}/{len(df)}  cache={g_hit}  new={g_miss}  fail={g_fail}"
+                    )
 
             gconn.close()
-            df["place_id"]        = place_ids
+            df["place_id"] = place_ids
             df["business_status"] = statuses
-            df["types"]           = types_list
-            df["website_places"]  = websites_places
-            df["google_fetched"]  = pd.Timestamp.utcnow().isoformat()
+            df["types"] = types_list
+            df["website_places"] = websites_places
+            df["google_fetched"] = pd.Timestamp.utcnow().isoformat()
             print(f"  Done — cache hits: {g_hit}, new: {g_miss}, failed: {g_fail}")
 
     # ── Write output ──────────────────────────────────────────────────────────
@@ -422,8 +494,19 @@ def main() -> None:
     out_path.parent.mkdir(parents=True, exist_ok=True)
 
     # Drop raw PRH blob columns that are not needed downstream
-    drop_cols = [c for c in ["names", "companyForms", "companySituations", "registeredEntries",
-                              "addresses", "tradeRegisterStatus", "registeredEntries"] if c in df.columns]
+    drop_cols = [
+        c
+        for c in [
+            "names",
+            "companyForms",
+            "companySituations",
+            "registeredEntries",
+            "addresses",
+            "tradeRegisterStatus",
+            "registeredEntries",
+        ]
+        if c in df.columns
+    ]
     df = df.drop(columns=drop_cols)
 
     df.to_parquet(out_path, index=False)

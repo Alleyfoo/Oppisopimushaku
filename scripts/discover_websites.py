@@ -42,31 +42,71 @@ CACHE_PATH = _ROOT / "data" / "website_cache.sqlite"
 # Domains to skip — business directories, social media, news sites, aggregators
 SKIP_DOMAINS = {
     # Finnish business registries & directories
-    "finder.fi", "asiakastieto.fi", "proff.fi", "ytj.fi", "kauppalehti.fi",
-    "taloussanomat.fi", "yrittajat.fi", "yritystele.fi", "fonecta.fi",
-    "yellow.fi", "eniro.fi", "yritysopas.fi", "yrityshaku.fi",
-    "ytunnus.fi", "b2bsuomi.fi", "cylex.fi", "yritystieto.fi",
+    "finder.fi",
+    "asiakastieto.fi",
+    "proff.fi",
+    "ytj.fi",
+    "kauppalehti.fi",
+    "taloussanomat.fi",
+    "yrittajat.fi",
+    "yritystele.fi",
+    "fonecta.fi",
+    "yellow.fi",
+    "eniro.fi",
+    "yritysopas.fi",
+    "yrityshaku.fi",
+    "ytunnus.fi",
+    "b2bsuomi.fi",
+    "cylex.fi",
+    "yritystieto.fi",
     # International business data
-    "cybo.com", "northdata.com", "dnb.com", "rocketreach.co",
-    "bloomberg.com", "lei.bloomberg.com", "opencorporates.com",
-    "crunchbase.com", "zoominfo.com", "companieshouse.gov.uk",
+    "cybo.com",
+    "northdata.com",
+    "dnb.com",
+    "rocketreach.co",
+    "bloomberg.com",
+    "lei.bloomberg.com",
+    "opencorporates.com",
+    "crunchbase.com",
+    "zoominfo.com",
+    "companieshouse.gov.uk",
     # Social media
-    "linkedin.com", "facebook.com", "twitter.com", "instagram.com",
-    "tiktok.com", "youtube.com",
+    "linkedin.com",
+    "facebook.com",
+    "twitter.com",
+    "instagram.com",
+    "tiktok.com",
+    "youtube.com",
     # Review / map sites
-    "yelp.com", "tripadvisor.com", "google.com", "google.fi",
-    "yandex.com", "bing.com", "maps.google.com",
+    "yelp.com",
+    "tripadvisor.com",
+    "google.com",
+    "google.fi",
+    "yandex.com",
+    "bing.com",
+    "maps.google.com",
     # PR / press
-    "cision.com", "mb.cision.com", "globenewswire.com", "businesswire.com",
+    "cision.com",
+    "mb.cision.com",
+    "globenewswire.com",
+    "businesswire.com",
     # Knowledge bases
-    "wikipedia.org", "wikidata.org",
+    "wikipedia.org",
+    "wikidata.org",
     # Finnish news
-    "seiska.fi", "iltalehti.fi", "iltasanomat.fi", "hs.fi",
-    "yle.fi", "mtv.fi",
+    "seiska.fi",
+    "iltalehti.fi",
+    "iltasanomat.fi",
+    "hs.fi",
+    "yle.fi",
+    "mtv.fi",
     # Government
-    "prh.fi", "vero.fi", "te-palvelut.fi",
+    "prh.fi",
+    "vero.fi",
+    "te-palvelut.fi",
     # Review / opinion
-    "kokemuksia.fi", "trustpilot.com",
+    "kokemuksia.fi",
+    "trustpilot.com",
 }
 
 # Noise words to strip when matching company name to domain
@@ -128,6 +168,7 @@ def _search(name: str, ddgs: DDGS, sleep: float) -> str:
 # Cache helpers
 # ---------------------------------------------------------------------------
 
+
 def _init_cache(path: Path) -> sqlite3.Connection:
     con = sqlite3.connect(path)
     con.execute(
@@ -156,11 +197,16 @@ def _save(con: sqlite3.Connection, business_id: str, url: str) -> None:
 # Main
 # ---------------------------------------------------------------------------
 
+
 def main() -> None:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--limit", type=int, default=0, help="Max companies to search (0=all)")
+    ap.add_argument(
+        "--limit", type=int, default=0, help="Max companies to search (0=all)"
+    )
     ap.add_argument("--sleep", type=float, default=0.7, help="Seconds between searches")
-    ap.add_argument("--new-only", action="store_true", help="Only search companies not yet in cache")
+    ap.add_argument(
+        "--new-only", action="store_true", help="Only search companies not yet in cache"
+    )
     args = ap.parse_args()
 
     df = pd.read_csv(CSV_PATH, encoding="utf-8-sig")
@@ -183,7 +229,9 @@ def main() -> None:
     print(f"Will search: {len(to_search)}")
 
     if len(to_search) == 0:
-        print("Nothing to search — all companies are cached. Re-run without --new-only to use cache.")
+        print(
+            "Nothing to search — all companies are cached. Re-run without --new-only to use cache."
+        )
     else:
         with DDGS() as ddgs:
             for i, (_, row) in enumerate(to_search.iterrows(), 1):
@@ -191,13 +239,16 @@ def main() -> None:
                 _save(con, row["business_id"], url)
                 status = "✓" if url else "·"
                 if i % 20 == 0 or url:
-                    print(f"[{i}/{len(to_search)}] {status} {row['name'][:45]} -> {url or '(not found)'}")
+                    print(
+                        f"[{i}/{len(to_search)}] {status} {row['name'][:45]} -> {url or '(not found)'}"
+                    )
 
     # Reload full cache and apply to CSV
     cache = _load_cache(con)
     df["found_website"] = df.apply(
-        lambda r: r["website"] if pd.notna(r["website"])
-        else cache.get(r["business_id"], ""),
+        lambda r: (
+            r["website"] if pd.notna(r["website"]) else cache.get(r["business_id"], "")
+        ),
         axis=1,
     )
     df["found_website"] = df["found_website"].replace("", pd.NA)
@@ -205,8 +256,10 @@ def main() -> None:
     # Stats
     prh_count = df["website"].notna().sum()
     found_count = df["found_website"].notna().sum()
-    print(f"\nWebsite coverage: {prh_count} PRH → {found_count} after discovery "
-          f"(+{found_count - prh_count}, {100*found_count/len(df):.1f}% total)")
+    print(
+        f"\nWebsite coverage: {prh_count} PRH → {found_count} after discovery "
+        f"(+{found_count - prh_count}, {100*found_count/len(df):.1f}% total)"
+    )
 
     df.to_csv(CSV_PATH, index=False, encoding="utf-8-sig")
     print(f"Saved {CSV_PATH}")

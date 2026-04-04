@@ -48,10 +48,10 @@ DEFAULT_OUT = _ROOT / "data" / "prh_registry.parquet"
 # Postal-code hints per area label (used in summary output; not yet a query
 # param because the public YTJ v3 API only exposes `location` as a filter).
 AREA_POSTAL_CODES: dict[str, list[str]] = {
-    "Lahti":     ["15100", "15110", "15120", "15130", "15140", "15150"],
-    "Kerava":    ["04200", "04220", "04230"],
-    "Savio":     ["04220", "04230", "04240"],
-    "Pasila":    ["00520", "00530", "00580", "00610"],
+    "Lahti": ["15100", "15110", "15120", "15130", "15140", "15150"],
+    "Kerava": ["04200", "04220", "04230"],
+    "Savio": ["04220", "04230", "04240"],
+    "Pasila": ["00520", "00530", "00580", "00610"],
     "Tikkurila": ["01300", "01370", "01380"],
 }
 
@@ -98,7 +98,9 @@ def fetch_area(
     municipality = area["municipality"]
     streets_lower = area["streets_lower"]
 
-    print(f"\n[{label}]  municipality={municipality}  street set size={len(streets_lower)}")
+    print(
+        f"\n[{label}]  municipality={municipality}  street set size={len(streets_lower)}"
+    )
     raw = fetch_companies(municipality, max_pages=max_pages)
     print(f"  PRH returned {len(raw)} raw rows")
 
@@ -124,17 +126,36 @@ def fetch_area(
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Fetch PRH companies for target station areas.")
-    parser.add_argument("--areas", nargs="*", default=None,
-                        help="Area labels to process (default: all from streets file)")
-    parser.add_argument("--max-pages", type=int, default=0,
-                        help="Max pages per area (0 = unlimited; use ≤10 for a quick test)")
-    parser.add_argument("--streets-file", default=str(DEFAULT_STREETS_FILE),
-                        help=f"Path to area_streets.json (default: {DEFAULT_STREETS_FILE})")
-    parser.add_argument("--out", default=str(DEFAULT_OUT),
-                        help=f"Output parquet path (default: {DEFAULT_OUT})")
-    parser.add_argument("--append", action="store_true",
-                        help="Append to existing registry; dedup on business_id")
+    parser = argparse.ArgumentParser(
+        description="Fetch PRH companies for target station areas."
+    )
+    parser.add_argument(
+        "--areas",
+        nargs="*",
+        default=None,
+        help="Area labels to process (default: all from streets file)",
+    )
+    parser.add_argument(
+        "--max-pages",
+        type=int,
+        default=0,
+        help="Max pages per area (0 = unlimited; use ≤10 for a quick test)",
+    )
+    parser.add_argument(
+        "--streets-file",
+        default=str(DEFAULT_STREETS_FILE),
+        help=f"Path to area_streets.json (default: {DEFAULT_STREETS_FILE})",
+    )
+    parser.add_argument(
+        "--out",
+        default=str(DEFAULT_OUT),
+        help=f"Output parquet path (default: {DEFAULT_OUT})",
+    )
+    parser.add_argument(
+        "--append",
+        action="store_true",
+        help="Append to existing registry; dedup on business_id",
+    )
     args = parser.parse_args()
 
     streets_path = Path(args.streets_file)
