@@ -248,7 +248,7 @@ with tab_table:
 
     st.dataframe(
         display.reset_index(drop=True),
-        use_container_width=True,
+        width="stretch",
         column_config={
             "Verkkosivut": st.column_config.LinkColumn("Verkkosivut"),
             "Etäisyys (km)": st.column_config.NumberColumn(format="%.2f km"),
