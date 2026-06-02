@@ -68,6 +68,14 @@ housing companies.
 ```
 python scripts/enrich_google.py --max-distance-km 1.5
 ```
+Output: `out/enriched_prh.parquet`
+
+### 3a. Build companies.csv
+Projects the enriched parquet (raw PRH column names) into the dashboard schema
+(`address`, `toi_code`, `toi_description`, `registered`, …).
+```
+python scripts/build_companies_csv.py
+```
 Output: `out/companies.csv` (~8,050 companies with industry labels and coordinates)
 
 ### 3b. Street-level geocoding (recommended)
