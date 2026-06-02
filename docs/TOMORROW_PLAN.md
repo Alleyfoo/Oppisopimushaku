@@ -8,7 +8,7 @@ Goal: build a station-focused hiring signal list with lightweight page checks.
   `python scripts/places_to_master.py --station "Lahti,60.9836,25.6577,out/places_lahti.csv" --out out/master_places.xlsx`
 
 2) Optional curation
-- Open Streamlit: `streamlit run streamlit_app.py`
+- Open Streamlit: `streamlit run curate_app.py`
 - Hide housing-like names, add notes/tags, shortlist
 
 3) Domain mapping

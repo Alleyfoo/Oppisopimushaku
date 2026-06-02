@@ -11,7 +11,7 @@ on their websites without running a full crawl.
 
 ## B) Optional: curate
 - Open Streamlit editor to hide housing-like names and add notes/tags:
-  - `streamlit run streamlit_app.py`
+  - `streamlit run curate_app.py`
 
 ## C) Build domains
 - Extract website domains from Places data:

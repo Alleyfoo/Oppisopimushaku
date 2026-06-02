@@ -7,7 +7,7 @@ using Finnish TOI (NACE Rev2) codes.
 
 ## Public dashboard
 
-A ready-to-use Streamlit dashboard is included (`dashboard.py`). Anyone can:
+A ready-to-use Streamlit dashboard is included (`streamlit_app.py`). Anyone can:
 - Choose a city / railway station
 - Set how far they are willing to travel (km)
 - Filter by industry
@@ -32,13 +32,13 @@ download, so it runs as-is on Streamlit Cloud.
 ### Run locally
 ```
 pip install -r requirements.txt
-streamlit run dashboard.py
+streamlit run streamlit_app.py
 ```
 
 ### Deploy to Streamlit Community Cloud (free)
 1. Fork this repo on GitHub
 2. Go to [share.streamlit.io](https://share.streamlit.io) → "New app"
-3. Select your fork, branch `master`, main file `dashboard.py`
+3. Select your fork, branch `master` — `streamlit_app.py` is picked up automatically
 4. Click Deploy — no configuration needed, data is committed in `out/companies.csv`
 
 ## Covered areas
@@ -92,8 +92,8 @@ Industry groups: `it`, `construction`, `wholesale`, `marketing`, `health`, `manu
 ## Legacy flow (Google Places based)
 1) Build a master from Places CSVs
    - `python scripts/places_to_master.py --station "Lahti,60.9836,25.6577,out/places_lahti.csv" --out out/master_places.xlsx`
-2) Optional: curate in Streamlit
-   - `streamlit run streamlit_app.py`
+2) Optional: curate in Streamlit (internal editor)
+   - `streamlit run curate_app.py`
 3) Build domains from Places websites
    - `python -m apprscan domains --companies out/master_places.xlsx --out domains.csv`
 
