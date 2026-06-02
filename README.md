@@ -49,7 +49,7 @@ streamlit run streamlit_app.py
 4. Click Deploy — no configuration needed, data is committed in `out/companies.csv`
 
 ## Covered areas
-Lahti, Kerava, Savio, Pasila — ~3 km radius from each railway station.
+Lahti, Kerava, Savio, Pasila, Tikkurila — ~3 km radius from each railway station.
 
 ## Pipeline
 
@@ -83,7 +83,7 @@ Projects the enriched parquet (raw PRH column names) into the dashboard schema
 ```
 python scripts/build_companies_csv.py
 ```
-Output: `out/companies.csv` (~23,000 companies with industry labels and coordinates)
+Output: `out/companies.csv` (~26,000 companies with industry labels and coordinates)
 
 ### 3b. Street-level geocoding (recommended)
 The base geocode resolves one point per postcode, which collapses every company
@@ -94,6 +94,17 @@ and commute times vary per company. Street-centroid accuracy (PRH addresses have
 no house numbers); each row gets a `geocode_quality` flag.
 ```
 python scripts/geocode_streets.py
+```
+
+### 3c. Road-distance last mile (recommended)
+Straight-line distance underestimates the real walk. This computes the
+shortest-path walking distance from each company to its station over the OSM
+walking network (via OSMnx) and writes `road_distance_km`, which the commute
+estimate uses for the last mile. OSM downloads are cached in `data/osmnx_cache`
+and results in `data/road_distance_cache.sqlite`. Build-only (needs `osmnx`); the
+deployed app just reads the column.
+```
+python scripts/road_distances.py
 ```
 
 ### 4. Analysis

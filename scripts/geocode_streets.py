@@ -42,7 +42,7 @@ FINLAND_BBOX = (19.0, 32.0, 59.0, 71.0)  # lon_min, lon_max, lat_min, lat_max
 
 # Station coordinates: single source of truth is apprscan.transit, so the
 # distance anchor matches the rail model and the dashboard markers exactly.
-STATION_COORDS = {k: _RAIL_COORDS[k] for k in ("Lahti", "Kerava", "Savio", "Pasila")}
+STATION_COORDS = {k: _RAIL_COORDS[k] for k in ("Lahti", "Kerava", "Savio", "Pasila", "Tikkurila")}
 
 # Municipality to use in the geocode query (Savio is a district of Kerava,
 # Pasila of Helsinki).
@@ -51,6 +51,7 @@ CITY_BY_STATION = {
     "Kerava": "Kerava",
     "Savio": "Kerava",
     "Pasila": "Helsinki",
+    "Tikkurila": "Vantaa",
 }
 
 # A street geocode farther than this from its station is treated as a bad match

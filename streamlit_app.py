@@ -100,6 +100,7 @@ STATION_INFO = {
         ("Kerava", "Kerava"),
         ("Savio", "Savio (Kerava Etelä)"),
         ("Pasila", "Helsinki Pasila"),
+        ("Tikkurila", "Tikkurila (Vantaa)"),
     ]
 }
 
@@ -267,11 +268,18 @@ if only_with_website:
     df = df[df["best_website"].notna()]
 
 # Train commute from the chosen origin: rail time to the company's station plus
-# the last-mile leg. Computed live so the committed CSV needs no extra column.
+# the last-mile leg. The last mile uses the precomputed walking *road* distance
+# (road_distance_km) when available, falling back to straight-line distance.
 _rail = transit.rail_minutes_from(origin_station)
+if "road_distance_km" in df.columns:
+    df["last_mile_km"] = pd.to_numeric(df["road_distance_km"], errors="coerce").fillna(
+        df["distance_km"]
+    )
+else:
+    df["last_mile_km"] = df["distance_km"]
 df["commute_min"] = [
     transit.commute_minutes(station, dist, mode=access_mode, rail_minutes=_rail)
-    for station, dist in zip(df["nearest_station"], df["distance_km"])
+    for station, dist in zip(df["nearest_station"], df["last_mile_km"])
 ]
 if commute_limit_on:
     df = df[df["commute_min"].notna() & (df["commute_min"] <= max_commute)]
@@ -539,10 +547,15 @@ with tab_table:
         ].astype(str).str.contains(search, case=False, na=False)
         source = base[mask].copy()
         # Always add commute_min (df_raw lacks it), even for an empty result set,
-        # so the column selection below never KeyErrors.
+        # so the column selection below never KeyErrors. Last mile uses road
+        # distance when available.
+        if "road_distance_km" in source.columns:
+            _lm = pd.to_numeric(source["road_distance_km"], errors="coerce").fillna(source["distance_km"])
+        else:
+            _lm = source["distance_km"]
         source["commute_min"] = [
             transit.commute_minutes(s, d, mode=access_mode, rail_minutes=_rail)
-            for s, d in zip(source["nearest_station"], source["distance_km"])
+            for s, d in zip(source["nearest_station"], _lm)
         ]
         if source.empty:
             st.warning("Ei hakutuloksia.")

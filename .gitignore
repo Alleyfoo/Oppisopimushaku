@@ -28,3 +28,6 @@ domains.csv
 domains_updated.csv
 out/master_places*.xlsx
 out/places_*.csv
+
+# OSMnx build cache (regenerable, large)
+data/osmnx_cache/

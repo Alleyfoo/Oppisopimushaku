@@ -5,3 +5,6 @@ mypy>=1.8.0
 responses>=0.25.0
 pytest-mock>=3.14.0
 streamlit>=1.30.0
+# Build-only: scripts/road_distances.py (OSM walking-network routing). Not used
+# by the deployed app, which only reads the precomputed road_distance_km column.
+osmnx>=2.0.0
