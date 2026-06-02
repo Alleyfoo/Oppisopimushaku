@@ -352,6 +352,15 @@ with tab_map:
             f"Näytetään {lo + 1}–{hi} / {total} yritystä · väri & koko = liidipisteet ({axis_label})"
         )
 
+        # Many companies geocode to the same street point, so a page of 100 can
+        # collapse to a handful of visible dots. Spread each point
+        # deterministically (~±180 m) around its street so every lead shows.
+        _h = pd.util.hash_pandas_object(
+            page_df["business_id"].astype(str), index=False
+        ).to_numpy()
+        page_df["lat"] = page_df["lat"].astype(float) + ((_h % 1000) / 1000.0 - 0.5) * 0.0032
+        page_df["lon"] = page_df["lon"].astype(float) + (((_h // 1000) % 1000) / 1000.0 - 0.5) * 0.0064
+
         page_df["commute_disp"] = page_df["commute_min"].map(
             lambda v: f"{v:.0f} min" if pd.notna(v) else "–"
         )
@@ -363,7 +372,7 @@ with tab_map:
 
         page_df["color"] = page_df["lead_score"].map(_lead_color)
         page_df["radius"] = page_df["lead_score"].map(
-            lambda s: 70 + (float(s) if pd.notna(s) else 0) * 28
+            lambda s: 50 + (float(s) if pd.notna(s) else 0) * 20
         )
 
         scatter = pdk.Layer(
@@ -420,7 +429,8 @@ with tab_map:
         )
         st.pydeck_chart(chart)
         st.caption(
-            "🔴 Asemat · pisteet = yritykset · vihreä→punainen = matalat→korkeat liidipisteet"
+            "🔴 Asemat · pisteet = yritykset (hajautettu ~±180 m kadun ympärille näkyvyyden vuoksi) "
+            "· vihreä→punainen = matalat→korkeat liidipisteet"
         )
 
 # ---- Train reach (isochrone) -------------------------------------------
