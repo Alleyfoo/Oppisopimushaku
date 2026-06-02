@@ -7,11 +7,27 @@ out/companies.csv which is committed to the repo.
 
 from __future__ import annotations
 
+import sys
 from pathlib import Path
 
 import pandas as pd
 import pydeck as pdk
 import streamlit as st
+
+# Make the src-layout `apprscan` package importable on Streamlit Cloud, where
+# only requirements.txt is installed (the package itself is not pip-installed).
+_SRC = Path(__file__).parent / "src"
+if _SRC.is_dir() and str(_SRC) not in sys.path:
+    sys.path.insert(0, str(_SRC))
+
+from apprscan import transit
+
+# Finnish labels for the last-mile access modes exposed by the commute model.
+ACCESS_MODE_LABELS = {
+    "walk": "🚶 Kävely",
+    "bike": "🚲 Pyörä",
+    "bus": "🚌 Bussi / liityntä",
+}
 
 # ---------------------------------------------------------------------------
 # Config
@@ -122,6 +138,29 @@ with st.sidebar:
     )
     st.caption("⚠️ Etäisyys on arvio postinumeroalueen perusteella.")
 
+    # Train commute from a home station
+    st.subheader("🚆 Työmatka junalla")
+    origin_station = st.selectbox(
+        "Mistä matkustat",
+        options=sorted(transit.STATION_COORDS.keys()),
+        index=sorted(transit.STATION_COORDS.keys()).index(transit.DEFAULT_ORIGIN),
+        help="Junamatkan lähtöasema. Työmatka = juna lähtöasemalta + viime kilometri asemalta yritykselle.",
+    )
+    access_mode = st.selectbox(
+        "Viime kilometri",
+        options=list(ACCESS_MODE_LABELS.keys()),
+        format_func=lambda k: ACCESS_MODE_LABELS[k],
+    )
+    commute_limit_on = st.toggle("Rajaa työmatkan keston mukaan", value=False)
+    max_commute = st.slider(
+        "Enintään (min)",
+        min_value=15,
+        max_value=120,
+        value=60,
+        step=5,
+        disabled=not commute_limit_on,
+    )
+
     # Industry filter
     st.subheader("🏭 Toimiala")
     available_industries = sorted(df_raw["industry"].dropna().unique())
@@ -168,6 +207,16 @@ df = df[df["registered"].between(reg_range[0], reg_range[1], inclusive="both")]
 if only_with_website:
     df = df[df["best_website"].notna()]
 
+# Train commute from the chosen origin: rail time to the company's station plus
+# the last-mile leg. Computed live so the committed CSV needs no extra column.
+_rail = transit.rail_minutes_from(origin_station)
+df["commute_min"] = [
+    transit.commute_minutes(station, dist, mode=access_mode, rail_minutes=_rail)
+    for station, dist in zip(df["nearest_station"], df["distance_km"])
+]
+if commute_limit_on:
+    df = df[df["commute_min"].notna() & (df["commute_min"] <= max_commute)]
+
 # ---------------------------------------------------------------------------
 # Main content
 # ---------------------------------------------------------------------------
@@ -179,11 +228,17 @@ if df.empty:
     st.stop()
 
 # Metric cards
-col1, col2, col3, col4 = st.columns(4)
+col1, col2, col3, col4, col5 = st.columns(5)
 col1.metric("Yrityksiä yhteensä", len(df))
 col2.metric("Joilla verkkosivut", df["best_website"].notna().sum())
 col3.metric("Eri toimialoja", df["industry"].nunique())
 col4.metric("Alueita", df["nearest_station"].nunique())
+_fastest = df["commute_min"].min()
+col5.metric(
+    "Nopein työmatka",
+    f"{_fastest:.0f} min" if pd.notna(_fastest) else "–",
+    help=f"Junalla asemalta {origin_station}, sis. viime kilometrin.",
+)
 
 st.divider()
 
@@ -193,10 +248,13 @@ tab_map, tab_table, tab_stats, tab_leads = st.tabs(
 )
 
 with tab_map:
-    valid_coords = df.dropna(subset=["lat", "lon"])
+    valid_coords = df.dropna(subset=["lat", "lon"]).copy()
     if valid_coords.empty:
         st.info("Ei koordinaatteja saatavilla valituille yrityksille.")
     else:
+        valid_coords["commute_disp"] = valid_coords["commute_min"].map(
+            lambda v: f"{v:.0f} min" if pd.notna(v) else "–"
+        )
         # Company scatter layer
         scatter = pdk.Layer(
             "ScatterplotLayer",
@@ -207,6 +265,7 @@ with tab_map:
                     "name",
                     "industry",
                     "distance_km",
+                    "commute_disp",
                     "best_website",
                     "color",
                 ]
@@ -243,7 +302,7 @@ with tab_map:
             layers=[scatter, station_layer],
             initial_view_state=view,
             tooltip={
-                "text": "{name}\nToimiala: {industry}\nEtäisyys: {distance_km} km\n{best_website}"
+                "text": "{name}\nToimiala: {industry}\nEtäisyys: {distance_km} km\nTyömatka: {commute_disp}\n{best_website}"
             },
             map_style="mapbox://styles/mapbox/light-v10",
         )
@@ -265,18 +324,21 @@ with tab_table:
             "toi_description",
             "nearest_station",
             "distance_km",
+            "commute_min",
             "address",
             "best_website",
             "registered",
         ]
         + llm_cols
     ].copy()
+    display["commute_min"] = display["commute_min"].round(0).astype("Int64")
     base_cols = [
         "Yritys",
         "Toimiala",
         "TOI-kuvaus",
         "Asema",
         "Etäisyys (km)",
+        "Työmatka (min)",
         "Osoite",
         "Verkkosivut",
         "Perustettu",
@@ -447,7 +509,7 @@ with tab_leads:
     }[lead_axis]
 
     n_leads = st.slider("Näytä top-N", 5, 30, 10)
-    top = scored.sort_values([axis_col, "distance_km"], ascending=[False, True]).head(
+    top = scored.sort_values([axis_col, "commute_min"], ascending=[False, True]).head(
         n_leads
     )
 
@@ -457,6 +519,7 @@ with tab_leads:
             "toi_description",
             "nearest_station",
             "distance_km",
+            "commute_min",
             "best_website",
             "registered",
             axis_col,
@@ -467,11 +530,13 @@ with tab_leads:
             if c in top.columns
         ]
     ].copy()
+    lead_display["commute_min"] = lead_display["commute_min"].round(0).astype("Int64")
     base_lead_cols = [
         "Yritys",
         "Toimiala (tarkennettu)",
         "Asema",
         "Etäisyys (km)",
+        "Työmatka (min)",
         "Verkkosivut",
         "Perustettu",
         "Pisteet",

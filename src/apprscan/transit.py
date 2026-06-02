@@ -52,6 +52,7 @@ STATION_COORDS: Dict[str, Tuple[float, float]] = {
     "Helsinki": (60.1718, 24.9414),
     "Pasila": (60.1987, 24.9331),
     "Tikkurila": (60.2925, 25.0439),
+    "Savio": (60.3822, 25.1021),
     "Kerava": (60.4036, 25.1040),
     "Järvenpää": (60.4733, 25.0903),
     "Hyvinkää": (60.6310, 24.8590),
@@ -67,7 +68,7 @@ STATION_COORDS: Dict[str, Tuple[float, float]] = {
 # Helsinki–Kerava section is slow despite high track limits, while the Kerava–
 # Lahti direct line (oikorata) is genuinely fast.
 RAIL_LINES: Tuple[Line, ...] = (
-    Line("Päärata (Helsinki–Kerava)", 72.0, ("Helsinki", "Pasila", "Tikkurila", "Kerava")),
+    Line("Päärata (Helsinki–Kerava)", 72.0, ("Helsinki", "Pasila", "Tikkurila", "Savio", "Kerava")),
     Line("Päärata (Kerava–Riihimäki)", 90.0, ("Kerava", "Järvenpää", "Hyvinkää", "Riihimäki")),
     Line("Oikorata (Kerava–Lahti)", 120.0, ("Kerava", "Haarajoki", "Mäntsälä", "Henna", "Lahti")),
     Line("Lahti–Riihimäki", 95.0, ("Lahti", "Riihimäki")),

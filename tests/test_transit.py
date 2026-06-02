@@ -45,6 +45,21 @@ def test_lahti_closer_than_helsinki_from_mantsala():
     assert rail["Lahti"] < rail["Helsinki"]
 
 
+def test_dashboard_stations_are_known_and_reachable():
+    # The stations present in out/companies.csv must all resolve in the model,
+    # otherwise dashboard commute times would silently be blank.
+    rail = transit.rail_minutes_from("Mäntsälä")
+    for station in ("Kerava", "Lahti", "Pasila", "Savio"):
+        assert station in transit.STATION_COORDS
+        assert rail[station] < 45.0
+
+
+def test_savio_just_past_kerava():
+    rail = transit.rail_minutes_from("Mäntsälä")
+    # Savio sits one stop south of Kerava, so slightly farther by train.
+    assert rail["Kerava"] < rail["Savio"] < rail["Kerava"] + 6.0
+
+
 def test_unknown_origin_raises():
     with pytest.raises(KeyError):
         transit.rail_minutes_from("Atlantis")
