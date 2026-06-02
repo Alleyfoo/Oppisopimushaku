@@ -81,6 +81,13 @@ def test_commute_adds_rail_and_access():
     assert math.isclose(total, rail["Lahti"] + transit.access_minutes(1.5, "walk"))
 
 
+def test_commute_overhead_is_added():
+    rail = transit.rail_minutes_from("Mäntsälä")
+    base = transit.commute_minutes("Lahti", 1.0, mode="bus", rail_minutes=rail)
+    with_oh = transit.commute_minutes("Lahti", 1.0, mode="bus", rail_minutes=rail, overhead_min=12)
+    assert math.isclose(with_oh - base, 12.0)
+
+
 def test_commute_unknown_station_returns_none():
     assert transit.commute_minutes("Nowhere", 1.0) is None
 

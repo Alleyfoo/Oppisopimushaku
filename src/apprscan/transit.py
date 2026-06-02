@@ -136,11 +136,14 @@ def commute_minutes(
     origin: str = DEFAULT_ORIGIN,
     mode: str = "walk",
     rail_minutes: Optional[Dict[str, float]] = None,
+    overhead_min: float = 0.0,
 ) -> Optional[float]:
-    """Door-to-door estimate: rail time to the nearest station + last-mile.
+    """Door-to-door estimate: rail time + last-mile + a fixed overhead.
 
-    Returns ``None`` when the station is unknown to the network or the inputs
-    are missing, so callers can leave the value blank rather than guess.
+    ``overhead_min`` accounts for what in-vehicle time ignores — average wait for
+    the (infrequent) train and getting to/from the platforms — so the estimate
+    isn't faster than the real journey. Returns ``None`` when the station is
+    unknown to the network or the inputs are missing.
     """
     if not nearest_station or nearest_station not in STATION_COORDS:
         return None
@@ -150,7 +153,7 @@ def commute_minutes(
     leg = rail.get(nearest_station)
     if leg is None:
         return None
-    return leg + access_minutes(distance_km, mode)
+    return leg + access_minutes(distance_km, mode) + float(overhead_min)
 
 
 @dataclass(frozen=True)

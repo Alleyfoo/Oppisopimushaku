@@ -148,6 +148,14 @@ INDUSTRY_COLORS = {
 def load_data() -> pd.DataFrame:
     df = pd.read_csv(DATA_PATH, encoding="utf-8-sig")
     df["distance_km"] = df["distance_km"].round(2)
+    # Effective distance shown/used everywhere: walking road distance when
+    # available (more honest), falling back to straight-line.
+    if "road_distance_km" in df.columns:
+        df["dist_km"] = (
+            pd.to_numeric(df["road_distance_km"], errors="coerce").round(2).fillna(df["distance_km"])
+        )
+    else:
+        df["dist_km"] = df["distance_km"]
     df["registered"] = pd.to_numeric(
         df["registered"].astype(str).str[:4], errors="coerce"
     )
@@ -193,7 +201,7 @@ with st.sidebar:
         value=4.0,
         step=0.5,
     )
-    st.caption("⚠️ Etäisyys on arvio kadun sijainnin perusteella (ei katuosoitteen tarkkuutta).")
+    st.caption("⚠️ Etäisyys on kävelymatka kadulta asemalle (arvio; ei katuosoitteen tarkkuutta).")
 
     # Train commute from a home station
     st.subheader("🚆 Työmatka junalla")
@@ -210,6 +218,15 @@ with st.sidebar:
         index=_access_keys.index("bus"),
         format_func=lambda k: ACCESS_MODE_LABELS[k],
         help="Oletus: bussi/liityntä — kävely on epärealistinen useamman kilometrin matkalla.",
+    )
+    overhead_min = st.slider(
+        "Odotus + liityntä (min)",
+        min_value=0,
+        max_value=30,
+        value=10,
+        step=1,
+        help="Junan keskimääräinen odotusaika + matka laiturille. Lisätään työmatka-aikaan, "
+        "jotta arvio ei ole nopeampi kuin todellinen matka.",
     )
     commute_limit_on = st.toggle("Rajaa työmatkan keston mukaan", value=False)
     max_commute = st.slider(
@@ -260,26 +277,22 @@ if selected_keys:
 else:
     df = df.iloc[:0]  # empty if nothing selected
 
-df = df[df["distance_km"] <= max_dist]
+df = df[df["dist_km"] <= max_dist]
 df = df[df["industry"].isin(selected_industries)]
 df = df[df["registered"].between(reg_range[0], reg_range[1], inclusive="both")]
 
 if only_with_website:
     df = df[df["best_website"].notna()]
 
-# Train commute from the chosen origin: rail time to the company's station plus
-# the last-mile leg. The last mile uses the precomputed walking *road* distance
-# (road_distance_km) when available, falling back to straight-line distance.
+# Train commute from the chosen origin: rail time + last-mile (walking road
+# distance, dist_km) + a fixed wait/access overhead so the estimate isn't faster
+# than the real journey.
 _rail = transit.rail_minutes_from(origin_station)
-if "road_distance_km" in df.columns:
-    df["last_mile_km"] = pd.to_numeric(df["road_distance_km"], errors="coerce").fillna(
-        df["distance_km"]
-    )
-else:
-    df["last_mile_km"] = df["distance_km"]
 df["commute_min"] = [
-    transit.commute_minutes(station, dist, mode=access_mode, rail_minutes=_rail)
-    for station, dist in zip(df["nearest_station"], df["last_mile_km"])
+    transit.commute_minutes(
+        station, dist, mode=access_mode, rail_minutes=_rail, overhead_min=overhead_min
+    )
+    for station, dist in zip(df["nearest_station"], df["dist_km"])
 ]
 if commute_limit_on:
     df = df[df["commute_min"].notna() & (df["commute_min"] <= max_commute)]
@@ -341,7 +354,7 @@ with tab_map:
                 ["nearest_station", axis_col], ascending=[True, False], na_position="last"
             )
         elif sort_choice == "Lähin asemaa":
-            valid_coords = valid_coords.sort_values("distance_km", na_position="last")
+            valid_coords = valid_coords.sort_values("dist_km", na_position="last")
         else:
             valid_coords = valid_coords.sort_values(
                 [axis_col, "commute_min"], ascending=[False, True], na_position="last"
@@ -549,13 +562,11 @@ with tab_table:
         # Always add commute_min (df_raw lacks it), even for an empty result set,
         # so the column selection below never KeyErrors. Last mile uses road
         # distance when available.
-        if "road_distance_km" in source.columns:
-            _lm = pd.to_numeric(source["road_distance_km"], errors="coerce").fillna(source["distance_km"])
-        else:
-            _lm = source["distance_km"]
         source["commute_min"] = [
-            transit.commute_minutes(s, d, mode=access_mode, rail_minutes=_rail)
-            for s, d in zip(source["nearest_station"], _lm)
+            transit.commute_minutes(
+                s, d, mode=access_mode, rail_minutes=_rail, overhead_min=overhead_min
+            )
+            for s, d in zip(source["nearest_station"], source["dist_km"])
         ]
         if source.empty:
             st.warning("Ei hakutuloksia.")
@@ -578,7 +589,7 @@ with tab_table:
             "industry",
             "toi_description",
             "nearest_station",
-            "distance_km",
+            "dist_km",
             "commute_min",
             "address",
             "best_website",
@@ -658,7 +669,7 @@ with tab_leads:
             "name",
             "toi_description",
             "nearest_station",
-            "distance_km",
+            "dist_km",
             "commute_min",
             "best_website",
             "registered",
