@@ -33,6 +33,53 @@ ACCESS_MODE_LABELS = {
     "bus": "🚌 Bussi / liityntä",
 }
 
+# ---- Lead scoring -------------------------------------------------------
+# Score 0-8 per service axis: TOI industry fit + company age (old = likely
+# modernisation need) + has a website (digitally reachable).
+_WEBSHOP = {
+    "4754": 6, "4763": 6, "4764": 6, "4761": 6, "4762": 6, "4752": 6, "4741": 6,
+    "4753": 5, "4759": 5, "4771": 5, "4772": 5, "4775": 5, "4776": 5, "4774": 5,
+    "4779": 5, "4781": 5, "4782": 5, "4789": 5, "4791": 5,
+    "474": 5, "475": 5, "476": 5, "477": 5, "478": 5, "479": 5,
+    "47": 4, "472": 3, "471": 3, "473": 2, "46": 3, "45": 2,
+    "10": 2, "11": 2, "13": 2, "14": 2, "20": 2, "22": 2, "23": 2, "24": 2,
+    "25": 2, "26": 2, "27": 2, "28": 2, "29": 2, "31": 2, "32": 2,
+    "33": 1, "49": 1, "52": 1,
+}
+_PIM = {
+    "4684": 5, "4641": 5, "4642": 5, "4664": 5, "4663": 5, "4665": 4, "4649": 4,
+    "4646": 4, "464": 3, "463": 3, "46": 2, "47": 2,
+    "28": 3, "29": 3, "25": 3, "26": 3, "27": 3, "20": 2, "22": 2,
+}
+_DATA = {
+    "52": 4, "49": 4, "64": 3, "65": 3, "33": 3, "71": 3, "86": 3,
+    "28": 2, "25": 2, "26": 2, "46": 2, "85": 1, "35": 2,
+}
+
+LEAD_AXES = {"Verkkokauppa": "s_webshop", "PIM": "s_pim", "Data": "s_data"}
+LEAD_SCORE_MAX = 8
+
+
+def _pscore(toi, smap):
+    code = str(toi).split(".")[0].strip() if pd.notna(toi) else ""
+    return max((v for k, v in smap.items() if code.startswith(k)), default=0)
+
+
+def add_lead_scores(frame: pd.DataFrame) -> pd.DataFrame:
+    """Add lead scores (s_webshop/s_pim/s_data, 0-8) for sales prioritisation."""
+    out = frame.copy()
+    out["s_webshop"] = out["toi_code"].apply(lambda t: _pscore(t, _WEBSHOP))
+    out["s_pim"] = out["toi_code"].apply(lambda t: _pscore(t, _PIM))
+    out["s_data"] = out["toi_code"].apply(lambda t: _pscore(t, _DATA))
+    legacy = (
+        pd.to_datetime(out["registered"], errors="coerce").dt.year.fillna(2020) <= 2010
+    ).astype(int)
+    web = out["best_website"] if "best_website" in out.columns else out.get("website")
+    has_web = web.notna().astype(int) if web is not None else 0
+    for col in ("s_webshop", "s_pim", "s_data"):
+        out[col] = out[col] + legacy + has_web
+    return out
+
 # ---------------------------------------------------------------------------
 # Config
 # ---------------------------------------------------------------------------
@@ -229,6 +276,9 @@ df["commute_min"] = [
 if commute_limit_on:
     df = df[df["commute_min"].notna() & (df["commute_min"] <= max_commute)]
 
+# Lead scores (s_webshop/s_pim/s_data) for the map and the Liidit tab.
+df = add_lead_scores(df)
+
 # ---------------------------------------------------------------------------
 # Main content
 # ---------------------------------------------------------------------------
@@ -264,24 +314,30 @@ with tab_map:
     if valid_coords.empty:
         st.info("Ei koordinaatteja saatavilla valituille yrityksille.")
     else:
-        # Sorting + paging so the map stays readable instead of dumping all
-        # points at once. With the station filter this gives "top 100 of Kerava,
-        # next 100, ...".
-        c1, c2 = st.columns([1, 1])
-        sort_choice = c1.selectbox(
-            "Järjestys",
-            ["Lähin asemaa", "Nopein työmatka", "Uusin yritys"],
+        # The map is filled from lead scoring: points are coloured and sized by
+        # their lead score for the chosen axis, browsable in pages and sortable
+        # by city (station). With the station filter this gives e.g. "top 100
+        # leads of Kerava, next 100, ...".
+        c1, c2, c3 = st.columns(3)
+        axis_label = c1.selectbox("Liidi-akseli", list(LEAD_AXES.keys()))
+        axis_col = LEAD_AXES[axis_label]
+        sort_choice = c2.selectbox(
+            "Järjestys", ["Liidipisteet", "Kaupunki (asema)", "Lähin asemaa"]
         )
-        page_size_label = c2.selectbox(
+        page_size_label = c3.selectbox(
             "Näytä kerralla", ["100", "250", "500", "1000", "Kaikki"], index=0
         )
 
-        if sort_choice == "Nopein työmatka":
-            valid_coords = valid_coords.sort_values("commute_min", na_position="last")
-        elif sort_choice == "Uusin yritys":
-            valid_coords = valid_coords.sort_values("registered", ascending=False, na_position="last")
-        else:
+        if sort_choice == "Kaupunki (asema)":
+            valid_coords = valid_coords.sort_values(
+                ["nearest_station", axis_col], ascending=[True, False], na_position="last"
+            )
+        elif sort_choice == "Lähin asemaa":
             valid_coords = valid_coords.sort_values("distance_km", na_position="last")
+        else:
+            valid_coords = valid_coords.sort_values(
+                [axis_col, "commute_min"], ascending=[False, True], na_position="last"
+            )
 
         total = len(valid_coords)
         page_size = total if page_size_label == "Kaikki" else int(page_size_label)
@@ -292,19 +348,33 @@ with tab_map:
         lo = (int(page) - 1) * page_size
         hi = min(lo + page_size, total)
         page_df = valid_coords.iloc[lo:hi].copy()
-        st.caption(f"Näytetään {lo + 1}–{hi} / {total} yritystä")
+        st.caption(
+            f"Näytetään {lo + 1}–{hi} / {total} yritystä · väri & koko = liidipisteet ({axis_label})"
+        )
 
         page_df["commute_disp"] = page_df["commute_min"].map(
             lambda v: f"{v:.0f} min" if pd.notna(v) else "–"
         )
+        page_df["lead_score"] = page_df[axis_col]
+
+        def _lead_color(s):
+            t = max(0.0, min(1.0, (float(s) if pd.notna(s) else 0) / LEAD_SCORE_MAX))
+            return [int(70 + 170 * t), int(170 - 110 * t), 70, 200]
+
+        page_df["color"] = page_df["lead_score"].map(_lead_color)
+        page_df["radius"] = page_df["lead_score"].map(
+            lambda s: 70 + (float(s) if pd.notna(s) else 0) * 28
+        )
+
         scatter = pdk.Layer(
             "ScatterplotLayer",
             data=page_df[
-                ["lat", "lon", "name", "industry", "distance_km", "commute_disp", "best_website", "color"]
+                ["lat", "lon", "name", "nearest_station", "lead_score", "industry",
+                 "commute_disp", "best_website", "color", "radius"]
             ].copy(),
             get_position=["lon", "lat"],
-            get_color="color",
-            get_radius=90,
+            get_fill_color="color",
+            get_radius="radius",
             pickable=True,
             opacity=0.8,
         )
@@ -313,7 +383,8 @@ with tab_map:
         station_data = [
             {
                 "lat": v["lat"], "lon": v["lon"], "name": f"🚉 {v['label']}",
-                "industry": "Asema", "distance_km": "", "commute_disp": "", "best_website": "",
+                "nearest_station": k, "lead_score": "", "industry": "Asema",
+                "commute_disp": "", "best_website": "",
             }
             for k, v in STATION_INFO.items()
             if k in selected_keys
@@ -322,13 +393,11 @@ with tab_map:
             "ScatterplotLayer",
             data=station_data,
             get_position=["lon", "lat"],
-            get_color=[255, 30, 30, 200],
-            get_radius=200,
+            get_fill_color=[255, 30, 30, 220],
+            get_radius=220,
             pickable=True,
         )
-        # Auto-fit the view to the points actually shown, so paging or a
-        # single-station filter frames the right area instead of centring on
-        # empty space between distant clusters.
+        # Auto-fit the view to the points actually shown.
         try:
             view = pdk.data_utils.compute_view(
                 page_df[["lon", "lat"]].astype(float).values.tolist()
@@ -345,12 +414,14 @@ with tab_map:
             layers=[scatter, station_layer],
             initial_view_state=view,
             tooltip={
-                "text": "{name}\nToimiala: {industry}\nEtäisyys: {distance_km} km\nTyömatka: {commute_disp}\n{best_website}"
+                "text": "{name}\nKaupunki: {nearest_station}\nLiidipisteet: {lead_score}\nToimiala: {industry}\nTyömatka: {commute_disp}\n{best_website}"
             },
             map_style=CARTO_BASEMAP,
         )
         st.pydeck_chart(chart)
-        st.caption("🔴 Asemat · muut pisteet = yritykset (väri toimialan mukaan)")
+        st.caption(
+            "🔴 Asemat · pisteet = yritykset · vihreä→punainen = matalat→korkeat liidipisteet"
+        )
 
 # ---- Train reach (isochrone) -------------------------------------------
 with tab_reach:
@@ -513,104 +584,7 @@ with tab_table:
         mime="text/csv",
     )
 
-# ---- Leads -------------------------------------------------------------
-# Lead scoring — runs on the already-filtered df
-# Specialty retail (games, sports, hobbies, books, electronics, fashion, optics) → highest
-# General retail (grocery, hypermarket, food specialists) → lower; petrol/kiosk → lowest
-_WEBSHOP = {
-    "4754": 6,
-    "4763": 6,
-    "4764": 6,
-    "4761": 6,
-    "4762": 6,
-    "4752": 6,
-    "4741": 6,  # ICT,games/toys,sports,books,music,hardware,optics
-    "4753": 5,
-    "4759": 5,
-    "4771": 5,
-    "4772": 5,
-    "4775": 5,
-    "4776": 5,
-    "4774": 5,  # carpets,other home,clothing,footwear,cosmetics,flowers/pets,eyewear
-    "4779": 5,
-    "4781": 5,
-    "4782": 5,
-    "4789": 5,
-    "4791": 5,  # 2nd hand, market stalls, specialty
-    "474": 5,
-    "475": 5,
-    "476": 5,
-    "477": 5,
-    "478": 5,
-    "479": 5,  # other specialty retail subcategories
-    "47": 4,  # general catch-all retail
-    "472": 3,
-    "471": 3,  # food/grocery specialist and hypermarket
-    "473": 2,  # petrol stations
-    "46": 3,
-    "45": 2,
-    "10": 2,
-    "11": 2,
-    "13": 2,
-    "14": 2,
-    "20": 2,
-    "22": 2,
-    "23": 2,
-    "24": 2,
-    "25": 2,
-    "26": 2,
-    "27": 2,
-    "28": 2,
-    "29": 2,
-    "31": 2,
-    "32": 2,
-    "33": 1,
-    "49": 1,
-    "52": 1,
-}
-_PIM = {
-    "4684": 5,
-    "4641": 5,
-    "4642": 5,
-    "4664": 5,
-    "4663": 5,
-    "4665": 4,
-    "4649": 4,
-    "4646": 4,
-    "464": 3,
-    "463": 3,
-    "46": 2,
-    "47": 2,
-    "28": 3,
-    "29": 3,
-    "25": 3,
-    "26": 3,
-    "27": 3,
-    "20": 2,
-    "22": 2,
-}
-_DATA = {
-    "52": 4,
-    "49": 4,
-    "64": 3,
-    "65": 3,
-    "33": 3,
-    "71": 3,
-    "86": 3,
-    "28": 2,
-    "25": 2,
-    "26": 2,
-    "46": 2,
-    "85": 1,
-    "35": 2,
-}
-
-
-def _pscore(toi, smap):
-    code = str(toi).split(".")[0].strip() if pd.notna(toi) else ""
-    return max((v for k, v in smap.items() if code.startswith(k)), default=0)
-
-
+# ---- Leads tab (scoring helpers are defined near the top of the file) ----
 with tab_leads:
     st.subheader("🎯 Liidipisteytys — keiden kannattaa ensin soittaa?")
     st.caption(
@@ -619,17 +593,7 @@ with tab_leads:
         "Valitse kategoria joka kiinnostaa sinua eniten."
     )
 
-    scored = df.copy()
-    scored["s_webshop"] = scored["toi_code"].apply(lambda t: _pscore(t, _WEBSHOP))
-    scored["s_pim"] = scored["toi_code"].apply(lambda t: _pscore(t, _PIM))
-    scored["s_data"] = scored["toi_code"].apply(lambda t: _pscore(t, _DATA))
-    legacy = (
-        pd.to_datetime(scored["registered"], errors="coerce").dt.year.fillna(2020)
-        <= 2010
-    ).astype(int)
-    has_web = scored["best_website"].notna().astype(int)
-    for col in ["s_webshop", "s_pim", "s_data"]:
-        scored[col] += legacy + has_web
+    scored = df.copy()  # lead scores (s_webshop/s_pim/s_data) already computed above
 
     lead_axis = st.radio(
         "Palvelutyyppi",
