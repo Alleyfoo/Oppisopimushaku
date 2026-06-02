@@ -11,7 +11,23 @@ A ready-to-use Streamlit dashboard is included (`dashboard.py`). Anyone can:
 - Choose a city / railway station
 - Set how far they are willing to travel (km)
 - Filter by industry
+- See the **train commute time** to each employer from a chosen home station
+  (default Mäntsälä) — train time + last-mile walk/bike/bus — and cap results
+  by minutes
+- Explore **how far you can get by train** within a time budget (isochrone)
 - Browse companies on an interactive map and download results as CSV
+
+![Companies near the selected stations](docs/img/dashboard-map.png)
+
+The **Junasaavutettavuus** (train reach) tab shows the area reachable from your
+home station within a time budget: green disks are the reachable station areas
+and green dots are employers inside the budget.
+
+![Train reach isochrone from Mäntsälä](docs/img/dashboard-reach.png)
+
+The commute estimate is a self-contained, offline model (`src/apprscan/transit.py`):
+a small calibrated rail network routed with Dijkstra — no API key or timetable
+download, so it runs as-is on Streamlit Cloud.
 
 ### Run locally
 ```

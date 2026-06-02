@@ -22,6 +22,10 @@ if _SRC.is_dir() and str(_SRC) not in sys.path:
 
 from apprscan import transit
 
+# Carto positron basemap: renders without a Mapbox token, so the map works on
+# Streamlit Cloud and locally without any secret configured.
+CARTO_BASEMAP = "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json"
+
 # Finnish labels for the last-mile access modes exposed by the commute model.
 ACCESS_MODE_LABELS = {
     "walk": "🚶 Kävely",
@@ -243,8 +247,8 @@ col5.metric(
 st.divider()
 
 # ---- Map ----------------------------------------------------------------
-tab_map, tab_table, tab_stats, tab_leads = st.tabs(
-    ["🗺️ Kartta", "📋 Yritykset", "📊 Tilastot", "🎯 Liidit"]
+tab_map, tab_reach, tab_table, tab_stats, tab_leads = st.tabs(
+    ["🗺️ Kartta", "🚆 Junasaavutettavuus", "📋 Yritykset", "📊 Tilastot", "🎯 Liidit"]
 )
 
 with tab_map:
@@ -304,10 +308,101 @@ with tab_map:
             tooltip={
                 "text": "{name}\nToimiala: {industry}\nEtäisyys: {distance_km} km\nTyömatka: {commute_disp}\n{best_website}"
             },
-            map_style="mapbox://styles/mapbox/light-v10",
+            map_style=CARTO_BASEMAP,
         )
         st.pydeck_chart(chart)
         st.caption("🔴 Asemat  · muut pisteet = yritykset (väri toimialan mukaan)")
+
+# ---- Train reach (isochrone) -------------------------------------------
+with tab_reach:
+    st.subheader(f"🚆 Kuinka kauas pääset asemalta {origin_station}")
+    st.caption(
+        f"Aikabudjetin sisällä juna­matkalla saavutettavat asemat ({ACCESS_MODE_LABELS[access_mode]} "
+        "viime kilometrillä). Varjostettu alue on karkea arvio saavutettavuudesta — "
+        "offline-malli ilman aikatauluja."
+    )
+    reach_budget = st.slider(
+        "Aikabudjetti (min)", min_value=15, max_value=120, value=60, step=5, key="reach_budget"
+    )
+    reach = transit.reachable_stations(
+        float(reach_budget), origin=origin_station, mode=access_mode
+    )
+    if not reach:
+        st.info("Ei saavutettavia asemia tällä budjetilla.")
+    else:
+        o_lat, o_lon = transit.STATION_COORDS[origin_station]
+        max_rail = max((r.rail_minutes for r in reach), default=1.0) or 1.0
+        disk_rows = []
+        for r in reach:
+            t = min(1.0, r.rail_minutes / max_rail)
+            disk_rows.append(
+                {
+                    "name": r.name,
+                    "lat": r.lat,
+                    "lon": r.lon,
+                    "rail_minutes": round(r.rail_minutes, 1),
+                    "reach_km": round(r.reach_km, 2),
+                    "radius_m": r.reach_km * 1000.0,
+                    "color": [int(255 * t), int(180 * (1 - t)) + 40, 60, 70],
+                }
+            )
+        disk_df = pd.DataFrame(disk_rows)
+
+        # Companies shaded by whether they fall inside the budget.
+        comp = df.dropna(subset=["lat", "lon"]).copy()
+        comp["in_reach"] = comp["commute_min"].notna() & (comp["commute_min"] <= reach_budget)
+        comp["pt_color"] = comp["in_reach"].map(
+            lambda ok: [0, 170, 90, 170] if ok else [150, 150, 150, 70]
+        )
+
+        disk_layer = pdk.Layer(
+            "ScatterplotLayer",
+            data=disk_df,
+            get_position=["lon", "lat"],
+            get_radius="radius_m",
+            get_fill_color="color",
+            stroked=True,
+            get_line_color=[80, 80, 80, 120],
+            line_width_min_pixels=1,
+            pickable=True,
+        )
+        company_layer = pdk.Layer(
+            "ScatterplotLayer",
+            data=comp[["lat", "lon", "name", "pt_color"]],
+            get_position=["lon", "lat"],
+            get_fill_color="pt_color",
+            get_radius=70,
+            pickable=True,
+        )
+        origin_layer = pdk.Layer(
+            "ScatterplotLayer",
+            data=pd.DataFrame([{"name": origin_station, "lat": o_lat, "lon": o_lon}]),
+            get_position=["lon", "lat"],
+            get_fill_color=[0, 90, 255, 230],
+            get_radius=600,
+            pickable=True,
+        )
+        reach_view = pdk.ViewState(latitude=o_lat, longitude=o_lon, zoom=8, pitch=0)
+        st.pydeck_chart(
+            pdk.Deck(
+                layers=[disk_layer, company_layer, origin_layer],
+                initial_view_state=reach_view,
+                tooltip={"text": "{name}"},
+                map_style=CARTO_BASEMAP,
+            )
+        )
+        in_reach_n = int(comp["in_reach"].sum())
+        st.caption(
+            f"🔵 Lähtöasema {origin_station} · 🟢 {in_reach_n} yritystä budjetin sisällä "
+            f"({reach_budget} min) · {len(reach)} asemaa saavutettavissa junalla."
+        )
+        st.dataframe(
+            disk_df[["name", "rail_minutes", "reach_km"]].rename(
+                columns={"name": "Asema", "rail_minutes": "Junamatka (min)", "reach_km": "Viime km"}
+            ),
+            width="stretch",
+            hide_index=True,
+        )
 
 # ---- Table --------------------------------------------------------------
 with tab_table:
