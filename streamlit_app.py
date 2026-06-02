@@ -538,13 +538,15 @@ with tab_table:
             "address"
         ].astype(str).str.contains(search, case=False, na=False)
         source = base[mask].copy()
+        # Always add commute_min (df_raw lacks it), even for an empty result set,
+        # so the column selection below never KeyErrors.
+        source["commute_min"] = [
+            transit.commute_minutes(s, d, mode=access_mode, rail_minutes=_rail)
+            for s, d in zip(source["nearest_station"], source["distance_km"])
+        ]
         if source.empty:
             st.warning("Ei hakutuloksia.")
         else:
-            source["commute_min"] = [
-                transit.commute_minutes(s, d, mode=access_mode, rail_minutes=_rail)
-                for s, d in zip(source["nearest_station"], source["distance_km"])
-            ]
             outside = int((~source["business_id"].isin(df["business_id"])).sum())
             if outside:
                 st.info(
