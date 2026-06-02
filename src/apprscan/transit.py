@@ -50,17 +50,17 @@ class Line:
 # Station coordinates (WGS84). Only the stops relevant to a Mäntsälä commute.
 STATION_COORDS: Dict[str, Tuple[float, float]] = {
     "Helsinki": (60.1718, 24.9414),
-    "Pasila": (60.1987, 24.9331),
+    "Pasila": (60.1987, 24.9334),
     "Tikkurila": (60.2925, 25.0439),
-    "Savio": (60.3822, 25.1021),
-    "Kerava": (60.4036, 25.1040),
+    "Savio": (60.3804, 25.0977),
+    "Kerava": (60.4043, 25.1057),
     "Järvenpää": (60.4733, 25.0903),
     "Hyvinkää": (60.6310, 24.8590),
     "Riihimäki": (60.7186, 24.7740),
     "Haarajoki": (60.5363, 25.1198),
     "Mäntsälä": (60.6113, 25.3186),
     "Henna": (60.7284, 25.5270),
-    "Lahti": (60.9759, 25.6610),
+    "Lahti": (60.9764, 25.6574),
     "Kouvola": (60.8664, 26.7045),
 }
 

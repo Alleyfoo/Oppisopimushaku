@@ -44,11 +44,16 @@ st.set_page_config(
 
 DATA_PATH = Path(__file__).parent / "out" / "companies.csv"
 
+# Coordinates come from apprscan.transit (single source of truth — the real
+# railway stations), so map markers, distance, and the rail model all agree.
 STATION_INFO = {
-    "Lahti": {"label": "Lahti", "lat": 60.9836, "lon": 25.6577},
-    "Kerava": {"label": "Kerava", "lat": 60.4050, "lon": 25.1022},
-    "Savio": {"label": "Savio (Kerava Etelä)", "lat": 60.3822, "lon": 25.1021},
-    "Pasila": {"label": "Helsinki Pasila", "lat": 60.1986, "lon": 24.9342},
+    key: {"label": label, "lat": transit.STATION_COORDS[key][0], "lon": transit.STATION_COORDS[key][1]}
+    for key, label in [
+        ("Lahti", "Lahti"),
+        ("Kerava", "Kerava"),
+        ("Savio", "Savio (Kerava Etelä)"),
+        ("Pasila", "Helsinki Pasila"),
+    ]
 }
 
 INDUSTRY_LABELS = {

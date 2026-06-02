@@ -26,11 +26,11 @@ OVERPASS_MIRRORS = [
 
 # Target station areas: (label, lat, lon, municipality_for_PRH)
 STATIONS = [
-    {"label": "Lahti", "lat": 60.9836, "lon": 25.6553, "municipality": "Lahti"},
-    {"label": "Kerava", "lat": 60.4032, "lon": 25.0985, "municipality": "Kerava"},
-    {"label": "Savio", "lat": 60.3839, "lon": 25.0861, "municipality": "Kerava"},
-    {"label": "Pasila", "lat": 60.1994, "lon": 24.9338, "municipality": "Helsinki"},
-    {"label": "Tikkurila", "lat": 60.2929, "lon": 25.0452, "municipality": "Vantaa"},
+    {"label": "Lahti", "lat": 60.9764, "lon": 25.6574, "municipality": "Lahti"},
+    {"label": "Kerava", "lat": 60.4043, "lon": 25.1057, "municipality": "Kerava"},
+    {"label": "Savio", "lat": 60.3804, "lon": 25.0977, "municipality": "Kerava"},
+    {"label": "Pasila", "lat": 60.1987, "lon": 24.9334, "municipality": "Helsinki"},
+    {"label": "Tikkurila", "lat": 60.2925, "lon": 25.0439, "municipality": "Vantaa"},
 ]
 
 

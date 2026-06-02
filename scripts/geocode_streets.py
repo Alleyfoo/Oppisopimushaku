@@ -30,6 +30,7 @@ import pandas as pd
 import requests
 
 from apprscan.distance import haversine_km
+from apprscan.transit import STATION_COORDS as _RAIL_COORDS
 
 _ROOT = Path(__file__).resolve().parents[1]
 CSV_PATH = _ROOT / "out" / "companies.csv"
@@ -39,13 +40,9 @@ PHOTON_URL = "https://photon.komoot.io/api/"
 PHOTON_DELAY = 0.5
 FINLAND_BBOX = (19.0, 32.0, 59.0, 71.0)  # lon_min, lon_max, lat_min, lat_max
 
-# Station coordinates — must match the markers shown in streamlit_app.py.
-STATION_COORDS = {
-    "Lahti": (60.9836, 25.6577),
-    "Kerava": (60.4050, 25.1022),
-    "Savio": (60.3822, 25.1021),
-    "Pasila": (60.1986, 24.9342),
-}
+# Station coordinates: single source of truth is apprscan.transit, so the
+# distance anchor matches the rail model and the dashboard markers exactly.
+STATION_COORDS = {k: _RAIL_COORDS[k] for k in ("Lahti", "Kerava", "Savio", "Pasila")}
 
 # Municipality to use in the geocode query (Savio is a district of Kerava,
 # Pasila of Helsinki).
