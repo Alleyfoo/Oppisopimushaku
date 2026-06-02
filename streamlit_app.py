@@ -526,13 +526,38 @@ with tab_reach:
 
 # ---- Table --------------------------------------------------------------
 with tab_table:
-    # Build a display-friendly frame
+    # Name/address search runs over ALL companies (ignores the sidebar filters)
+    # so a company is always findable; with no search the table reflects the
+    # current filters as usual.
+    search = st.text_input(
+        "🔎 Hae yrityksen nimellä tai osoitteella (hakee kaikista yrityksistä)", ""
+    )
+    if search:
+        base = df_raw.copy()
+        mask = base["name"].astype(str).str.contains(search, case=False, na=False) | base[
+            "address"
+        ].astype(str).str.contains(search, case=False, na=False)
+        source = base[mask].copy()
+        if source.empty:
+            st.warning("Ei hakutuloksia.")
+        else:
+            source["commute_min"] = [
+                transit.commute_minutes(s, d, mode=access_mode, rail_minutes=_rail)
+                for s, d in zip(source["nearest_station"], source["distance_km"])
+            ]
+            outside = int((~source["business_id"].isin(df["business_id"])).sum())
+            if outside:
+                st.info(
+                    f"Haku kattaa kaikki yritykset — {outside}/{len(source)} osumaa on "
+                    "nykyisten suodattimien ulkopuolella."
+                )
+    else:
+        source = df
+
     llm_cols = [
-        c
-        for c in ["llm_description", "llm_has_shop", "llm_is_hiring"]
-        if c in df.columns
+        c for c in ["llm_description", "llm_has_shop", "llm_is_hiring"] if c in source.columns
     ]
-    display = df[
+    display = source[
         [
             "name",
             "industry",
@@ -566,14 +591,6 @@ with tab_table:
     display.columns = base_cols + [rename_map[c] for c in llm_cols]
     display["Toimiala"] = display["Toimiala"].map(lambda x: INDUSTRY_LABELS.get(x, x))
     display["Perustettu"] = display["Perustettu"].astype("Int64")
-
-    # Search box
-    search = st.text_input("🔎 Hae yrityksen nimellä tai osoitteella", "")
-    if search:
-        mask = display["Yritys"].str.contains(search, case=False, na=False) | display[
-            "Osoite"
-        ].str.contains(search, case=False, na=False)
-        display = display[mask]
 
     st.dataframe(
         display.reset_index(drop=True),
