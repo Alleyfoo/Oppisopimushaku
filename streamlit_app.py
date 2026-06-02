@@ -264,33 +264,57 @@ with tab_map:
     if valid_coords.empty:
         st.info("Ei koordinaatteja saatavilla valituille yrityksille.")
     else:
-        valid_coords["commute_disp"] = valid_coords["commute_min"].map(
+        # Sorting + paging so the map stays readable instead of dumping all
+        # points at once. With the station filter this gives "top 100 of Kerava,
+        # next 100, ...".
+        c1, c2 = st.columns([1, 1])
+        sort_choice = c1.selectbox(
+            "Järjestys",
+            ["Lähin asemaa", "Nopein työmatka", "Uusin yritys"],
+        )
+        page_size_label = c2.selectbox(
+            "Näytä kerralla", ["100", "250", "500", "1000", "Kaikki"], index=0
+        )
+
+        if sort_choice == "Nopein työmatka":
+            valid_coords = valid_coords.sort_values("commute_min", na_position="last")
+        elif sort_choice == "Uusin yritys":
+            valid_coords = valid_coords.sort_values("registered", ascending=False, na_position="last")
+        else:
+            valid_coords = valid_coords.sort_values("distance_km", na_position="last")
+
+        total = len(valid_coords)
+        page_size = total if page_size_label == "Kaikki" else int(page_size_label)
+        n_pages = max(1, (total + page_size - 1) // page_size)
+        page = 1
+        if n_pages > 1:
+            page = st.number_input("Sivu", min_value=1, max_value=n_pages, value=1, step=1)
+        lo = (int(page) - 1) * page_size
+        hi = min(lo + page_size, total)
+        page_df = valid_coords.iloc[lo:hi].copy()
+        st.caption(f"Näytetään {lo + 1}–{hi} / {total} yritystä")
+
+        page_df["commute_disp"] = page_df["commute_min"].map(
             lambda v: f"{v:.0f} min" if pd.notna(v) else "–"
         )
-        # Company scatter layer
         scatter = pdk.Layer(
             "ScatterplotLayer",
-            data=valid_coords[
-                [
-                    "lat",
-                    "lon",
-                    "name",
-                    "industry",
-                    "distance_km",
-                    "commute_disp",
-                    "best_website",
-                    "color",
-                ]
+            data=page_df[
+                ["lat", "lon", "name", "industry", "distance_km", "commute_disp", "best_website", "color"]
             ].copy(),
             get_position=["lon", "lat"],
             get_color="color",
-            get_radius=80,
+            get_radius=90,
             pickable=True,
-            opacity=0.75,
+            opacity=0.8,
         )
-        # Station marker layer
+        # Station markers carry the same tooltip keys so hovering them shows the
+        # station name rather than a literal "{name}".
         station_data = [
-            {"lat": v["lat"], "lon": v["lon"], "label": v["label"]}
+            {
+                "lat": v["lat"], "lon": v["lon"], "name": f"🚉 {v['label']}",
+                "industry": "Asema", "distance_km": "", "commute_disp": "", "best_website": "",
+            }
             for k, v in STATION_INFO.items()
             if k in selected_keys
         ]
@@ -302,14 +326,21 @@ with tab_map:
             get_radius=200,
             pickable=True,
         )
-        # Center map on selection
-        center_lat = valid_coords["lat"].mean()
-        center_lon = valid_coords["lon"].mean()
-        zoom = 12 if len(selected_keys) == 1 else 9
-
-        view = pdk.ViewState(
-            latitude=center_lat, longitude=center_lon, zoom=zoom, pitch=0
-        )
+        # Auto-fit the view to the points actually shown, so paging or a
+        # single-station filter frames the right area instead of centring on
+        # empty space between distant clusters.
+        try:
+            view = pdk.data_utils.compute_view(
+                page_df[["lon", "lat"]].astype(float).values.tolist()
+            )
+            view.pitch = 0
+        except Exception:
+            view = pdk.ViewState(
+                latitude=page_df["lat"].astype(float).mean(),
+                longitude=page_df["lon"].astype(float).mean(),
+                zoom=10,
+                pitch=0,
+            )
         chart = pdk.Deck(
             layers=[scatter, station_layer],
             initial_view_state=view,
@@ -319,7 +350,7 @@ with tab_map:
             map_style=CARTO_BASEMAP,
         )
         st.pydeck_chart(chart)
-        st.caption("🔴 Asemat  · muut pisteet = yritykset (väri toimialan mukaan)")
+        st.caption("🔴 Asemat · muut pisteet = yritykset (väri toimialan mukaan)")
 
 # ---- Train reach (isochrone) -------------------------------------------
 with tab_reach:
