@@ -140,7 +140,7 @@ with st.sidebar:
         value=1.5,
         step=0.1,
     )
-    st.caption("⚠️ Etäisyys on arvio postinumeroalueen perusteella.")
+    st.caption("⚠️ Etäisyys on arvio kadun sijainnin perusteella (ei katuosoitteen tarkkuutta).")
 
     # Train commute from a home station
     st.subheader("🚆 Työmatka junalla")

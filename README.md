@@ -70,6 +70,17 @@ python scripts/enrich_google.py --max-distance-km 1.5
 ```
 Output: `out/companies.csv` (~8,050 companies with industry labels and coordinates)
 
+### 3b. Street-level geocoding (recommended)
+The base geocode resolves one point per postcode, which collapses every company
+in an area onto a single coordinate. This step re-geocodes each unique
+`street + postcode` via Photon (station-biased, street-name matched, cached in
+`data/street_cache.sqlite`) and recomputes `distance_km` in place, so distances
+and commute times vary per company. Street-centroid accuracy (PRH addresses have
+no house numbers); each row gets a `geocode_quality` flag.
+```
+python scripts/geocode_streets.py
+```
+
 ### 4. Analysis
 ```
 python scripts/analyze_companies.py
@@ -83,7 +94,7 @@ python -m apprscan scan --station Lahti --max-distance-km 1.0 --limit 50 --out o
 
 ## Key output: `out/companies.csv`
 Columns: `name`, `business_id`, `industry`, `toi_code`, `toi_description`, `nearest_station`,
-`distance_km`, `address`, `website`, `status`, `registered`, `lat`, `lon`
+`distance_km`, `address`, `website`, `status`, `registered`, `lat`, `lon`, `geocode_quality`
 
 Industry groups: `it`, `construction`, `wholesale`, `marketing`, `health`, `manufacturing`,
 `logistics`, `finance`, `retail`, `hospitality`, `education`, `engineering`, `staffing`,
