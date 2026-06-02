@@ -42,14 +42,14 @@ streamlit run streamlit_app.py
 4. Click Deploy — no configuration needed, data is committed in `out/companies.csv`
 
 ## Covered areas
-Lahti, Kerava, Savio, Pasila — ~1.5 km radius from each railway station.
+Lahti, Kerava, Savio, Pasila — ~3 km radius from each railway station.
 
 ## Pipeline
 
 ### 1. Street discovery (one-time, cached)
 Fetches named roads within the station radius from OpenStreetMap via Overpass API.
 ```
-python scripts/discover_streets.py
+python scripts/discover_streets.py --radius-m 3000
 ```
 Output: `data/area_streets.json`
 
@@ -66,7 +66,7 @@ Resolves company postcodes to coordinates via Photon (no API key needed), filter
 distance to station, and writes the enriched dataset. Use `--no-filter-passive` to keep
 housing companies.
 ```
-python scripts/enrich_google.py --max-distance-km 1.5
+python scripts/enrich_google.py --max-distance-km 3 --areas Lahti Kerava Savio Pasila
 ```
 Output: `out/enriched_prh.parquet`
 
@@ -76,7 +76,7 @@ Projects the enriched parquet (raw PRH column names) into the dashboard schema
 ```
 python scripts/build_companies_csv.py
 ```
-Output: `out/companies.csv` (~8,050 companies with industry labels and coordinates)
+Output: `out/companies.csv` (~23,000 companies with industry labels and coordinates)
 
 ### 3b. Street-level geocoding (recommended)
 The base geocode resolves one point per postcode, which collapses every company
