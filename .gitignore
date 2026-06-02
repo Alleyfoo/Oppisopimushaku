@@ -21,6 +21,7 @@ data/geocode_cache.sqlite
 *.swp
 *.swo
 out/
+!out/companies.csv
 data/output/
 repo_export.txt
 domains.csv

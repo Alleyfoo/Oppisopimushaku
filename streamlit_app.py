@@ -282,6 +282,101 @@ def prepare_map(filtered_df: pd.DataFrame, radius: float):
     st.pydeck_chart(deck)
 
 
+def render_train_reach():
+    """Phase 1: train commute reach from Mäntsälä as an isochrone with a slider."""
+    from apprscan import transit
+
+    st.subheader("Train reach from Mäntsälä")
+    st.caption(
+        "Offline estimate: train time to each station (calibrated direct-line model) "
+        "plus a last-mile disk for the chosen access mode. The shaded union is roughly "
+        "how far you can get within the time budget."
+    )
+
+    controls = st.columns([2, 1, 1])
+    budget = controls[0].slider("Time budget (minutes)", min_value=15, max_value=90, value=60, step=5)
+    mode = controls[1].selectbox("Last mile", options=list(transit.ACCESS_SPEEDS_KMH.keys()), index=0)
+    origin = controls[2].selectbox(
+        "Origin", options=sorted(transit.STATION_COORDS.keys()),
+        index=sorted(transit.STATION_COORDS.keys()).index(transit.DEFAULT_ORIGIN),
+    )
+
+    reach = transit.reachable_stations(float(budget), origin=origin, mode=mode)
+    if not reach:
+        st.info("No stations reachable within the budget.")
+        return
+
+    o_lat, o_lon = transit.STATION_COORDS[origin]
+    rows = [
+        {
+            "name": r.name,
+            "lat": r.lat,
+            "lon": r.lon,
+            "rail_minutes": round(r.rail_minutes, 1),
+            "reach_km": round(r.reach_km, 2),
+            "radius_m": r.reach_km * 1000.0,
+        }
+        for r in reach
+    ]
+    disk_df = pd.DataFrame(rows)
+
+    # Colour disks from green (close) to red (near the budget edge) by rail time.
+    max_rail = max((r["rail_minutes"] for r in rows), default=1.0) or 1.0
+
+    def disk_color(row):
+        t = min(1.0, row["rail_minutes"] / max_rail)
+        return [int(255 * t), int(180 * (1 - t)) + 40, 60, 70]
+
+    disk_df["color"] = disk_df.apply(disk_color, axis=1)
+
+    disk_layer = pdk.Layer(
+        "ScatterplotLayer",
+        data=disk_df,
+        get_position=["lon", "lat"],
+        get_radius="radius_m",
+        get_fill_color="color",
+        stroked=True,
+        get_line_color=[80, 80, 80, 120],
+        line_width_min_pixels=1,
+        pickable=True,
+    )
+    station_layer = pdk.Layer(
+        "ScatterplotLayer",
+        data=disk_df,
+        get_position=["lon", "lat"],
+        get_radius=400,
+        get_fill_color=[30, 30, 30, 220],
+        pickable=True,
+    )
+    origin_layer = pdk.Layer(
+        "ScatterplotLayer",
+        data=pd.DataFrame([{"name": origin, "lat": o_lat, "lon": o_lon}]),
+        get_position=["lon", "lat"],
+        get_radius=900,
+        get_fill_color=[0, 90, 255, 230],
+        pickable=True,
+    )
+    tooltip = {
+        "html": "<b>{name}</b><br>Train: {rail_minutes} min<br>Last-mile reach: {reach_km} km",
+        "style": {"color": "white"},
+    }
+    deck = pdk.Deck(
+        layers=[disk_layer, station_layer, origin_layer],
+        initial_view_state={"latitude": o_lat, "longitude": o_lon, "zoom": 8},
+        tooltip=tooltip,
+    )
+    st.pydeck_chart(deck)
+
+    st.caption(f"{len(reach)} stations reachable within {budget} min by train from {origin}.")
+    st.dataframe(
+        disk_df[["name", "rail_minutes", "reach_km"]].rename(
+            columns={"rail_minutes": "train min", "reach_km": "last-mile km"}
+        ),
+        use_container_width=True,
+        hide_index=True,
+    )
+
+
 def render_overview(
     view_df: pd.DataFrame,
     filtered_df: pd.DataFrame,
@@ -468,7 +563,7 @@ def main():
     master_input = st.sidebar.text_input("Master path", value=str(master_path) if master_path else "")
     diff_input = st.sidebar.text_input("Jobs diff path (optional)", value=str(diff_path) if diff_path else "")
     curation_input = st.sidebar.text_input("Curation overlay", value=curation_default)
-    page = st.sidebar.radio("View", ["Overview", "Inspector", "Curate", "Jobs"], key="page")
+    page = st.sidebar.radio("View", ["Overview", "Inspector", "Curate", "Jobs", "Train reach"], key="page")
     last_page = st.session_state.get("last_page")
     if page != "Jobs" and last_page != "Jobs":
         if st.session_state.get("jobs_context"):
@@ -477,6 +572,12 @@ def main():
         if last_page and page != last_page:
             st.session_state["focus_bid"] = None
     st.session_state["last_page"] = page
+
+    # Train reach is independent of master/curation data — render it before the
+    # data-loading requirements so it works on a fresh deploy with no master.
+    if page == "Train reach":
+        render_train_reach()
+        st.stop()
 
     if not master_input:
         st.warning("Master path missing. Run apprscan run to generate master.xlsx or provide a path.")

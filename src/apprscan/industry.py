@@ -17,7 +17,16 @@ def load_industry_groups(path: str | Path | None) -> Dict[str, List[str]]:
         data = yaml.safe_load(path.read_text(encoding="utf-8"))
         if not isinstance(data, dict):
             return {"other": []}
-        return {k: v or [] for k, v in data.items()}
+        result: Dict[str, List[str]] = {}
+        for k, v in data.items():
+            if isinstance(v, list):
+                result[k] = v
+            elif isinstance(v, dict):
+                # Support {prefixes: [...]} format
+                result[k] = v.get("prefixes") or []
+            else:
+                result[k] = []
+        return result
     except Exception:
         return {"other": []}
 

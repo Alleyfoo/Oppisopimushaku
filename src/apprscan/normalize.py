@@ -8,7 +8,6 @@ from typing import Iterable, List, Mapping, Any
 import pandas as pd
 from unidecode import unidecode
 
-
 ADDR_CANDIDATES = {
     "street": ["addresses.0.street", "street"],
     "postCode": ["addresses.0.postCode", "postCode"],
@@ -24,11 +23,17 @@ def pick_first(row: Mapping[str, Any], candidates: List[str]) -> str:
 
 
 def clean_address(street: str, post_code: str, city: str) -> str:
-    parts = [p.strip() for p in [street or "", post_code or "", city or ""] if p and p.strip()]
+    parts = [
+        p.strip()
+        for p in [street or "", post_code or "", city or ""]
+        if p and p.strip()
+    ]
     return unidecode(", ".join(parts))
 
 
-def normalize_companies(rows: Iterable[dict], *, industry_groups: Mapping[str, list] | None = None) -> pd.DataFrame:
+def normalize_companies(
+    rows: Iterable[dict], *, industry_groups: Mapping[str, list] | None = None
+) -> pd.DataFrame:
     rows_list = list(rows)
     df = pd.json_normalize(rows_list, sep=".")
     if df.empty:
@@ -66,8 +71,10 @@ def normalize_companies(rows: Iterable[dict], *, industry_groups: Mapping[str, l
             type1 = [n for n in candidates if str(n.get("type") or "") == "1"]
             if type1:
                 candidates = type1
+
             def reg_key(n):
                 return str(n.get("registrationDate") or "")
+
             candidates = sorted(candidates, key=reg_key, reverse=True)
             return candidates[0].get("name", "") if candidates else ""
 
@@ -83,7 +90,10 @@ def normalize_companies(rows: Iterable[dict], *, industry_groups: Mapping[str, l
                     if not addr:
                         continue
                     city_val = str(addr.get("city", "")).strip()
-                    if city_val and city_val == str(original.get("_source_city", "")).strip():
+                    if (
+                        city_val
+                        and city_val == str(original.get("_source_city", "")).strip()
+                    ):
                         for key, value in addr.items():
                             row[f"addresses.0.{key}"] = value
                         break
@@ -104,7 +114,11 @@ def normalize_companies(rows: Iterable[dict], *, industry_groups: Mapping[str, l
 
         # Name normalization
         name_val = row.get("name") or ""
-        parsed_name = pick_name_from_names(original.get("names")) if isinstance(original, dict) else ""
+        parsed_name = (
+            pick_name_from_names(original.get("names"))
+            if isinstance(original, dict)
+            else ""
+        )
         if parsed_name:
             name_val = parsed_name
         names_out.append(name_val)
@@ -121,11 +135,12 @@ def normalize_companies(rows: Iterable[dict], *, industry_groups: Mapping[str, l
         industries.append(code)
 
     df["full_address"] = [
-        clean_address(street, post, city) for street, post, city in zip(streets, posts, cities)
+        clean_address(street, post, city)
+        for street, post, city in zip(streets, posts, cities)
     ]
     df["business_id"] = business_ids
     df["name"] = names_out
-    df["industry_raw"] = [rows_list[i].get("main_business_line", "") if isinstance(rows_list[i], dict) else industries[i] for i in range(len(rows_list))]
+    df["industry_raw"] = industries
     from .industry import classify_industry, load_industry_groups
 
     groups = industry_groups or load_industry_groups("config/industry_groups.yaml")
