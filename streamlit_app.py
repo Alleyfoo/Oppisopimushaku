@@ -136,9 +136,9 @@ with st.sidebar:
     max_dist = st.slider(
         "Enintään (km)",
         min_value=0.5,
-        max_value=2.0,
-        value=1.5,
-        step=0.1,
+        max_value=5.0,
+        value=4.0,
+        step=0.5,
     )
     st.caption("⚠️ Etäisyys on arvio kadun sijainnin perusteella (ei katuosoitteen tarkkuutta).")
 
@@ -150,10 +150,13 @@ with st.sidebar:
         index=sorted(transit.STATION_COORDS.keys()).index(transit.DEFAULT_ORIGIN),
         help="Junamatkan lähtöasema. Työmatka = juna lähtöasemalta + viime kilometri asemalta yritykselle.",
     )
+    _access_keys = list(ACCESS_MODE_LABELS.keys())
     access_mode = st.selectbox(
         "Viime kilometri",
-        options=list(ACCESS_MODE_LABELS.keys()),
+        options=_access_keys,
+        index=_access_keys.index("bus"),
         format_func=lambda k: ACCESS_MODE_LABELS[k],
+        help="Oletus: bussi/liityntä — kävely on epärealistinen useamman kilometrin matkalla.",
     )
     commute_limit_on = st.toggle("Rajaa työmatkan keston mukaan", value=False)
     max_commute = st.slider(
