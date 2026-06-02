@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import sys
 import uuid
 from datetime import datetime
 from pathlib import Path
@@ -10,6 +11,12 @@ from pathlib import Path
 import pandas as pd
 import streamlit as st
 import pydeck as pdk
+
+# Make the src-layout `apprscan` package importable on Streamlit Cloud, where
+# only requirements.txt is installed (the package itself is not pip-installed).
+_SRC = Path(__file__).parent / "src"
+if _SRC.is_dir() and str(_SRC) not in sys.path:
+    sys.path.insert(0, str(_SRC))
 
 from apprscan.artifacts import find_latest_diff, find_latest_master, artifact_date
 from apprscan.analytics import io as a_io
