@@ -15,9 +15,16 @@ A ready-to-use Streamlit dashboard is included (`streamlit_app.py`). Anyone can:
   (default Mäntsälä) — train time + last-mile walk/bike/bus — and cap results
   by minutes
 - Explore **how far you can get by train** within a time budget (isochrone)
-- Browse companies on an interactive map and download results as CSV
+- Browse leads on an interactive map and download results as CSV
 
-![Companies near the selected stations](docs/img/dashboard-map.png)
+![Lead-scored map](docs/img/dashboard-map.png)
+
+The **Kartta** (map) tab is filled from lead scoring: pick a service axis
+(Verkkokauppa / PIM / Data) and each company is coloured (green→red) and sized
+by its lead score. Sort by lead score, by city (station), or closest, and page
+through the results (100/250/500/1000/all) — so you can browse e.g. the top
+100 leads of Kerava, then the next 100. The same scoring drives the **Liidit**
+(leads) tab.
 
 The **Junasaavutettavuus** (train reach) tab shows the area reachable from your
 home station within a time budget: green disks are the reachable station areas
