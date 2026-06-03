@@ -29,11 +29,17 @@ FINNISH, ENGLISH = "1", "3"
 
 
 def _finnish_description(descriptions) -> str:
-    """Pick the Finnish business-line description, falling back to any present."""
-    if not isinstance(descriptions, (list, tuple)) or len(descriptions) == 0:
+    """Pick the Finnish business-line description, falling back to any present.
+
+    Accepts a list/tuple or a numpy ndarray (parquet round-trips lists of dicts
+    as ndarray), or None.
+    """
+    try:
+        items = list(descriptions)
+    except TypeError:
         return ""
     by_lang = {}
-    for d in descriptions:
+    for d in items:
         if isinstance(d, dict) and d.get("description"):
             by_lang[str(d.get("languageCode"))] = d["description"]
     for lang in (FINNISH, ENGLISH):

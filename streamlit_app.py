@@ -145,7 +145,9 @@ INDUSTRY_COLORS = {
 # Data loading
 # ---------------------------------------------------------------------------
 @st.cache_data(show_spinner=False)
-def load_data() -> pd.DataFrame:
+def load_data(_mtime: float) -> pd.DataFrame:
+    # _mtime is part of the cache key, so editing out/companies.csv invalidates
+    # the cache and the app reloads the fresh data instead of stale columns.
     df = pd.read_csv(DATA_PATH, encoding="utf-8-sig")
     df["distance_km"] = df["distance_km"].round(2)
     # Effective distance shown/used everywhere: walking road distance when
@@ -176,7 +178,7 @@ with st.sidebar:
     st.caption("Etsi työnantajia asemasi läheltä")
     st.divider()
 
-    df_raw = load_data()
+    df_raw = load_data(DATA_PATH.stat().st_mtime if DATA_PATH.exists() else 0.0)
 
     # Station selector
     st.subheader("📍 Asema / kaupunki")
