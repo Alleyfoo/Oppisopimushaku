@@ -420,11 +420,30 @@ with tab_map:
             lambda s: 50 + (float(s) if pd.notna(s) else 0) * 20
         )
 
+        # What the LLM wrote about the site (+ hiring/shop flags), for the tooltip.
+        def _ai_note(row):
+            sells, desc = row.get("llm_sells"), row.get("llm_description")
+            text = sells if (isinstance(sells, str) and sells.strip()) else desc
+            if not (isinstance(text, str) and text.strip()):
+                return ""
+            flags = []
+            if str(row.get("llm_is_hiring")).lower() in ("true", "1", "yes"):
+                flags.append("📢 rekrytoi")
+            if str(row.get("llm_has_shop")).lower() in ("true", "1", "yes"):
+                flags.append("🛒 verkkokauppa")
+            prefix = (" · ".join(flags) + " · ") if flags else ""
+            return (prefix + text.strip())[:170]
+
+        if "llm_description" in page_df.columns:
+            page_df["ai_note"] = page_df.apply(_ai_note, axis=1)
+        else:
+            page_df["ai_note"] = ""
+
         scatter = pdk.Layer(
             "ScatterplotLayer",
             data=page_df[
                 ["lat", "lon", "name", "nearest_station", "lead_score", "industry",
-                 "commute_disp", "best_website", "color", "radius"]
+                 "commute_disp", "ai_note", "best_website", "color", "radius"]
             ].copy(),
             get_position=["lon", "lat"],
             get_fill_color="color",
@@ -438,7 +457,7 @@ with tab_map:
             {
                 "lat": v["lat"], "lon": v["lon"], "name": f"🚉 {v['label']}",
                 "nearest_station": k, "lead_score": "", "industry": "Asema",
-                "commute_disp": "", "best_website": "",
+                "commute_disp": "", "ai_note": "", "best_website": "",
             }
             for k, v in STATION_INFO.items()
             if k in selected_keys
@@ -468,7 +487,7 @@ with tab_map:
             layers=[scatter, station_layer],
             initial_view_state=view,
             tooltip={
-                "text": "{name}\nKaupunki: {nearest_station}\nLiidipisteet: {lead_score}\nToimiala: {industry}\nTyömatka: {commute_disp}\n{best_website}"
+                "text": "{name}\nKaupunki: {nearest_station}\nLiidipisteet: {lead_score}\nToimiala: {industry}\nTyömatka: {commute_disp}\n{ai_note}\n{best_website}"
             },
             map_style=CARTO_BASEMAP,
         )
