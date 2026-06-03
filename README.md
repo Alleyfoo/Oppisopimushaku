@@ -120,6 +120,14 @@ python scripts/website_health.py
 python scripts/analyze_companies.py
 ```
 
+### 4b. Lead analysis queue
+Builds `out/lead_targets.csv` — the top-N **live-website** leads per category
+(webshop / pim / data), a short high-value list to run the LLM website analysis
+on instead of all ~8k sites.
+```
+python scripts/lead_targets.py --top 100
+```
+
 ### 5. Hiring-signal scan (Ollama)
 Scans company websites for active hiring signals using a local LLM.
 ```
