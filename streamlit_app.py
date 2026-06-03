@@ -257,6 +257,12 @@ with st.sidebar:
         help="Näytä vain yritykset joiden verkkosivu vastaa ja näyttää oikealta "
         "(ei kuollut tai parkkeerattu) — karkea merkki siitä että yritys on aktiivinen.",
     )
+    only_hiring = st.toggle(
+        "Vain rekrytoivat (AI)",
+        value=False,
+        help="Näytä vain yritykset joiden sivulla AI-analyysi havaitsi "
+        "rekrytointisignaalin (vain analysoiduille yrityksille).",
+    )
 
     # Registration year
     min_year, max_year = int(df_raw["registered"].min()), int(
@@ -291,6 +297,8 @@ if only_with_website:
     df = df[df["best_website"].notna()]
 if only_live and "website_status" in df.columns:
     df = df[df["website_status"] == "live"]
+if only_hiring and "llm_is_hiring" in df.columns:
+    df = df[df["llm_is_hiring"].astype(str).str.lower().isin(["true", "1", "yes"])]
 
 # Train commute from the chosen origin: rail time + last-mile (walking road
 # distance, dist_km) + a fixed wait/access overhead so the estimate isn't faster
