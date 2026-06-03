@@ -128,6 +128,15 @@ on instead of all ~8k sites.
 python scripts/lead_targets.py --top 100
 ```
 
+### 4c. Website LLM analysis (Ollama)
+Runs the local LLM over the lead queue, extracting hiring signals, online-sales,
+platform and a Finnish description into `llm_*` columns (shown in the dashboard
+table). `--no-json-mode` is needed for models like qwen3.5 that return empty
+under Ollama's JSON mode.
+```
+python scripts/analyze_websites.py --ids-file out/lead_targets.csv --model qwen3.5:9b --no-json-mode
+```
+
 ### 5. Hiring-signal scan (Ollama)
 Scans company websites for active hiring signals using a local LLM.
 ```

@@ -165,15 +165,18 @@ def _strip_emoji(text: str | None) -> str | None:
     return re.sub(r"[^\u0000-\uFFFF]", "", text).strip()
 
 
-def _call_ollama(page_text: str, model: str) -> dict | None:
+def _call_ollama(page_text: str, model: str, json_mode: bool = True) -> dict | None:
     prompt = PROMPT_TEMPLATE.format(page_text=page_text)
     payload = {
         "model": model,
         "prompt": prompt,
         "stream": False,
-        "format": "json",
         "options": {"temperature": 0.1},
     }
+    # Some models (e.g. qwen3.5) return an empty body under Ollama's JSON mode;
+    # the prompt asks for JSON and we extract it from text anyway, so it's optional.
+    if json_mode:
+        payload["format"] = "json"
     try:
         resp = httpx.post(OLLAMA_URL, json=payload, timeout=OLLAMA_TIMEOUT)
         resp.raise_for_status()
@@ -212,6 +215,19 @@ def main() -> None:
     parser.add_argument(
         "--reanalyze", action="store_true", help="Re-analyse even if already cached"
     )
+    parser.add_argument(
+        "--ids-file",
+        default=None,
+        help="CSV with a business_id column; analyse only those companies "
+        "(e.g. out/lead_targets.csv). Takes precedence over --areas.",
+    )
+    parser.add_argument(
+        "--no-json-mode",
+        action="store_false",
+        dest="json_mode",
+        help="Don't use Ollama's format=json (needed for models like qwen3.5 "
+        "that return empty under it).",
+    )
     args = parser.parse_args()
 
     # Check Ollama reachability
@@ -228,8 +244,14 @@ def main() -> None:
         df["found_website"] = None
     df["best_website"] = df["website"].combine_first(df["found_website"])
 
-    # Filter by area
-    if args.areas != ["all"]:
+    # Select companies: an explicit id list (e.g. the lead queue) takes
+    # precedence over the area filter.
+    if args.ids_file:
+        ids = set(
+            pd.read_csv(args.ids_file, encoding="utf-8-sig")["business_id"].astype(str)
+        )
+        subset = df[df["business_id"].astype(str).isin(ids) & df["best_website"].notna()].copy()
+    elif args.areas != ["all"]:
         mask = df["nearest_station"].isin(args.areas)
         subset = df[mask & df["best_website"].notna()].copy()
     else:
@@ -264,7 +286,7 @@ def main() -> None:
             print("— fetch failed, skip")
             continue
 
-        result = _call_ollama(page_text, args.model)
+        result = _call_ollama(page_text, args.model, json_mode=args.json_mode)
         if result is None:
             print("— LLM failed, skip")
             continue
@@ -292,7 +314,7 @@ def main() -> None:
         )
         hire_flag = " 📢" if result.get("is_hiring") else ""
         platform = result.get("platform") or ""
-        sells = result.get("sells", "")[:60]
+        sells = (result.get("sells") or "")[:60]
         print(f"{shop_flag}{hire_flag} {sells}  [{platform}]")
 
         time.sleep(args.sleep)
