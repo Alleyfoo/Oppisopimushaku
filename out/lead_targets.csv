@@ -1,301 +1,301 @@
 ﻿lead_type,axis_score,name,business_id,toi_code,toi_description,nearest_station,distance_km,best_website,website_status,registered,s_webshop,s_pim,s_data
-webshop,5,HeMiKo Oy,3005960-1,47811.0,,Kerava,0.803,https://www.hemiko.com/???-?????-world/,live,2019-07-01,5,3,1
-webshop,5,Makia Clothing Oy,2039316-3,47712.0,,Pasila,0.939,www.makia.com,live,2006-05-31,5,3,1
-webshop,5,HOK-Elanto Liiketoiminta Oy,1837957-3,47110.0,,Pasila,0.15,www.hok-elanto.fi,live,2003-12-31,5,3,1
-webshop,5,Qi Nordic Oy,3316875-8,47120.0,,Pasila,0.441,https://qinordic.fi/,live,2022-10-10,5,3,1
-webshop,5,Motolla Oy,3316603-1,47811.0,,Lahti,1.68,www.motolla.fi,live,2022-10-18,5,3,1
-webshop,5,Kanavan Lasimestari Oy,2980806-2,47521.0,,Lahti,1.897,lasimestari.fi,live,2019-02-21,5,3,1
-webshop,5,Fonum Oy Ab,2518463-5,47400.0,,Pasila,0.227,www.fonum.fi,live,2013-01-15,5,3,1
-webshop,5,Noral Naturals Oy,3525105-3,47750.0,,Pasila,2.661,www.noralskin.com,live,2025-04-12,5,3,1
-webshop,5,Cycland Oy,2986501-6,47632.0,,Pasila,0.884,www.cycland.fi,live,2019-03-11,5,3,1
-webshop,5,CYBERSHOP HELSINKI Oy,1864422-6,47699.0,,Pasila,1.759,www.cybershop.fi,live,2004-01-05,5,3,1
-webshop,5,Liukkosen Pultti Oy,1865112-7,47521.0,,Lahti,1.659,www.liukkosenpultti.fi,live,2003-12-02,5,3,1
-webshop,5,Nokos Oy,2987219-5,47782.0,,Pasila,3.062,www.coolflat.fi,live,2019-03-08,5,3,1
-webshop,5,Kroi Auto Center OY,3309945-7,47811.0,,Pasila,2.497,www.kroiautocenter.com,live,2022-09-07,5,3,1
-webshop,5,HORSEPRO OY,0704240-6,47782.0,,Lahti,0.759,www.horsepro.fi,live,1989-04-12,5,3,1
-webshop,5,Optishake Oy,2988291-6,47782.0,,Pasila,2.497,optishake.info,live,2019-03-15,5,3,1
-webshop,5,Autopesu Meti Oy,2716135-7,47300.0,,Tikkurila,1.925,www.autopesumeti.com,live,2015-10-30,5,3,1
-webshop,5,Reload Vending Oy Ab,3307565-8,47782.0,,Pasila,2.202,www.reloadvending.com,live,2022-08-29,5,3,1
-webshop,5,MU Filosofia Oy,2988719-4,47761.0,,Pasila,2.224,www.mu.house,live,2019-04-11,5,3,1
-webshop,5,Golf Factory Oy,3532116-2,47782.0,,Pasila,3.029,www.golf-factory.com,live,2025-05-19,5,3,1
-webshop,5,Suomen Minimaailma Oy,1891117-9,47640.0,,Pasila,2.902,www.minimaailma.fi,live,2004-04-20,5,3,1
-webshop,5,Jujukas Oy,2504862-5,47632.0,,Pasila,2.982,www.jujukas.fi,live,2012-11-22,5,3,1
-webshop,5,Sihlman Data Oy,1892399-7,47400.0,,Tikkurila,0.152,www.sihlmandata.fi,live,2004-04-30,5,3,1
-webshop,5,Ecomit Oy,1904426-5,47400.0,,Lahti,2.489,www.ecomit.fi,live,2004-06-30,5,3,1
-webshop,5,Karanttia Oy Perusturva,0679780-7,47782.0,,Pasila,0.853,https://karanttia.com/,live,1987-11-18,5,3,1
-webshop,5,eau de Finna Oy,3301157-4,47750.0,,Tikkurila,0.386,https://libertyperfume.com/,live,2022-08-08,5,3,1
-webshop,5,Rosebud Books Oy,0679141-3,47610.0,,Pasila,2.99,www.rosebud.fi,live,1988-12-28,5,3,1
-webshop,5,Sukaton Oy,1914785-4,47110.0,,Tikkurila,1.326,www.pilkkoset.fi,live,2004-09-15,5,3,1
-webshop,5,Silmäasema Optiikka Oy,1827711-2,47741.0,,Pasila,0.765,www.silmaasema.fi,live,2003-04-29,5,3,1
-webshop,5,Inge Löök Oy Ab Ltd,2524865-1,47555.0,,Pasila,2.395,www.ingelook.com,live,2013-02-06,5,3,1
-webshop,5,Reilut lahjakortit Oy,3321338-7,47782.0,,Pasila,1.759,reilutlahjakortit.fi,live,2022-10-28,5,3,1
-webshop,5,SATAMAN ULPUKKA KÄSITYÖKAUPPA OSK,1765805-2,47699.0,,Lahti,2.007,www.ulpukka.fi,live,2003-05-20,5,3,1
-webshop,5,Masivill Oy,2551446-2,47522.0,,Lahti,2.43,www.masivill.fi,live,2013-06-13,5,3,1
-webshop,5,SBC Saksa Oy,2704110-1,47120.0,,Lahti,1.471,www.freddywear.de,live,2015-08-17,5,3,1
-webshop,5,MONKEYZZ GROUP avoin yhtiö,2549628-4,47712.0,,Pasila,2.435,monkeyzz.com,live,2013-05-31,5,3,1
-webshop,5,Teraset Finland Oy,1750252-5,47400.0,,Pasila,0.817,www.teraset.net,live,2002-10-17,5,3,1
-webshop,5,Avan Oy,2548058-1,47782.0,,Lahti,1.366,www.avan.fi,live,2013-05-17,5,3,1
-webshop,5,SunRoof Oy,2546068-7,47782.0,,Pasila,1.723,www.sunroof.fi,live,2013-06-18,5,3,1
-webshop,5,Elukkamania Oy,2824155-1,47699.0,,Pasila,2.004,www.elukkamania.fi,live,2017-04-04,5,3,1
-webshop,5,Relevant Sales Oy,3333357-3,47782.0,,Pasila,1.654,www.relevantsales.fi,live,2022-12-28,5,3,1
-webshop,5,Mukama Oy,2543720-9,47782.0,,Pasila,3.034,www.mukama.com,live,2013-04-25,5,3,1
-webshop,5,"Blivakker & Cocopanda Retail AS, Suomen Sivuliike",3515859-6,47750.0,,Pasila,0.15,www.brandsdalgroup.com,live,2025-04-24,5,3,1
-webshop,5,BAS.united Oy,2706302-8,47782.0,,Pasila,1.366,https://www.bas-united.com/,live,2015-09-10,5,3,1
-webshop,5,Helleborgin Kukka Oy,2540513-5,47761.0,,Kerava,0.305,www.helleborginkukka.fi,live,2013-04-12,5,3,1
-webshop,5,Erä-Lindroos Oy,0731141-8,47632.0,,Lahti,1.657,www.era-lindroos.fi,live,1989-02-22,5,3,1
-webshop,5,Cetori Second Hand Oy,3330189-7,47799.0,,Lahti,0.759,https://www.cetorisecondhand.fi/,live,2022-12-13,5,3,1
-webshop,5,E2 Software Oy,0748586-4,47400.0,,Pasila,0.308,www.weare.fi,live,1989-07-26,5,3,1
-webshop,5,Optikaisla Oy,1771641-9,47741.0,,Kerava,0.305,www.keravankatse.fi,live,2002-07-25,5,3,1
-webshop,5,Kenkä-Meklari Oy,0745670-5,47721.0,,Pasila,2.797,www.kenkameklari.fi,live,1989-07-19,5,3,1
-webshop,5,HCPC Lab Oy,3329461-5,47400.0,,Tikkurila,1.926,hcpclab.com,live,2022-12-09,5,3,1
-webshop,5,Camu Oy,2959943-2,47782.0,,Pasila,2.926,www.camu.fi,live,2019-02-18,5,3,1
-webshop,5,Heritarium Fine Jewellery Oy,3518111-2,47770.0,,Pasila,1.307,https://www.heritarium.fi/,live,2025-04-07,5,3,1
-webshop,5,Lahden Autokauppa Oy,2962691-2,47811.0,,Lahti,2.47,www.lahdenautokauppa.fi,live,2019-01-16,5,3,1
-webshop,5,Meslewi Oy,1789523-4,47712.0,,Pasila,1.61,www.meslewi.com,live,2002-10-23,5,3,1
-webshop,5,V Brands Oy,3324045-7,47120.0,,Pasila,2.976,venturabrands.com,live,2022-11-10,5,3,1
-webshop,5,Alppi-Rauta Oy,0734764-8,47521.0,,Pasila,0.882,https://www.alppirauta.fi/,live,1989-08-16,5,3,1
-webshop,5,Peten Koiratarvike Oy,1917875-7,47763.0,,Pasila,2.876,www.petenkoiratarvike.com,live,2004-09-27,5,3,1
-webshop,5,Helsingin Kukkatehdas Oy,3000195-2,47761.0,,Pasila,2.304,www.kukkatehdas.net,live,2019-06-05,5,3,1
-webshop,5,Ajatellen Group Oy,2488849-7,47699.0,,Pasila,0.663,www.ajatellen.fi,live,2012-08-03,5,3,1
-webshop,5,BILLION EURO ENTERPRISES OY,3259035-9,47120.0,,Pasila,0.584,krisnan.com,live,2022-01-18,5,3,1
-webshop,5,Optikko Mäkelä Optila Oy,0606241-3,47741.0,,Lahti,0.612,WWW.OPTIKKOMAKELA.FI,live,1983-07-28,5,3,1
-webshop,5,Pasilan Kuva Oy,2000751-7,47781.0,,Kerava,0.305,www.fotoliike.fi,live,2005-11-21,5,3,1
-webshop,5,Sisustusliike Kauniskoti Oy,2462389-4,47120.0,,Savio,2.01,www.kauniskoti.fi,live,2012-03-08,5,3,1
-webshop,5,Avainahjo Oy,2005749-3,47529.0,,Pasila,2.12,www.avainahjo.fi,live,2006-01-16,5,3,1
-webshop,5,Domitor Oy,2007022-5,47742.0,,Pasila,2.225,www.finndent.com,live,2005-12-16,5,3,1
-webshop,5,Decoforia Suomi Oy,3262684-1,47120.0,,Lahti,1.392,https://decoforia.fi/,live,2022-02-01,5,3,1
-webshop,5,Blumma Oy,3261307-1,47782.0,,Pasila,0.884,https://blummastudio.com/,live,2022-01-27,5,3,1
-webshop,5,Hehku Company Oy,3259593-4,47555.0,,Kerava,0.574,hehkuco.com,live,2022-01-19,5,3,1
-webshop,5,Millan Putiikki Oy,2450891-7,47551.0,,Lahti,0.781,www.millanputiikki.fi,live,2012-01-12,5,3,1
-webshop,5,VPD Finland Oy,2015063-9,47400.0,,Tikkurila,0.128,www.vpd.fi,live,2006-02-08,5,3,1
-webshop,5,Harjun Kukka Oy,3259070-3,47761.0,,Pasila,1.729,www.harjunkukka.com,live,2022-01-14,5,3,1
-webshop,5,Oy Cycle Center Finland Ltd,2016971-9,47632.0,,Pasila,1.782,www.cyclecenter.org,live,2006-02-14,5,3,1
-webshop,5,Design Made Oy,1992452-9,47555.0,,Pasila,2.004,www.designmade.fi,live,2005-11-14,5,3,1
-webshop,5,Kaivokukka Oy,0585773-2,47761.0,,Pasila,2.515,www.kaivokukka.fi,live,1985-04-11,5,3,1
-webshop,5,LaKo Trade Oy,2017795-4,47699.0,,Savio,0.269,www.suomikauppa.fi,live,2006-02-13,5,3,1
-webshop,5,Affix Scaffolding Europe Oy,3558220-7,47521.0,,Tikkurila,0.943,www.affixscaffolding.eu,live,2025-08-28,5,3,1
-webshop,5,Kuvahetki Oy,2801517-5,47781.0,,Lahti,2.821,www.kuvahetki.com,live,2016-12-29,5,3,1
-webshop,5,Keravan Löytö Oy,3558490-7,47799.0,,Savio,2.01,www.keravanloyto.com,live,2025-10-03,5,3,1
-webshop,5,Rasalas Oy,0580102-6,47742.0,,Pasila,2.902,www.rasalas.fi,live,1985-02-28,5,3,1
-webshop,5,RIVALE OY,3088479-1,47763.0,,Tikkurila,0.646,www.rivale.fi,live,2019-09-30,5,3,1
-webshop,5,Black Spot Merchandise OY,3088501-4,47712.0,,Pasila,3.039,www.blackspotmerch.com,live,2019-10-30,5,3,1
-webshop,5,Taivaskulta Oy,3253553-6,47770.0,,Lahti,0.835,www.taivaskulta.fi,live,2021-12-15,5,3,1
-webshop,5,Suomen Unikaverit Oy,3253421-8,47551.0,,Pasila,0.961,www.kalusteduo.fi,live,2022-03-07,5,3,1
-webshop,5,Lahden Verkkopalvelu Oy,0558848-0,47400.0,,Lahti,1.785,www.verkkopalvelu.fi,live,1984-10-18,5,3,1
-webshop,5,FixCom Oy,1992815-9,47400.0,,Pasila,2.288,www.fixcom.fi,live,2005-10-28,5,3,1
-webshop,5,Draivi Media Oy,2464551-6,47400.0,,Pasila,2.395,www.draivi.com,live,2012-04-03,5,3,1
-webshop,5,ThinkIT Oy,1928345-0,47400.0,,Pasila,0.939,www.tukikomppania.fi,live,2004-11-16,5,3,1
-webshop,5,Ilves-Interiööri Oy,1963961-3,47555.0,,Pasila,2.515,www.ilvesinterioori.fi,live,2005-05-11,5,3,1
-webshop,5,Leimasin- ja Kilpitehdas Ojanen Avoin yhtiö,0665678-0,47620.0,,Lahti,0.835,https://www.leimasinjakilpi.fi/yhteystiedot,live,1985-12-31,5,3,1
-webshop,5,Putiikki WOW avoin yhtiö,3003371-9,47711.0,,Pasila,0.15,www.wowlifestyle.fi,live,2019-06-26,5,3,1
-webshop,5,LXR Group Oy,1946212-5,47721.0,,Pasila,0.663,www.tanssitarvike.fi,live,2005-02-15,5,3,1
-webshop,5,Kulkurin Antiikki Oy,3284456-6,47791.0,,Pasila,0.884,https://kulkurinantiikki.fi/,live,2022-05-10,5,3,1
-webshop,5,IdaKoo Oy,3010163-8,47699.0,,Tikkurila,0.128,www.onnigom.fi,live,2019-07-08,5,3,1
-webshop,5,HappyStaff Oy,3011476-2,47711.0,,Kerava,2.301,https://www.happystaff.ru/,live,2019-07-12,5,3,1
-webshop,5,Siralos Group Oy,2811495-8,47120.0,,Pasila,1.275,www.rentta.fi,live,2017-02-09,5,3,1
-webshop,5,Aurinkokeittiöt Oy,2810244-7,47523.0,,Tikkurila,1.967,www.aurinkokeittiot.fi,live,2017-02-27,5,3,1
-webshop,5,Finsoffat Oy,1958763-0,47551.0,,Kerava,2.545,www.finsoffat.fi,live,2005-04-14,5,3,1
-webshop,5,Fast Motor Rental Oy,3281873-9,47811.0,,Lahti,1.54,https://fastmotorrentalnaxos.gr/,live,2022-05-23,5,3,1
-webshop,5,Ruslania Books Oy,0645278-8,47610.0,,Pasila,0.672,www.ruslania.com,live,1986-12-03,5,3,1
-webshop,5,Formtex Oy,1966433-3,47712.0,,Pasila,2.698,www.charlston.fi,live,2005-08-12,5,3,1
-webshop,5,KARUSOMA OY,2464825-8,47691.0,,Pasila,1.334,www.karusoma.com,live,2012-03-09,5,3,1
-pim,6,Oy Plentrafo Ab,0820740-1,46421.0,,Pasila,2.99,www.selectedbrands.com,live,1990-10-31,4,6,3
-pim,6,Green Attachments Oy,2799121-1,46630.0,,Lahti,3.004,www.greenattachments.com,live,2016-12-29,4,6,3
-pim,6,WL-Done Oy,2186761-5,46642.0,,Tikkurila,2.974,www.wl-done.fi,live,2008-04-09,4,6,3
-pim,6,Eurocore Global Oy,3517112-5,46649.0,,Pasila,2.93,www.eurocoreglobal.com,live,2025-03-26,4,6,3
-pim,6,Onninen Oy,1071207-9,46842.0,,Pasila,2.417,www.onninen.fi,live,1996-12-09,4,6,3
-pim,6,Fight Ops Oy,2337011-9,46421.0,,Pasila,2.552,www.makeyourmark.fi,live,2010-09-14,4,6,3
-pim,6,Kryotherm Oy Ab,0942748-1,46842.0,,Savio,2.01,www.kryotherm.fi,live,1993-09-29,4,6,3
-pim,6,Airam Electric Oy Ab,0733549-5,46641.0,,Savio,0.894,https://www.airam.fi/en,live,1988-11-02,4,6,3
-pim,6,KSB-Trading Oy,1073097-1,46421.0,,Pasila,1.201,shop.hifk.fi,live,1996-09-11,4,6,3
-pim,6,Prodmac Oy,2400573-8,46642.0,,Kerava,0.803,www.prodmac.fi,live,2011-04-11,4,6,3
-pim,6,Jartek AI Oy,3131742-2,46649.0,,Lahti,1.051,https://www.jartek.com/company,live,2020-04-28,4,6,3
-pim,6,Mainio Clothing Oy,2127372-9,46421.0,,Pasila,2.004,www.mainioclothing.fi,live,2007-07-25,4,6,3
-pim,6,Dayton Group Oy,0745142-9,46642.0,,Tikkurila,2.924,www.mtoy.fi,live,1989-06-21,4,6,3
-pim,6,Thinkflow Group Oy,2378999-9,46642.0,,Savio,0.486,https://www.thinkflow.fi/,live,2010-12-23,4,6,3
-pim,6,Renewe Group Oy,3014659-6,46842.0,,Pasila,1.176,www.renewe.fi,live,2019-08-27,4,6,3
-pim,6,ALBIOX Oy,1842690-7,46641.0,,Pasila,0.672,albiox.com,live,2003-09-01,4,6,3
-pim,6,Muotitorppa Oy,2196262-0,46421.0,,Pasila,0.961,www.muotitorppa.fi,live,2008-05-23,4,6,3
-pim,6,SEAMOTION OY,2292759-5,46649.0,,Lahti,0.251,www.seamotion.fi,live,2009-10-23,4,6,3
-pim,6,Jungheinrich Lift Truck Oy,1893988-4,46642.0,,Kerava,1.375,www.jungheinrich.fi,live,2004-04-29,4,6,3
-pim,6,Fais Finland Oy,0921077-6,46421.0,,Pasila,1.933,www.fais.fi,live,1993-01-13,4,6,3
-pim,6,Layher Oy,3093374-1,46630.0,,Lahti,1.718,www.layher.com,live,2019-11-18,4,6,3
-pim,6,EM-Kone Oy,0912503-7,46642.0,,Savio,0.638,www.em-kone.fi,live,1993-03-10,4,6,3
-pim,6,T&T Trading Oy,1964469-0,46421.0,,Pasila,0.308,www.gazoz.fi,live,2005-05-16,4,6,3
-pim,6,Oy Säätö Ab,0196596-3,46642.0,,Tikkurila,2.943,www.saato.fi,live,1969-07-11,4,6,3
-pim,6,Resta Turku Oy,2239554-1,46642.0,,Pasila,1.366,www.restaturku.fi,live,2009-01-12,4,6,3
-pim,6,Dayton Oy,2511986-8,46642.0,,Tikkurila,2.924,www.dayton.fi,live,2012-11-29,4,6,3
-pim,6,Nordic Simulators Oy,2118168-0,46649.0,,Lahti,3.014,www.nordicsimulators.fi,live,2007-06-14,4,6,3
-pim,6,Oy Armatec Finland Ab,1789130-5,46842.0,,Tikkurila,2.773,www.armatec.com,live,2002-10-23,4,6,3
-pim,6,Fegime Finland & Baltics Osk,2544275-3,46641.0,,Pasila,0.092,www.fegime.fi,live,2013-08-26,4,6,3
-pim,6,PL Parts Oy,3126790-4,46841.0,,Savio,2.01,www.plvaraosat.fi,live,2020-04-06,4,6,3
-pim,6,Zio Oy,2296073-1,46421.0,,Pasila,3.062,www.zio.fi,live,2009-11-12,4,6,3
-pim,6,DASA-group Oy,3455376-2,46412.0,,Pasila,0.663,https://dasagroup.nl/,live,2024-06-14,4,6,3
-pim,6,Jerikom Oy,1955191-0,46641.0,,Lahti,1.21,www.jerikom.fi,live,2005-04-04,4,6,3
-pim,6,Imuripiste Karppinen Oy,0789788-5,46642.0,,Lahti,0.855,www.imuripiste.fi,live,1990-02-28,4,6,3
-pim,6,OP Trade And Service Oy,2344046-3,46649.0,,Pasila,1.409,www.catec.fi,live,2010-08-11,4,6,3
-pim,6,KMV-tuotteet Oy,0563908-1,46842.0,,Savio,0.948,www.kmv.fi,live,1984-05-24,4,6,3
-pim,6,Suomen Pikaliitin Oy,1013020-4,46642.0,,Pasila,2.497,www.suomenpikaliitin.fi,live,1995-04-12,4,6,3
-pim,6,Finkova Oy,2352549-1,46649.0,,Tikkurila,2.773,www.finkova.fi,live,2010-09-08,4,6,3
-pim,6,Getra Oy,2444431-9,46642.0,,Savio,2.01,www.getra.fi,live,2012-01-01,4,6,3
-pim,6,Helsinki Valve & Fitting Ab,0521669-5,46842.0,,Tikkurila,2.866,swagelok.fi,live,1983-10-06,4,6,3
-pim,6,Tornokone Oy,0515191-6,46630.0,,Savio,0.894,www.tornokone.fi,live,1983-06-02,4,6,3
-pim,6,Aqua Africa Finland Oy,3429802-8,46649.0,,Pasila,0.961,https://www.aquaafrica.com/,live,2024-03-07,4,6,3
-pim,6,Protective Gear Finland Oy,2784923-1,46421.0,,Pasila,2.613,www.zoombang.fi,live,2016-10-04,4,6,3
-pim,6,Oy Joal Engineering Ab,2961950-1,46641.0,,Pasila,2.447,https://www.joal.fi,live,2019-01-11,4,6,3
-pim,6,POCLAIN HYDRAULICS OY,2592817-1,46649.0,,Tikkurila,0.158,www.poclain-hydraulics.com,live,2014-01-03,4,6,3
-pim,6,NK-teollisuus Oy,2697309-7,46411.0,,Kerava,1.887,www.nk-teollisuus.fi,live,2015-06-25,4,6,3
-pim,6,Murri Oy,3267634-7,46641.0,,Lahti,1.21,www.murri.fi,live,2022-02-14,4,6,3
-pim,6,Filterit Oy,2781538-1,46649.0,,Pasila,0.691,https://filterit.fi/,live,2016-12-31,4,6,3
-pim,6,Heatchem Oy,1744434-5,46641.0,,Pasila,2.36,www.heatchem.com,live,2002-02-01,4,6,3
-pim,6,KSB Finland Oy,0987983-2,46642.0,,Savio,0.486,https://www.ksb.com/en-fi/company,live,1994-12-14,4,6,3
-pim,6,Thinkflow Oy,1763560-0,46642.0,,Savio,0.486,https://www.thinkflow.fi/en,live,2002-05-22,4,6,3
-pim,6,Ingeo Oy,1047194-9,46649.0,,Pasila,2.326,www.ingeo.fi,live,1996-05-13,4,6,3
-pim,6,Action Road Top Oy,0985244-5,46841.0,,Lahti,1.926,www.artoy.fi,live,1995-04-26,4,6,3
-pim,6,Ernst Textil Aktiebolag filial i Finland,2409721-4,46411.0,,Lahti,3.007,www.ernsttextil.se,live,2011-06-22,4,6,3
-pim,6,Helrot Oy,0635690-5,46642.0,,Pasila,2.99,www.helrot.fi,live,1986-06-12,4,6,3
-pim,6,KYOCERA UNIMERCO Tooling Oy,2146396-0,46841.0,,Lahti,1.785,www.kyocera-unimerco.fi,live,2007-10-11,4,6,3
-pim,6,Flying Carpet Oy,2863997-3,46412.0,,Tikkurila,2.202,www.flyingcarpet.fi,live,2017-11-15,4,6,3
-pim,6,Abrosa Baltic Oy,2774053-5,46642.0,,Savio,0.269,https://abrosa.lt/,live,2016-08-22,4,6,3
-pim,6,Oy Sea Safety Scandinavia Ltd,0663405-5,46642.0,,Pasila,1.38,https://seasafety.net/,live,1987-09-30,4,6,3
-pim,6,Firex Oy,3297413-3,46842.0,,Lahti,1.785,https://firex.fi/,live,2022-07-06,4,6,3
-pim,6,Eurotermo Trading Oy,3240285-6,46842.0,,Lahti,1.471,www.lvitukku.fi,live,2021-10-14,4,6,3
-pim,6,Spraystore Finland Oy,3523131-9,46630.0,,Kerava,1.369,www.spraystore.fi,live,2025-04-09,4,6,3
-pim,6,Dräger Suomi Oy,2284733-3,46641.0,,Tikkurila,2.773,www.draeger.fi,live,2009-09-11,4,6,3
-pim,6,Avesco Oy,3096798-4,46630.0,,Savio,0.432,https://www.avesco-cat.fi/,live,2019-11-21,4,6,3
-pim,6,Atmas Group Oy,3342182-1,46649.0,,Pasila,2.928,www.atmasgroup.com,live,2023-02-06,4,6,3
-pim,6,Elgood Oy,1078149-6,46641.0,,Tikkurila,2.773,www.elgood.fi,live,1997-03-12,4,6,3
-pim,6,EPS International Oy,2605473-6,46649.0,,Tikkurila,1.511,www.epsi.fi,live,2014-03-06,4,6,3
-pim,6,MIP Electronics Oy,1627111-2,46641.0,,Savio,1.998,www.mip.fi,live,2000-10-20,4,6,3
-pim,6,Sondex Tapiro Oy Ab,2110934-7,46842.0,,Tikkurila,2.363,www.sondextapiro.fi,live,2007-04-20,4,6,3
-pim,6,Alestalo Overseas Oy.,1630969-4,46649.0,,Lahti,1.124,https://www.alestalo.eu/,live,2000-11-13,4,6,3
-pim,6,Infrast Oy,3476887-8,46649.0,,Savio,0.225,https://infrast.fi/collections/tyomaa-aita,live,2024-09-25,4,6,3
-pim,6,Holtab AB Filial i Finland,1801818-8,46641.0,,Pasila,2.357,www.holtab.se,live,2003-01-14,4,6,3
-pim,6,Semikron Danfoss Oy,1446227-3,46642.0,,Pasila,2.497,www.semikron.com,live,1998-01-26,4,6,3
-pim,6,Blue Shop Oy,0843148-9,46411.0,,Lahti,1.659,blueshopoy.fi,live,1991-08-21,4,6,3
-pim,6,Nilfisk Oy,1908664-1,46649.0,,Tikkurila,2.676,www.nilfisk.fi,live,2004-07-28,4,6,3
-pim,6,Nevotex Suomi Oy,2815851-2,46412.0,,Lahti,0.994,www.nevotex.fi,live,2017-03-15,4,6,3
-pim,6,Hydromarket Oy,0899486-3,46642.0,,Savio,1.003,www.hydromarket.fi,live,1992-04-15,4,6,3
-pim,6,ASENSI Oy,3493608-5,46842.0,,Pasila,0.884,www.asensi.fi,live,2024-12-01,4,6,3
-pim,6,Alps Finland Ab Oy,3153028-2,46412.0,,Pasila,3.034,www.pals.fi,live,2020-08-24,4,6,3
-pim,6,Rimeki Oy,0893374-5,46649.0,,Kerava,1.341,https://rimeki.fi/,live,1992-08-19,4,6,3
-pim,6,Oy Scandiagent Forsström & Co Ab,1107156-8,46421.0,,Pasila,2.99,www.scandiagent.fi,live,1997-09-30,4,6,3
-pim,6,Norwegian Concept AB,3337088-4,46421.0,,Lahti,2.007,norwegianconcept.no,live,,4,6,3
-pim,6,Oy Merilux Ab,0111537-9,46641.0,,Pasila,2.417,www.merilux.fi,live,1975-12-19,4,6,3
-pim,6,Teuvo Louhisola Oy,0110991-3,46649.0,,Pasila,2.36,www.teuvolouhisola.fi,live,1976-01-23,4,6,3
-pim,6,Grafinet Oy,0818124-8,46642.0,,Tikkurila,2.554,www.grafinetoy.fi,live,1990-02-14,4,6,3
-pim,6,Protech Lahti Oy,2090571-2,46642.0,,Lahti,3.097,www.protech.fi,live,2007-02-08,4,6,3
-pim,6,HARMAC Oy,2310196-3,46649.0,,Tikkurila,1.995,www.harmac.fi,live,2010-02-04,4,6,3
-pim,6,ETC TEAM OY,1974535-2,46421.0,,Tikkurila,0.152,www.pelipaita.fi,live,2005-07-14,4,6,3
-pim,6,Oryx Oy,0847229-9,46641.0,,Tikkurila,2.094,www.oryx.fi,live,1991-06-05,4,6,3
-pim,6,Rebel Light Oy,3126081-7,46641.0,,Pasila,2.698,www.rebellight.com,live,2020-05-05,4,6,3
-pim,6,Touchpoint Group Oy,2228022-6,46412.0,,Pasila,0.939,www.touchpoint.fi,live,2008-10-28,4,6,3
-pim,5,Suomen Ladun Palveluyhtiö Oy,1040512-4,46492.0,,Pasila,1.344,www.suomenlatu.fi,live,1995-12-29,4,5,3
-pim,5,Rosero Oy,1640161-8,46492.0,,Pasila,1.515,www.roseros.net,live,2001-01-22,4,5,3
-pim,5,Penhouse Finland Oy,2747997-1,46491.0,,Pasila,0.691,www.logollakiitos.fi,live,2016-03-18,4,5,3
-pim,5,Ziehm Imaging Oy,1973402-0,46462.0,,Savio,0.269,www.ziehm.com,live,2005-07-29,4,5,3
-pim,5,SodaStream International B.V. Suomen sivuliike,2462442-4,46499.0,,Pasila,1.366,https://sodastream.fi/pages/legal,live,2012-03-23,4,5,3
-pim,5,Biorunner Oy,3110792-7,46492.0,,Pasila,0.8,https://biorunner.de/,live,2020-02-11,4,5,3
-pim,5,Celebration Brothers Ltd Oy,2474775-8,46492.0,,Pasila,2.792,www.petscando.com,live,2012-05-15,4,5,3
-pim,5,Putinki Art Oy,1040942-4,46491.0,,Pasila,1.847,www.putinki.fi,live,1996-02-14,4,5,3
-pim,5,Corner Pro Shop Oy,2152465-5,46492.0,,Pasila,1.38,http://www.hockeycorner.net,live,2007-11-01,4,5,3
-data,5,NordicPark Oy,3182326-1,52212.0,,Tikkurila,0.951,www.nordicpark.fi,live,2021-01-20,2,1,5
-data,5,Frigoscandia Oy,1633378-2,52291.0,,Savio,0.432,www.frigoscandia.com,live,2000-11-09,2,1,5
-data,5,Rolly Uusimaa Oy,1780028-2,49330.0,,Tikkurila,1.511,www.rolly.fi,live,2002-09-30,2,1,5
-data,5,Finline Evro Trans Oy,2165647-1,52250.0,,Savio,2.01,www.finline.fi,live,2008-01-21,2,1,5
-data,5,Fenniarail Oy,2261575-1,49200.0,,Pasila,0.211,www.fenniarail.fi,live,2009-05-18,2,1,5
-data,5,Itä-Pasilan Pysäköinti Oy,0502469-3,52212.0,,Pasila,0.247,www.pasilanpysakointi.fi,live,1982-12-23,2,1,5
-data,5,Fullpull Ky,2774487-8,49410.0,,Lahti,2.286,www.fullpull.fi,live,2016-09-01,2,1,5
-data,5,KOA Trucks Oy,2516644-5,49410.0,,Kerava,2.187,www.koa.fi,live,2012-12-18,2,1,5
-data,5,EM Cargo Oy,3132966-9,49410.0,,Pasila,0.884,www.emcargo.fi/,live,2020-04-30,2,1,5
-data,5,Coreorient Oy,2388488-1,49410.0,,Pasila,2.515,www.coreorient.com,live,2011-02-14,2,1,5
-data,5,Kuljetus Reen Oy,0863090-4,49410.0,,Pasila,2.515,www.reen.fi,live,1991-06-05,2,1,5
-data,5,Taxiveli Oy,2838204-7,49330.0,,Pasila,1.485,https://www.taxiveli.com/,live,2017-06-21,2,1,5
-data,5,Airlog Group Oy,2298909-1,49410.0,,Pasila,1.847,www.airloggroup.fi,live,2009-12-02,2,1,5
-data,5,MR Logistic Oy,2735432-7,52310.0,,Tikkurila,1.511,www.rolly.fi,live,2016-01-18,2,1,5
-data,5,Balanced Logistics Oy,2298662-4,52250.0,,Tikkurila,1.511,https://www.balancedlogistics.fi,live,2010-01-19,2,1,5
-data,5,Exim Service Europe Oy,2267714-3,52250.0,,Tikkurila,0.663,www.eximservice.fi,live,2009-07-03,2,1,5
-data,5,Posti Teollisuusratkaisut Oy,1646732-6,52100.0,,Pasila,3.034,www.posti.com,live,2001-02-12,2,1,5
-data,5,Posti Logistiikkaratkaisut Länsi-Suomi Oy,1744451-3,52250.0,,Pasila,3.034,www.posti.com,live,2002-02-13,2,1,5
-data,5,SOS International Oy,2083957-5,52219.0,,Pasila,0.939,https://www.sos.eu/fi/meistae/,live,2007-01-03,2,1,5
-data,5,Nosto ja kuljetus A P V Oy,2310211-4,49410.0,,Tikkurila,0.736,www.nostojakuljetusapv.fi,live,2010-01-21,2,1,5
-data,5,Launear Oy,2712552-4,49420.0,,Savio,0.269,www.muuttotamminen.fi,live,2015-09-23,2,1,5
-data,5,Posti 4PL Contract Logistics Oy,3121164-4,52250.0,,Pasila,3.034,www.posti.com,live,2020-03-23,2,1,5
-data,5,Suomen Turistiauto Oy,0151275-3,49310.0,,Lahti,0.907,www.lehtimakitilausajot.fi,live,1969-02-07,2,1,5
-data,5,Pääkaupunkiseudun Junakalusto Oy,1874314-4,52219.0,,Pasila,0.395,www.junakalusto.fi,live,2004-03-03,2,1,5
-data,5,Aimo Park Finland Oy,2208141-1,52212.0,,Pasila,0.672,www.aimopark.fi,live,2008-12-31,2,1,5
-data,5,Mattilan Liikenne Oy,3087532-6,49310.0,,Lahti,2.468,www.mattilanliikenne.fi,live,2019-09-25,2,1,5
-data,5,Tilataksi Koskinen Oy,1054432-7,49330.0,,Lahti,1.48,www.tilataksikoskinen.fi,live,1996-06-24,2,1,5
-data,5,Pynnönen International Oy,0632634-3,49410.0,,Kerava,2.126,www.pynnonen.fi,live,1986-03-20,2,1,5
-data,5,Posti 3PL Contract Logistics Oy,3121167-9,52250.0,,Pasila,3.034,www.posti.com,live,2020-03-23,2,1,5
-data,5,A2B Turku Oy,0968725-9,49410.0,,Pasila,2.497,www.a2b.fi,live,1994-06-01,2,1,5
-data,5,Taksi Helsinki Oy,0838031-9,52310.0,,Pasila,0.352,https://taksihelsinki.fi/en/kela-taxi/,live,1990-11-21,2,1,5
-data,5,Sillog Oy,3111517-7,52100.0,,Kerava,2.126,www.sillog.fi,live,2020-01-21,2,1,5
-data,5,KOA Lift Oy,2126169-9,49410.0,,Kerava,2.187,www.koa.fi,live,2007-07-12,2,1,5
-data,5,Ecolines Finland Oy,2627541-6,49320.0,,Pasila,0.092,https://ecolines.net/,live,2014-11-17,2,1,5
-data,5,Lektor Consulting Resources Finland Oy,3012275-4,52230.0,,Pasila,1.176,www.lektorconsulting.com,live,2019-08-06,2,1,5
-data,5,R.A. Rajala Oy,1027555-0,49410.0,,Lahti,2.16,https://rarajala.fi/,live,1995-10-25,2,1,5
-data,5,Trans LO Oy,3105810-9,52219.0,,Tikkurila,2.102,www.translo.fi,live,2019-12-17,2,1,5
-data,5,HUB logistics Service Oy,2738798-9,52250.0,,Tikkurila,2.102,www.hub.fi,live,2016-02-15,2,1,5
-data,5,Spedman Global Logistics Oy,0894922-9,52250.0,,Pasila,2.181,www.spedman.com,live,1992-06-24,2,1,5
-data,5,Posti 3PL Etelä-Suomi Oy,2982233-1,52250.0,,Pasila,3.034,www.posti.com,live,2019-03-05,2,1,5
-data,5,Posti Logistics Solutions Supply Oy,2527743-6,52250.0,,Pasila,3.034,www.posti.com,live,2013-02-28,2,1,5
-data,5,Rolly Helsinki Oy,1702534-3,52310.0,,Tikkurila,1.511,www.rolly.fi,live,2001-09-30,2,1,5
-data,5,Lintulammenkadun Pysäköintilaitos oy,1708580-5,52212.0,,Tikkurila,0.246,www.rettaisannointi.fi,live,2001-07-09,2,1,5
-data,5,Citysaukko Oy,0415102-5,49410.0,,Pasila,2.515,www.saukko.fi,live,1962-08-24,2,1,5
-data,5,Ankkurin Asukaspysäköinti Oy,3234527-3,52212.0,,Lahti,1.471,www.reim.fi,live,2021-11-01,2,1,5
-data,5,Threeson OY,0884861-2,49410.0,,Lahti,1.48,http://www.threeson.fi/,live,1992-04-01,2,1,5
-data,5,Vuosaaren Kuljetus Oy,3380583-3,49410.0,,Kerava,2.117,www.vktrans.fi,live,2023-08-16,2,1,5
-data,5,Jääholvi Oy,2639891-8,52100.0,,Pasila,2.515,www.saukko.fi,live,2015-02-28,2,1,5
-data,5,Olars Mestarit Oy,2684823-7,49410.0,,Savio,1.36,https://www.olars.fi/,live,2015-04-23,2,1,5
-data,5,Posti 3PL Pääkaupunkiseutu Oy,2982201-6,52250.0,,Pasila,3.034,www.posti.com,live,2019-03-05,2,1,5
-data,5,Posti Warehousing Oy,2527740-1,52250.0,,Pasila,3.034,www.posti.com,live,2013-02-28,2,1,5
-data,5,Länsi-Pasilan Autopaikat Oy,0356855-8,52212.0,,Pasila,0.247,www.pasilanpysakointi.fi,live,1980-03-07,2,1,5
-data,5,EuroPark Finland Oy,1544350-9,52212.0,,Pasila,2.896,www.europark.fi,live,1998-10-30,2,1,5
-data,5,Olavi Leppänen & Co,0291360-4,49330.0,,Pasila,2.456,meneva.fi,live,1962-12-07,2,1,5
-data,5,LoCoEn Oy,2513648-1,52250.0,,Pasila,1.366,www.locoen.fi,live,2012-12-21,2,1,5
-data,5,Kuljetusliike Eino Ojansuu & Co,0220237-8,49330.0,,Pasila,2.456,www.helsingintaksipalvelu.fi,live,1959-06-12,2,1,5
-data,5,Evro Trans Oy,3313949-8,52250.0,,Savio,2.01,www.finline.fi,live,2022-09-27,2,1,5
-data,5,LEMAN Oy,1999764-8,52250.0,,Tikkurila,2.735,www.leman.dk,live,2005-11-16,2,1,5
-data,5,Lotrekka Oy,3299276-1,52100.0,,Pasila,2.004,www.lotrekka.fi,live,2022-07-15,2,1,5
-data,5,DACHSER Finland Oy,2599717-7,52250.0,,Savio,0.432,www.dachser.fi,live,2014-02-11,2,1,5
-data,5,NMT Shipping Finland Oy,2703465-7,52250.0,,Pasila,2.304,www.nmtshipping.com,live,2015-09-14,2,1,5
-data,5,Rolly Raseborg Ab,2220954-2,49320.0,,Tikkurila,1.511,www.rolly.fi,live,2008-09-29,2,1,5
-data,5,Taksi Juutilainen Ky,2646655-4,49330.0,,Lahti,0.482,https://www.taksiji.com/turgutreis-marina-taksi-3f37c2f229,live,2014-10-14,2,1,5
-data,5,Taksikuljetukset Harri Vuolle Oy,1904945-3,49330.0,,Tikkurila,2.866,www.taksikuljetukset.fi,live,2004-07-20,2,1,5
-data,5,Lahden Liikennepalvelut Oy,3446822-6,49330.0,,Lahti,1.502,www.lahdenliikennepalvelut.fi,live,2024-05-10,2,1,5
-data,5,Been Oy,3362266-6,49410.0,,Tikkurila,0.99,https://www.been.fi,live,2023-05-19,2,1,5
-data,5,Customs Clearance Finland Oy,2632383-6,52250.0,,Pasila,2.926,www.ccs.fi,live,2014-08-05,2,1,5
-data,5,Kilon Osuus-Auto,0684427-1,49410.0,,Kerava,2.187,www.koa.fi,live,1987-12-09,2,1,5
-data,5,TS Logistics Oy,2704709-5,49410.0,,Savio,0.612,https://www.tslogistics.fi/,live,2015-08-28,2,1,5
-data,5,Trans World Shipping Oy,1950025-9,52250.0,,Kerava,0.29,www.tws.fi,live,2005-03-21,2,1,5
-data,5,Avain Parkki Oy,3238748-1,52212.0,,Pasila,2.304,www.avainasunnot.fi,live,2021-10-15,2,1,5
-data,5,Motoline Finland Oy,3429694-6,52250.0,,Pasila,2.788,www.motolinefinland.fi,live,2024-03-20,2,1,5
-data,5,KanerVilla Oy,3195519-2,49410.0,,Kerava,0.343,www.kanervillaoy.fi,live,2021-03-09,2,1,5
-data,5,Tuomarilan Pysäköintilaitos Oy,1810909-8,52212.0,,Pasila,2.497,www.kontuoy.fi,live,2003-02-21,2,1,5
-data,5,Mixor Group Oy,3508940-4,49410.0,,Kerava,2.67,www.mixorgroup.fi,live,2025-02-24,2,1,5
-data,5,Colligx Oy,2945125-1,52100.0,,Tikkurila,2.773,www.colligx.fi,live,2018-10-24,2,1,5
-data,5,MH System Oy,2335216-4,49410.0,,Tikkurila,2.042,www.mhsystem.fi,live,2010-06-04,2,1,5
-data,5,Movere Oy,0948460-3,52310.0,,Lahti,1.785,https://www.movere.fi/,live,1993-06-30,2,1,5
-data,5,Logistrik Finland OY,3368048-7,52250.0,,Tikkurila,0.951,www.logistrik.com,live,2023-06-20,2,1,5
-data,5,Ab Hede-Logistics Oy,3307160-6,49410.0,,Savio,0.487,https://hede-logistics.fi/,live,2022-08-26,2,1,5
-data,5,Strömbergin Pysäköinti Oy,1073232-8,52212.0,,Pasila,2.497,www.kontuoy.fi,live,1996-10-18,2,1,5
-data,5,Mundial Import Export Oy,3114999-1,49330.0,,Pasila,2.224,www.mundial.fi,live,2020-02-10,2,1,5
-data,5,RaLog Oy,1820357-8,52250.0,,Kerava,0.636,www.ralog.fi,live,2003-05-07,2,1,5
-data,5,John Nurminen Oy,2139209-0,52250.0,,Pasila,0.375,https://www.johnnurminen.com/,live,2008-01-01,2,1,5
-data,5,ALS Logistics Oy,2047540-9,52250.0,,Tikkurila,1.603,www.alslog.com,live,2006-07-25,2,1,5
-data,5,Taksi Wallin Oy,2699432-2,49330.0,,Lahti,0.781,www.taksiwallin.fi,live,2015-07-23,2,1,5
-data,5,Suomen Elämysjunat Oy,3118812-2,49110.0,,Pasila,1.176,http://reissujuna.fi,live,2020-03-24,2,1,5
-data,5,A to B Finland Oy,2330772-6,52250.0,,Pasila,2.497,www.a2b.fi,live,2010-04-27,2,1,5
-data,5,Posti Verkkologistiikka Oy,2540273-5,52100.0,,Pasila,3.034,www.posti.com,live,2013-05-02,2,1,5
-data,5,Posti Logistics Handling Oy,2466442-6,52100.0,,Pasila,3.034,www.posti.com,live,2012-04-03,2,1,5
-data,5,Jatumi Oy,2335916-3,49410.0,,Lahti,0.92,https://www.jatumi.fi/,live,2010-06-08,2,1,5
-data,5,Fast Cargo Finland Oy,2721344-4,49410.0,,Pasila,1.425,https://fastcargofinlandoy.com/,live,2015-11-19,2,1,5
-data,5,CharterCab Oy,1858719-6,49330.0,,Pasila,0.884,www.chartercab.fi,live,2003-10-23,2,1,5
-data,5,MLP-Group Oy,2853548-8,49310.0,,Pasila,0.635,https://mlpgroup.com/en/homepage/,live,2017-09-05,2,1,5
-data,5,Paul Rehn Oy Ab,0800576-2,49410.0,,Tikkurila,1.925,www.paulrehn.fi,live,1988-10-26,2,1,5
-data,5,Päijät-Hämeen Hinauspalvelu Oy,2792116-8,52219.0,,Lahti,2.516,www.ph-hinauspalvelu.fi,live,2016-11-14,2,1,5
-data,5,Malmin Pysäköintitalo Oy,0597314-3,52212.0,,Tikkurila,0.246,www.rettaisannointi.fi,live,1985-04-25,2,1,5
-data,5,Conceptum Logistics (Finland) Oy Ltd,2339338-8,52250.0,,Pasila,2.12,www.conceptum-logistics.com,live,2010-06-30,2,1,5
-data,5,Kuljetus Arto Järvimäki Oy,0788108-2,49410.0,,Savio,0.612,www.jarvimaki.com,live,1990-03-21,2,1,5
-data,5,Posti Satamalogistiikka Oy,1090596-2,52250.0,,Pasila,3.034,www.posti.com,live,1997-03-27,2,1,5
+webshop,8,Leimasin- ja Kilpitehdas Ojanen Avoin yhtiö,0665678-0,47620.0,"Sanomalehtien, muiden aikakausjulkaisujen ja paperitavaran vähittäiskauppa",Lahti,0.835,https://www.leimasinjakilpi.fi/yhteystiedot,live,1985-12-31,8,4,2
+webshop,8,Brandsense Oy,2054642-2,47632.0,Polkupyörien ja muiden urheiluvälineiden vähittäiskauppa,Pasila,1.65,www.classicbike.fi,live,2006-09-07,8,4,2
+webshop,8,Liukkosen Pultti Oy,1865112-7,47521.0,Rautakauppatavaran ja rakennustarvikkeiden vähittäiskauppa ilman erikoistumista tiettyyn tuoteryhmään,Lahti,1.659,www.liukkosenpultti.fi,live,2003-12-02,8,4,2
+webshop,8,Arkkiplussa Oy,1533296-4,47620.0,"Sanomalehtien, muiden aikakausjulkaisujen ja paperitavaran vähittäiskauppa",Tikkurila,0.99,www.arkkiplussa.fi,live,1999-05-04,8,4,2
+webshop,8,Booky.fi Oy,2131125-4,47610.0,Kirjojen vähittäiskauppa,Pasila,2.417,www.booky.fi,live,2007-08-08,8,4,2
+webshop,8,Suomen Minimaailma Oy,1891117-9,47640.0,Pelien ja leikkikalujen vähittäiskauppa,Pasila,2.902,www.minimaailma.fi,live,2004-04-20,8,4,2
+webshop,8,Alppi-Avain Oy,0502236-4,47529.0,"Muu rautakauppatavaran, rakennustarvikkeiden ja lasin erikoistunut vähittäiskauppa",Pasila,1.289,www.alppiavain.fi,live,1983-02-03,8,4,2
+webshop,8,Gymnastica Oy,1059726-9,47632.0,Polkupyörien ja muiden urheiluvälineiden vähittäiskauppa,Pasila,1.38,www.gymnastica.fi,live,1996-08-20,8,4,2
+webshop,8,Ruslania Books Oy,0645278-8,47610.0,Kirjojen vähittäiskauppa,Pasila,0.672,www.ruslania.com,live,1986-12-03,8,4,2
+webshop,8,Videotykki Oy,1016948-3,47540.0,Sähkökäyttöisten kodinkoneiden vähittäiskauppa,Pasila,0.691,https://videotykki.fi/,live,1995-11-15,8,4,2
+webshop,8,Horse & Rider Nordic Oy,1107085-6,47632.0,Polkupyörien ja muiden urheiluvälineiden vähittäiskauppa,Savio,1.431,www.horserider.fi,live,1997-09-23,8,4,2
+webshop,8,Oy Cycle Center Finland Ltd,2016971-9,47632.0,Polkupyörien ja muiden urheiluvälineiden vähittäiskauppa,Pasila,1.782,www.cyclecenter.org,live,2006-02-14,8,4,2
+webshop,8,Medilukko Oy,2260164-0,47529.0,"Muu rautakauppatavaran, rakennustarvikkeiden ja lasin erikoistunut vähittäiskauppa",Pasila,1.482,medilukko.fi,live,2009-04-07,8,4,2
+webshop,8,Erä-Lindroos Oy,0731141-8,47632.0,Polkupyörien ja muiden urheiluvälineiden vähittäiskauppa,Lahti,1.657,www.era-lindroos.fi,live,1989-02-22,8,4,2
+webshop,8,Avainahjo Oy,2005749-3,47529.0,"Muu rautakauppatavaran, rakennustarvikkeiden ja lasin erikoistunut vähittäiskauppa",Pasila,2.12,www.avainahjo.fi,live,2006-01-16,8,4,2
+webshop,8,Helsingin Venevaruste Oy,0837460-5,47631.0,Veneiden ja veneilytarvikkeiden vähittäiskauppa,Pasila,2.363,www.marinea.fi,live,1991-03-13,8,4,2
+webshop,8,Lukko-Tiimi Oy,2325398-3,47529.0,"Muu rautakauppatavaran, rakennustarvikkeiden ja lasin erikoistunut vähittäiskauppa",Tikkurila,2.094,www.lukko-tiimi.fi,live,2010-07-16,8,4,2
+webshop,8,Loisirs Oy,0913355-5,47632.0,Polkupyörien ja muiden urheiluvälineiden vähittäiskauppa,Savio,0.638,www.urheilukiilunen.fi,live,1992-12-16,8,4,2
+webshop,8,DekoCenter Oy,1080623-5,47521.0,Rautakauppatavaran ja rakennustarvikkeiden vähittäiskauppa ilman erikoistumista tiettyyn tuoteryhmään,Lahti,0.35,www.dekocenter.fi,live,1995-06-14,8,4,2
+webshop,8,Kirjokanta Oy,0469660-7,47621.0,Paperi- ja toimistotarvikkeiden vähittäiskauppa,Pasila,2.998,www.kirjokanta.fi,live,1982-03-04,8,4,2
+webshop,8,Helsingin Asennustoimi Oy,0972062-9,47540.0,Sähkökäyttöisten kodinkoneiden vähittäiskauppa,Kerava,0.552,https://www.hel.fi/en,live,1994-10-05,8,4,2
+webshop,8,Kerko Group Oy,2161589-9,47632.0,Polkupyörien ja muiden urheiluvälineiden vähittäiskauppa,Kerava,0.803,https://www.unisport.com/fi,live,2007-12-12,8,4,2
+webshop,8,IVPlus Oy,2040579-3,47540.0,Sähkökäyttöisten kodinkoneiden vähittäiskauppa,Lahti,2.53,www.ivplus.fi,live,2006-06-09,8,4,2
+webshop,8,Keravan Lukko Oy,2072292-4,47529.0,"Muu rautakauppatavaran, rakennustarvikkeiden ja lasin erikoistunut vähittäiskauppa",Kerava,0.435,https://keravanlukko.fi/,live,2006-11-13,8,4,2
+webshop,8,Alppi-Rauta Oy,0734764-8,47521.0,Rautakauppatavaran ja rakennustarvikkeiden vähittäiskauppa ilman erikoistumista tiettyyn tuoteryhmään,Pasila,0.882,https://www.alppirauta.fi/,live,1989-08-16,8,4,2
+webshop,8,Lukitusturva Oy,0108052-4,47529.0,"Muu rautakauppatavaran, rakennustarvikkeiden ja lasin erikoistunut vähittäiskauppa",Tikkurila,1.758,www.lukitusturva.fi,live,1959-02-20,8,4,2
+webshop,8,Rosebud Books Oy,0679141-3,47610.0,Kirjojen vähittäiskauppa,Pasila,2.99,www.rosebud.fi,live,1988-12-28,8,4,2
+webshop,7,Tyykipuoti Kommandiittiyhtiö,0356549-6,47511.0,Kankaiden vähittäiskauppa,Kerava,0.305,www.tyykipuoti.fi,live,1980-04-11,7,4,2
+webshop,7,Karanttia Oy Perusturva,0679780-7,47782.0,Muu muualla luokittelematon uusien tavaroiden vähittäiskauppa,Pasila,0.853,https://karanttia.com/,live,1987-11-18,7,4,2
+webshop,7,Formtex Oy,1966433-3,47712.0,Vaatteiden vähittäiskauppa ilman erikoistumista tiettyyn tuoteryhmään,Pasila,2.698,www.charlston.fi,live,2005-08-12,7,4,2
+webshop,7,Indoor Group Oy,1512332-9,47551.0,Huonekalujen vähittäiskauppa,Pasila,0.299,www.indoorgroup.fi,live,1999-01-12,7,4,2
+webshop,7,FinScooter Oy,2434591-9,47632.0,Polkupyörien ja muiden urheiluvälineiden vähittäiskauppa,Pasila,2.12,www.finscooter.com,live,2011-10-24,7,3,1
+webshop,7,K ja R Tammela Oy,0350777-1,47551.0,Huonekalujen vähittäiskauppa,Tikkurila,1.893,www.lasimyynti.fi,live,1980-02-22,7,4,2
+webshop,7,Keravan Silmäkulma Oy,0424625-1,47741.0,Optisten lääkinnällisten tuotteiden vähittäiskauppa,Kerava,0.197,www.keravansilmakulma.fi,live,1981-04-23,7,4,2
+webshop,7,Ilves-Interiööri Oy,1963961-3,47555.0,"Muu ruokailuvälineiden, astioiden ja taloustavaroiden vähittäiskauppa",Pasila,2.515,www.ilvesinterioori.fi,live,2005-05-11,7,4,2
+webshop,7,Makia Clothing Oy,2039316-3,47712.0,Vaatteiden vähittäiskauppa ilman erikoistumista tiettyyn tuoteryhmään,Pasila,0.939,www.makia.com,live,2006-05-31,7,4,2
+webshop,7,Finsoffat Oy,1958763-0,47551.0,Huonekalujen vähittäiskauppa,Kerava,2.545,www.finsoffat.fi,live,2005-04-14,7,4,2
+webshop,7,Päijät-Hämeen Käyttöauto Oy,0997266-6,47811.0,Autojen ja kevyiden moottoriajoneuvojen vähittäiskauppa,Lahti,1.659,www.vuokrauspalvelu.fi,live,1995-04-05,7,4,2
+webshop,7,E2 Software Oy,0748586-4,47400.0,Tieto- ja viestintäteknisten laitteiden vähittäiskauppa,Pasila,0.308,www.weare.fi,live,1989-07-26,7,4,2
+webshop,7,Kenkä-Meklari Oy,0745670-5,47721.0,Jalkineiden vähittäiskauppa,Pasila,2.797,www.kenkameklari.fi,live,1989-07-19,7,4,2
+webshop,7,Suomen Luonnonsuojelun Tuki Oy,0202203-5,47712.0,Vaatteiden vähittäiskauppa ilman erikoistumista tiettyyn tuoteryhmään,Pasila,2.213,www.luontokauppa.fi,live,1974-12-13,7,4,2
+webshop,7,Jujukas Oy,2504862-5,47632.0,Polkupyörien ja muiden urheiluvälineiden vähittäiskauppa,Pasila,2.982,www.jujukas.fi,live,2012-11-22,7,3,1
+webshop,7,Westvision Oy,1614179-9,47741.0,Optisten lääkinnällisten tuotteiden vähittäiskauppa,Pasila,2.896,www.kruunuoptiikka.fi,live,1999-08-19,7,4,2
+webshop,7,Oy Annette Tillander Ab,2161236-4,47770.0,Kellojen ja korujen vähittäiskauppa,Pasila,3.062,www.annettetillander.fi,live,2007-12-11,7,4,2
+webshop,7,ThinkIT Oy,1928345-0,47400.0,Tieto- ja viestintäteknisten laitteiden vähittäiskauppa,Pasila,0.939,www.tukikomppania.fi,live,2004-11-16,7,4,2
+webshop,7,Musiikki Silfverberg Oy,0213704-3,47699.0,Muu muualla luokittelematon kulttuuri- ja vapaa-ajan tuotteiden vähittäiskauppa,Tikkurila,0.663,www.musiikkisilfverberg.fi,live,1977-12-31,7,4,2
+webshop,7,Optiminäkö Oy,1080859-9,47741.0,Optisten lääkinnällisten tuotteiden vähittäiskauppa,Lahti,0.835,https://optiminako.fi/,live,1997-04-22,7,4,2
+webshop,7,LXR Group Oy,1946212-5,47721.0,Jalkineiden vähittäiskauppa,Pasila,0.663,www.tanssitarvike.fi,live,2005-02-15,7,4,2
+webshop,7,Keskusmusiikki Lahti Oy,1572757-9,47699.0,Muu muualla luokittelematon kulttuuri- ja vapaa-ajan tuotteiden vähittäiskauppa,Lahti,0.612,https://keskusmusiikki.fi/,live,2000-01-10,7,4,2
+webshop,7,Ajan-Avain Oy,0222897-3,47596.0,Lukkoseppä- ja avainliikkeet,Pasila,2.698,www.ajan-avain.fi,live,1967-11-10,7,4,2
+webshop,7,Pintaväri Oy,0222912-4,47532.0,Seinäpinnoitteiden ja lattianpäällysteiden vähittäiskauppa,Tikkurila,2.524,www.pintavari.fi,live,1978-01-13,7,4,2
+webshop,7,Lahden Polkupyörähuolto Oy,2909946-2,47632.0,Polkupyörien ja muiden urheiluvälineiden vähittäiskauppa,Lahti,1.063,www.pyorakauppa.fi/,live,2018-05-11,7,3,1
+webshop,7,Tehocom Oy,1548415-9,47400.0,Tieto- ja viestintäteknisten laitteiden vähittäiskauppa,Tikkurila,2.094,www.tehocom.fi,live,1999-09-03,7,4,2
+webshop,7,Marja Entrich Oy,1544009-2,47750.0,Kosmetiikka- ja hygieniatuotteiden vähittäiskauppa,Pasila,1.478,www.marjaentrich.fi,live,1999-06-08,7,4,2
+webshop,7,Akku-Palvelu V. Häkkinen Oy,0290455-6,47822.0,Muu moottoriajoneuvojen osien ja varusteiden vähittäiskauppa,Pasila,2.36,www.akkupalvelu.fi,live,1979-04-12,7,4,2
+webshop,7,HORSEPRO OY,0704240-6,47782.0,Muu muualla luokittelematon uusien tavaroiden vähittäiskauppa,Lahti,0.759,www.horsepro.fi,live,1989-04-12,7,4,2
+webshop,7,Avasa Oy,0493811-9,47811.0,Autojen ja kevyiden moottoriajoneuvojen vähittäiskauppa,Kerava,1.41,https://www.avasa.fi/collections/frontpage,live,1982-10-07,7,4,2
+webshop,7,ArtShop Finland Oy,2093601-7,47782.0,Muu muualla luokittelematon uusien tavaroiden vähittäiskauppa,Lahti,1.502,www.artshop.fi,live,2007-02-19,7,4,2
+webshop,7,Hake Golf Oy,3595907-8,47632.0,Polkupyörien ja muiden urheiluvälineiden vähittäiskauppa,Pasila,0.13,https://www.hake.golf/,live,2026-02-03,7,3,1
+webshop,7,Rengasverkko H & T Oy,2370659-1,47821.0,Moottoriajoneuvojen renkaiden vähittäiskauppa,Savio,2.01,www.rengasverkko.net,live,2010-11-25,7,4,2
+webshop,7,Kalavei Oy,3211871-6,47632.0,Polkupyörien ja muiden urheiluvälineiden vähittäiskauppa,Pasila,1.887,www.kalavei.com,live,2021-05-27,7,3,1
+webshop,7,Vetokonsultit Oy,0558718-9,47400.0,Tieto- ja viestintäteknisten laitteiden vähittäiskauppa,Savio,2.288,www.vetokonsultit.fi,live,1984-04-19,7,4,2
+webshop,7,Lahden Verkkopalvelu Oy,0558848-0,47400.0,Tieto- ja viestintäteknisten laitteiden vähittäiskauppa,Lahti,1.785,www.verkkopalvelu.fi,live,1984-10-18,7,4,2
+webshop,7,Enenet Oy,1061739-7,47555.0,"Muu ruokailuvälineiden, astioiden ja taloustavaroiden vähittäiskauppa",Tikkurila,0.017,www.promohobby.com,live,1996-07-10,7,4,2
+webshop,7,Pasilan Kuva Oy,2000751-7,47781.0,Valokuvaustarvikkeiden vähittäiskauppa,Kerava,0.305,www.fotoliike.fi,live,2005-11-21,7,4,2
+webshop,7,Mini More Oy,2112348-0,47711.0,Erikoistunut vaatteiden vähittäiskauppa,Lahti,0.847,minimore.fi,live,2007-05-02,7,4,2
+webshop,7,VPD Finland Oy,2015063-9,47400.0,Tieto- ja viestintäteknisten laitteiden vähittäiskauppa,Tikkurila,0.128,www.vpd.fi,live,2006-02-08,7,4,2
+webshop,7,Rasalas Oy,0580102-6,47742.0,Muu lääkinnällisten ja ortopedisten tuotteiden vähittäiskauppa,Pasila,2.902,www.rasalas.fi,live,1985-02-28,7,4,2
+webshop,7,Floranna Oy,2351818-7,47761.0,Kukkien ja koristekasvien vähittäiskauppa,Pasila,2.395,www.floranna.fi,live,2010-09-06,7,4,2
+webshop,7,KAAVAINMAAILMA OY,2361885-8,47782.0,Muu muualla luokittelematon uusien tavaroiden vähittäiskauppa,Lahti,1.136,www.kaavain.fi,live,2010-11-10,7,4,2
+webshop,7,Optikko Mäkelä Optila Oy,0606241-3,47741.0,Optisten lääkinnällisten tuotteiden vähittäiskauppa,Lahti,0.612,WWW.OPTIKKOMAKELA.FI,live,1983-07-28,7,4,2
+webshop,7,Aurinkokeittiöt Oy,2810244-7,47523.0,Keittiö- ja saniteettikalusteiden vähittäiskauppa,Tikkurila,1.967,www.aurinkokeittiot.fi,live,2017-02-27,7,3,1
+webshop,7,Kaivokukka Oy,0585773-2,47761.0,Kukkien ja koristekasvien vähittäiskauppa,Pasila,2.515,www.kaivokukka.fi,live,1985-04-11,7,4,2
+webshop,7,Eurorc Oy,2352786-8,47782.0,Muu muualla luokittelematon uusien tavaroiden vähittäiskauppa,Tikkurila,2.102,www.eurorc.fi,live,2010-09-09,7,4,2
+webshop,7,Kaihdin ja Markiisi Lahti Oy,2356673-6,47531.0,Mattojen ja verhojen vähittäiskauppa,Lahti,0.612,www.kaihdinjamarkiisilahti.fi,live,2010-09-24,7,4,2
+webshop,7,Musti ja Mirri Oy,1083808-5,47763.0,Lemmikkieläinten ja lemmikkieläinten ruokien vähittäiskauppa,Pasila,2.876,www.mustijamirri.fi,live,1997-04-09,7,4,2
+webshop,7,LaKo Trade Oy,2017795-4,47699.0,Muu muualla luokittelematon kulttuuri- ja vapaa-ajan tuotteiden vähittäiskauppa,Savio,0.269,www.suomikauppa.fi,live,2006-02-13,7,4,2
+webshop,7,FixCom Oy,1992815-9,47400.0,Tieto- ja viestintäteknisten laitteiden vähittäiskauppa,Pasila,2.288,www.fixcom.fi,live,2005-10-28,7,4,2
+webshop,7,Satusilmä Oy,1056637-4,47741.0,Optisten lääkinnällisten tuotteiden vähittäiskauppa,Pasila,2.998,www.satusilma.fi,live,1996-09-02,7,4,2
+webshop,7,"""Burton"" Sportartikel Gesellschaft m.b.H. Branch Finland",2859423-4,47632.0,Polkupyörien ja muiden urheiluvälineiden vähittäiskauppa,Pasila,2.363,www.burton.com,live,2024-03-26,7,3,1
+webshop,7,Lahen Fillaripiste Oy,3192974-4,47632.0,Polkupyörien ja muiden urheiluvälineiden vähittäiskauppa,Lahti,0.855,https://www.fillaripiste.fi/,live,2021-02-26,7,3,1
+webshop,7,Finrea Oy,2136876-0,47699.0,Muu muualla luokittelematon kulttuuri- ja vapaa-ajan tuotteiden vähittäiskauppa,Lahti,0.398,http://www.Finrea.fi,live,2007-09-04,7,4,2
+webshop,7,Hockey Busters Oy,1044626-8,47782.0,Muu muualla luokittelematon uusien tavaroiden vähittäiskauppa,Lahti,0.662,www.hbpromotion.fi,live,1996-05-22,7,4,2
+webshop,7,Etelä-Suomen Kalustetalot Oy,1482500-3,47551.0,Huonekalujen vähittäiskauppa,Lahti,0.9,www.kalustetalot.fi,live,1998-09-18,7,4,2
+webshop,7,Kanavan Lasimestari Oy,2980806-2,47521.0,Rautakauppatavaran ja rakennustarvikkeiden vähittäiskauppa ilman erikoistumista tiettyyn tuoteryhmään,Lahti,1.897,lasimestari.fi,live,2019-02-21,7,3,1
+webshop,7,Affix Scaffolding Europe Oy,3558220-7,47521.0,Rautakauppatavaran ja rakennustarvikkeiden vähittäiskauppa ilman erikoistumista tiettyyn tuoteryhmään,Tikkurila,0.943,www.affixscaffolding.eu,live,2025-08-28,7,3,1
+webshop,7,Arona Ky,2079727-2,47782.0,Muu muualla luokittelematon uusien tavaroiden vähittäiskauppa,Tikkurila,2.123,www.arona.fi,live,2006-12-15,7,4,2
+webshop,7,Viherpaja Oy,0639065-2,47762.0,Muu kasvien ja lannoitteiden vähittäiskauppa,Tikkurila,2.843,www.viherkasvi.com,live,1987-03-25,7,4,2
+webshop,7,Design Made Oy,1992452-9,47555.0,"Muu ruokailuvälineiden, astioiden ja taloustavaroiden vähittäiskauppa",Pasila,2.004,www.designmade.fi,live,2005-11-14,7,4,2
+webshop,7,Kukkahuone Yhtymä Oy,2336201-2,47761.0,Kukkien ja koristekasvien vähittäiskauppa,Pasila,1.558,www.bieder.fi,live,2010-05-21,7,4,2
+webshop,7,EnviroProcess Finland Oy,1055112-1,47782.0,Muu muualla luokittelematon uusien tavaroiden vähittäiskauppa,Savio,0.612,www.enviroprocess.com/fi,live,1996-06-10,7,4,2
+webshop,7,Simolan Taide ja Kehys Ky,0635307-7,47691.0,Taideliikkeet,Lahti,1.028,https://www.simolan.fi/,live,1983-01-13,7,4,2
+webshop,7,Florencia Oy,2337276-3,47761.0,Kukkien ja koristekasvien vähittäiskauppa,Lahti,0.676,www.florencia.fi,live,2010-05-26,7,4,2
+webshop,7,Viherviisikko Oy,1056612-0,47762.0,Muu kasvien ja lannoitteiden vähittäiskauppa,Tikkurila,2.094,www.viherviisikko.fi,live,1996-08-15,7,4,2
+webshop,7,Highlight Holding Oy,1987550-1,47552.0,Valaisimien vähittäiskauppa,Pasila,0.593,https://www.highlightholdings.com/,live,2005-12-22,7,4,2
+webshop,7,Ruutu-Rouva Oy,0532247-1,47799.0,Muu käytettyjen tavaroiden vähittäiskauppa,Pasila,1.366,https://www.ruutu.fi/,live,1983-06-16,7,4,2
+webshop,7,Peten Koiratarvike Oy,1917875-7,47763.0,Lemmikkieläinten ja lemmikkieläinten ruokien vähittäiskauppa,Pasila,2.876,www.petenkoiratarvike.com,live,2004-09-27,7,4,2
+webshop,7,Domitor Oy,2007022-5,47742.0,Muu lääkinnällisten ja ortopedisten tuotteiden vähittäiskauppa,Pasila,2.225,www.finndent.com,live,2005-12-16,7,4,2
+webshop,7,Pääkaupunkiseudun Kierrätyskeskus Oy,0809814-5,47799.0,Muu käytettyjen tavaroiden vähittäiskauppa,Pasila,2.088,www.kierratyskeskus.fi,live,1990-07-11,7,4,2
+webshop,7,Närhi Oy Sisustuspalvelu,0803603-2,47531.0,Mattojen ja verhojen vähittäiskauppa,Kerava,0.305,www.sisustusnarhi.com,live,1990-08-01,7,4,2
+pim,7,Jungheinrich Lift Truck Oy,1893988-4,46642.0,Muu teollisuuskäyttöön tarkoitettujen koneiden tukkukauppa,Kerava,1.375,www.jungheinrich.fi,live,2004-04-29,5,7,4
+pim,7,Airam Electric Oy Ab,0733549-5,46641.0,Sähkölaitteiden tukkukauppa,Savio,0.894,https://www.airam.fi/en,live,1988-11-02,5,7,4
+pim,7,Onninen Oy,1071207-9,46842.0,LVI-laitteiden ja -tarvikkeiden tukkukauppa,Pasila,2.417,www.onninen.fi,live,1996-12-09,5,7,4
+pim,7,Thinkflow Group Oy,2378999-9,46642.0,Muu teollisuuskäyttöön tarkoitettujen koneiden tukkukauppa,Savio,0.486,https://www.thinkflow.fi/,live,2010-12-23,5,7,4
+pim,7,Heatchem Oy,1744434-5,46641.0,Sähkölaitteiden tukkukauppa,Pasila,2.36,www.heatchem.com,live,2002-02-01,5,7,4
+pim,7,Dräger Suomi Oy,2284733-3,46641.0,Sähkölaitteiden tukkukauppa,Tikkurila,2.773,www.draeger.fi,live,2009-09-11,5,7,4
+pim,7,Oy Sea Safety Scandinavia Ltd,0663405-5,46642.0,Muu teollisuuskäyttöön tarkoitettujen koneiden tukkukauppa,Pasila,1.38,https://seasafety.net/,live,1987-09-30,5,7,4
+pim,7,Rimeki Oy,0893374-5,46649.0,Muu muualla luokittelematon koneiden ja laitteiden tukkukauppa,Kerava,1.341,https://rimeki.fi/,live,1992-08-19,5,7,4
+pim,7,KYOCERA UNIMERCO Tooling Oy,2146396-0,46841.0,Rautakauppatavaroiden tukkukauppa,Lahti,1.785,www.kyocera-unimerco.fi,live,2007-10-11,5,7,4
+pim,7,Elgood Oy,1078149-6,46641.0,Sähkölaitteiden tukkukauppa,Tikkurila,2.773,www.elgood.fi,live,1997-03-12,5,7,4
+pim,7,Muotitorppa Oy,2196262-0,46421.0,Vaatteiden tukkukauppa,Pasila,0.961,www.muotitorppa.fi,live,2008-05-23,5,7,4
+pim,7,Ingeo Oy,1047194-9,46649.0,Muu muualla luokittelematon koneiden ja laitteiden tukkukauppa,Pasila,2.326,www.ingeo.fi,live,1996-05-13,5,7,4
+pim,7,Hydromarket Oy,0899486-3,46642.0,Muu teollisuuskäyttöön tarkoitettujen koneiden tukkukauppa,Savio,1.003,www.hydromarket.fi,live,1992-04-15,5,7,4
+pim,7,SEAMOTION OY,2292759-5,46649.0,Muu muualla luokittelematon koneiden ja laitteiden tukkukauppa,Lahti,0.251,www.seamotion.fi,live,2009-10-23,5,7,4
+pim,7,WL-Done Oy,2186761-5,46642.0,Muu teollisuuskäyttöön tarkoitettujen koneiden tukkukauppa,Tikkurila,2.974,www.wl-done.fi,live,2008-04-09,5,7,4
+pim,7,Zio Oy,2296073-1,46421.0,Vaatteiden tukkukauppa,Pasila,3.062,www.zio.fi,live,2009-11-12,5,7,4
+pim,7,KSB-Trading Oy,1073097-1,46421.0,Vaatteiden tukkukauppa,Pasila,1.201,shop.hifk.fi,live,1996-09-11,5,7,4
+pim,7,Protech Lahti Oy,2090571-2,46642.0,Muu teollisuuskäyttöön tarkoitettujen koneiden tukkukauppa,Lahti,3.097,www.protech.fi,live,2007-02-08,5,7,4
+pim,7,Imuripiste Karppinen Oy,0789788-5,46642.0,Muu teollisuuskäyttöön tarkoitettujen koneiden tukkukauppa,Lahti,0.855,www.imuripiste.fi,live,1990-02-28,5,7,4
+pim,7,Holtab AB Filial i Finland,1801818-8,46641.0,Sähkölaitteiden tukkukauppa,Pasila,2.357,www.holtab.se,live,2003-01-14,5,7,4
+pim,7,Mainio Clothing Oy,2127372-9,46421.0,Vaatteiden tukkukauppa,Pasila,2.004,www.mainioclothing.fi,live,2007-07-25,5,7,4
+pim,7,Oy Armatec Finland Ab,1789130-5,46842.0,LVI-laitteiden ja -tarvikkeiden tukkukauppa,Tikkurila,2.773,www.armatec.com,live,2002-10-23,5,7,4
+pim,7,Oy Säätö Ab,0196596-3,46642.0,Muu teollisuuskäyttöön tarkoitettujen koneiden tukkukauppa,Tikkurila,2.943,www.saato.fi,live,1969-07-11,5,7,4
+pim,7,Resta Turku Oy,2239554-1,46642.0,Muu teollisuuskäyttöön tarkoitettujen koneiden tukkukauppa,Pasila,1.366,www.restaturku.fi,live,2009-01-12,5,7,4
+pim,7,Nordic Simulators Oy,2118168-0,46649.0,Muu muualla luokittelematon koneiden ja laitteiden tukkukauppa,Lahti,3.014,www.nordicsimulators.fi,live,2007-06-14,5,7,4
+pim,7,Oy Plentrafo Ab,0820740-1,46421.0,Vaatteiden tukkukauppa,Pasila,2.99,www.selectedbrands.com,live,1990-10-31,5,7,4
+pim,7,Sondex Tapiro Oy Ab,2110934-7,46842.0,LVI-laitteiden ja -tarvikkeiden tukkukauppa,Tikkurila,2.363,www.sondextapiro.fi,live,2007-04-20,5,7,4
+pim,7,ALBIOX Oy,1842690-7,46641.0,Sähkölaitteiden tukkukauppa,Pasila,0.672,albiox.com,live,2003-09-01,5,7,4
+pim,7,Grafinet Oy,0818124-8,46642.0,Muu teollisuuskäyttöön tarkoitettujen koneiden tukkukauppa,Tikkurila,2.554,www.grafinetoy.fi,live,1990-02-14,5,7,4
+pim,7,Semikron Danfoss Oy,1446227-3,46642.0,Muu teollisuuskäyttöön tarkoitettujen koneiden tukkukauppa,Pasila,2.497,www.semikron.com,live,1998-01-26,5,7,4
+pim,7,Thinkflow Oy,1763560-0,46642.0,Muu teollisuuskäyttöön tarkoitettujen koneiden tukkukauppa,Savio,0.486,https://www.thinkflow.fi/en,live,2002-05-22,5,7,4
+pim,7,Blue Shop Oy,0843148-9,46411.0,Kankaiden ja lankojen tukkukauppa,Lahti,1.659,blueshopoy.fi,live,1991-08-21,5,7,4
+pim,7,Oy Scandiagent Forsström & Co Ab,1107156-8,46421.0,Vaatteiden tukkukauppa,Pasila,2.99,www.scandiagent.fi,live,1997-09-30,5,7,4
+pim,7,Oryx Oy,0847229-9,46641.0,Sähkölaitteiden tukkukauppa,Tikkurila,2.094,www.oryx.fi,live,1991-06-05,5,7,4
+pim,7,Nilfisk Oy,1908664-1,46649.0,Muu muualla luokittelematon koneiden ja laitteiden tukkukauppa,Tikkurila,2.676,www.nilfisk.fi,live,2004-07-28,5,7,4
+pim,7,Touchpoint Group Oy,2228022-6,46412.0,Muu tekstiilien tukkukauppa,Pasila,0.939,www.touchpoint.fi,live,2008-10-28,5,7,4
+pim,7,Teuvo Louhisola Oy,0110991-3,46649.0,Muu muualla luokittelematon koneiden ja laitteiden tukkukauppa,Pasila,2.36,www.teuvolouhisola.fi,live,1976-01-23,5,7,4
+pim,7,KMV-tuotteet Oy,0563908-1,46842.0,LVI-laitteiden ja -tarvikkeiden tukkukauppa,Savio,0.948,www.kmv.fi,live,1984-05-24,5,7,4
+pim,7,Helsinki Valve & Fitting Ab,0521669-5,46842.0,LVI-laitteiden ja -tarvikkeiden tukkukauppa,Tikkurila,2.866,swagelok.fi,live,1983-10-06,5,7,4
+pim,7,KSB Finland Oy,0987983-2,46642.0,Muu teollisuuskäyttöön tarkoitettujen koneiden tukkukauppa,Savio,0.486,https://www.ksb.com/en-fi/company,live,1994-12-14,5,7,4
+pim,7,Tornokone Oy,0515191-6,46630.0,Kaivos- ja rakennuskoneiden tukkukauppa,Savio,0.894,www.tornokone.fi,live,1983-06-02,5,7,4
+pim,7,Fais Finland Oy,0921077-6,46421.0,Vaatteiden tukkukauppa,Pasila,1.933,www.fais.fi,live,1993-01-13,5,7,4
+pim,7,Helrot Oy,0635690-5,46642.0,Muu teollisuuskäyttöön tarkoitettujen koneiden tukkukauppa,Pasila,2.99,www.helrot.fi,live,1986-06-12,5,7,4
+pim,7,Finkova Oy,2352549-1,46649.0,Muu muualla luokittelematon koneiden ja laitteiden tukkukauppa,Tikkurila,2.773,www.finkova.fi,live,2010-09-08,5,7,4
+pim,7,Alestalo Overseas Oy.,1630969-4,46649.0,Muu muualla luokittelematon koneiden ja laitteiden tukkukauppa,Lahti,1.124,https://www.alestalo.eu/,live,2000-11-13,5,7,4
+pim,7,HARMAC Oy,2310196-3,46649.0,Muu muualla luokittelematon koneiden ja laitteiden tukkukauppa,Tikkurila,1.995,www.harmac.fi,live,2010-02-04,5,7,4
+pim,7,ETC TEAM OY,1974535-2,46421.0,Vaatteiden tukkukauppa,Tikkurila,0.152,www.pelipaita.fi,live,2005-07-14,5,7,4
+pim,7,MIP Electronics Oy,1627111-2,46641.0,Sähkölaitteiden tukkukauppa,Savio,1.998,www.mip.fi,live,2000-10-20,5,7,4
+pim,7,Fight Ops Oy,2337011-9,46421.0,Vaatteiden tukkukauppa,Pasila,2.552,www.makeyourmark.fi,live,2010-09-14,5,7,4
+pim,7,Kryotherm Oy Ab,0942748-1,46842.0,LVI-laitteiden ja -tarvikkeiden tukkukauppa,Savio,2.01,www.kryotherm.fi,live,1993-09-29,5,7,4
+pim,7,Jerikom Oy,1955191-0,46641.0,Sähkölaitteiden tukkukauppa,Lahti,1.21,www.jerikom.fi,live,2005-04-04,5,7,4
+pim,7,OP Trade And Service Oy,2344046-3,46649.0,Muu muualla luokittelematon koneiden ja laitteiden tukkukauppa,Pasila,1.409,www.catec.fi,live,2010-08-11,5,7,4
+pim,7,T&T Trading Oy,1964469-0,46421.0,Vaatteiden tukkukauppa,Pasila,0.308,www.gazoz.fi,live,2005-05-16,5,7,4
+pim,7,Dayton Group Oy,0745142-9,46642.0,Muu teollisuuskäyttöön tarkoitettujen koneiden tukkukauppa,Tikkurila,2.924,www.mtoy.fi,live,1989-06-21,5,7,4
+pim,7,EM-Kone Oy,0912503-7,46642.0,Muu teollisuuskäyttöön tarkoitettujen koneiden tukkukauppa,Savio,0.638,www.em-kone.fi,live,1993-03-10,5,7,4
+pim,7,Suomen Pikaliitin Oy,1013020-4,46642.0,Muu teollisuuskäyttöön tarkoitettujen koneiden tukkukauppa,Pasila,2.497,www.suomenpikaliitin.fi,live,1995-04-12,5,7,4
+pim,7,Action Road Top Oy,0985244-5,46841.0,Rautakauppatavaroiden tukkukauppa,Lahti,1.926,www.artoy.fi,live,1995-04-26,5,7,4
+pim,7,Oy Merilux Ab,0111537-9,46641.0,Sähkölaitteiden tukkukauppa,Pasila,2.417,www.merilux.fi,live,1975-12-19,5,7,4
+pim,6,NK-teollisuus Oy,2697309-7,46411.0,Kankaiden ja lankojen tukkukauppa,Kerava,1.887,www.nk-teollisuus.fi,live,2015-06-25,4,6,3
+pim,6,VilliHelmi Oy,2049352-7,46499.0,Muu muualla luokittelematon taloustavaroiden tukkukauppa,Tikkurila,0.128,www.villihelmi.fi,live,2006-07-31,5,6,4
+pim,6,Getra Oy,2444431-9,46642.0,Muu teollisuuskäyttöön tarkoitettujen koneiden tukkukauppa,Savio,2.01,www.getra.fi,live,2012-01-01,4,6,3
+pim,6,OneMed Group Oy,2039640-1,46462.0,Lääkinnällisten tuotteiden tukkukauppa,Pasila,2.463,www.onemed.com,live,2006-05-29,5,6,4
+pim,6,Murri Oy,3267634-7,46641.0,Sähkölaitteiden tukkukauppa,Lahti,1.21,www.murri.fi,live,2022-02-14,4,6,3
+pim,6,Artebia Design Oy,0692779-8,46499.0,Muu muualla luokittelematon taloustavaroiden tukkukauppa,Pasila,2.004,www.artebia.fi,live,1988-01-13,5,6,4
+pim,6,Ziehm Imaging Oy,1973402-0,46462.0,Lääkinnällisten tuotteiden tukkukauppa,Savio,0.269,www.ziehm.com,live,2005-07-29,5,6,4
+pim,6,Nordec Nautic Oy,2039489-5,46495.0,Veneiden ja veneilytarvikkeiden tukkukauppa,Tikkurila,0.017,www.nordecnautic.fi,live,2006-06-01,5,6,4
+pim,6,Firex Oy,3297413-3,46842.0,LVI-laitteiden ja -tarvikkeiden tukkukauppa,Lahti,1.785,https://firex.fi/,live,2022-07-06,4,6,3
+pim,6,ProNav Oy,2233636-5,46493.0,Veneiden tukkukauppa,Pasila,2.181,www.pronav.fi,live,2008-11-19,5,6,4
+pim,6,Parafellows Oy,1785867-9,46492.0,Urheiluvälineiden tukkukauppa,Pasila,2.116,www.parafellows.fi,live,2002-10-08,5,6,4
+pim,6,Katajanokan Paperi Oy,1782144-6,46491.0,Paperitarvikkeiden tukkukauppa,Pasila,1.482,www.katajanokanpaperi.fi,live,2002-09-26,5,6,4
+pim,6,Hi - Tec Implants Finland Oy Ltd.,1102132-5,46462.0,Lääkinnällisten tuotteiden tukkukauppa,Lahti,0.902,https://www.hitec-implants.com/,live,1998-03-30,5,6,4
+pim,6,Eurotermo Trading Oy,3240285-6,46842.0,LVI-laitteiden ja -tarvikkeiden tukkukauppa,Lahti,1.471,www.lvitukku.fi,live,2021-10-14,4,6,3
+pim,6,Flying Carpet Oy,2863997-3,46412.0,Muu tekstiilien tukkukauppa,Tikkurila,2.202,www.flyingcarpet.fi,live,2017-11-15,4,6,3
+pim,6,Abrosa Baltic Oy,2774053-5,46642.0,Muu teollisuuskäyttöön tarkoitettujen koneiden tukkukauppa,Savio,0.269,https://abrosa.lt/,live,2016-08-22,4,6,3
+pim,6,Filterit Oy,2781538-1,46649.0,Muu muualla luokittelematon koneiden ja laitteiden tukkukauppa,Pasila,0.691,https://filterit.fi/,live,2016-12-31,4,6,3
+pim,6,GE Healthcare Oy,1897088-1,46462.0,Lääkinnällisten tuotteiden tukkukauppa,Pasila,0.672,https://www.gehealthcare.fi/about/ge-healthcare-offices-in-finland,live,2004-12-31,5,6,4
+pim,6,Plastcenter Nordic Oy,2307321-0,46491.0,Paperitarvikkeiden tukkukauppa,Pasila,2.515,www.plastcenternordic.fi,live,2010-01-13,5,6,4
+pim,6,Suomen Ladun Palveluyhtiö Oy,1040512-4,46492.0,Urheiluvälineiden tukkukauppa,Pasila,1.344,www.suomenlatu.fi,live,1995-12-29,5,6,4
+pim,6,Putinki Art Oy,1040942-4,46491.0,Paperitarvikkeiden tukkukauppa,Pasila,1.847,www.putinki.fi,live,1996-02-14,5,6,4
+pim,6,Green Attachments Oy,2799121-1,46630.0,Kaivos- ja rakennuskoneiden tukkukauppa,Lahti,3.004,www.greenattachments.com,live,2016-12-29,4,6,3
+pim,6,Alps Finland Ab Oy,3153028-2,46412.0,Muu tekstiilien tukkukauppa,Pasila,3.034,www.pals.fi,live,2020-08-24,4,6,3
+pim,6,Labo Line Oy,0918872-4,46462.0,Lääkinnällisten tuotteiden tukkukauppa,Pasila,0.691,https://laboline.fi/,live,1993-03-24,5,6,4
+pim,6,Nevotex Suomi Oy,2815851-2,46412.0,Muu tekstiilien tukkukauppa,Lahti,0.994,www.nevotex.fi,live,2017-03-15,4,6,3
+pim,6,Spraystore Finland Oy,3523131-9,46630.0,Kaivos- ja rakennuskoneiden tukkukauppa,Kerava,1.369,www.spraystore.fi,live,2025-04-09,4,6,3
+pim,6,Rapala VMC North Europe Oy,0895426-3,46492.0,Urheiluvälineiden tukkukauppa,Pasila,1.482,https://rapalavmc.com/contact/,live,1992-11-11,5,6,4
+pim,6,LO-Tarvike Oy,0890744-0,46491.0,Paperitarvikkeiden tukkukauppa,Pasila,0.303,https://www.lo-tarvike.com/446215,live,1992-05-20,5,6,4
+pim,6,Anna Koo Oy,0633164-4,46499.0,Muu muualla luokittelematon taloustavaroiden tukkukauppa,Pasila,2.224,www.annakoo.fi,live,1986-08-28,5,6,4
+pim,6,Norwegian Concept AB,3337088-4,46421.0,Vaatteiden tukkukauppa,Lahti,2.007,norwegianconcept.no,live,,4,6,3
+pim,6,Atmas Group Oy,3342182-1,46649.0,Muu muualla luokittelematon koneiden ja laitteiden tukkukauppa,Pasila,2.928,www.atmasgroup.com,live,2023-02-06,4,6,3
+pim,6,Amoena Finland Oy,1015539-9,46462.0,Laboratorio- ja sairaanhoitovälineiden tukkukauppa,Pasila,0.663,www.amoweb.fi,live,1995-06-14,5,6,4
+pim,6,Prodmac Oy,2400573-8,46642.0,Muu teollisuuskäyttöön tarkoitettujen koneiden tukkukauppa,Kerava,0.803,www.prodmac.fi,live,2011-04-11,4,6,3
+pim,6,Ernst Textil Aktiebolag filial i Finland,2409721-4,46411.0,Kankaiden ja lankojen tukkukauppa,Lahti,3.007,www.ernsttextil.se,live,2011-06-22,4,6,3
+pim,6,Protective Gear Finland Oy,2784923-1,46421.0,Vaatteiden tukkukauppa,Pasila,2.613,www.zoombang.fi,live,2016-10-04,4,6,3
+pim,6,Eurocore Global Oy,3517112-5,46649.0,Muu muualla luokittelematon koneiden ja laitteiden tukkukauppa,Pasila,2.93,www.eurocoreglobal.com,live,2025-03-26,4,6,3
+pim,6,Dayton Oy,2511986-8,46642.0,Muu teollisuuskäyttöön tarkoitettujen koneiden tukkukauppa,Tikkurila,2.924,www.dayton.fi,live,2012-11-29,4,6,3
+pim,6,EPS International Oy,2605473-6,46649.0,Muu muualla luokittelematon koneiden ja laitteiden tukkukauppa,Tikkurila,1.511,www.epsi.fi,live,2014-03-06,4,6,3
+pim,6,iLink Finland Oy,2210267-3,46462.0,Lääkinnällisten tuotteiden tukkukauppa,Lahti,0.979,www.ilink.fi,live,2008-08-25,5,6,4
+pim,6,PL Parts Oy,3126790-4,46841.0,Rautakauppatavaroiden tukkukauppa,Savio,2.01,www.plvaraosat.fi,live,2020-04-06,4,6,3
+pim,6,Oy Joal Engineering Ab,2961950-1,46641.0,Sähkölaitteiden tukkukauppa,Pasila,2.447,https://www.joal.fi,live,2019-01-11,4,6,3
+pim,6,Takeda Oy,1703775-8,46461.0,Lääkkeiden tukkukauppa,Pasila,1.164,https://www.takeda.com/fi-fi/,live,2001-10-31,5,6,4
+data,6,Posti Logistiikkaratkaisut Oy,0775983-7,52211.0,Tavaratieliikenteen terminaalitoiminta,Pasila,3.034,www.posti.com,live,1989-12-13,3,2,6
+data,6,Länsi-Pasilan Autopaikat Oy,0356855-8,52212.0,Maksullinen pysäköinti,Pasila,0.247,www.pasilanpysakointi.fi,live,1980-03-07,3,2,6
+data,6,Olavi Leppänen & Co,0291360-4,49330.0,Kutsuttaessa saatavilla oleva henkilökuljetus,Pasila,2.456,meneva.fi,live,1962-12-07,3,2,6
+data,6,Posti Teollisuusratkaisut Oy,1646732-6,52100.0,Varastointi,Pasila,3.034,www.posti.com,live,2001-02-12,3,2,6
+data,6,Frigoscandia Oy,1633378-2,52291.0,Huolinta ja rahtaus,Savio,0.432,www.frigoscandia.com,live,2000-11-09,3,2,6
+data,6,Itäkeskuksen Pysäköintitalo Oy,0757505-0,52212.0,Maksullinen pysäköinti,Tikkurila,0.246,www.rettaisannointi.fi,live,1989-04-19,3,2,6
+data,6,Kuljetusliike Eino Ojansuu & Co,0220237-8,49330.0,Kutsuttaessa saatavilla oleva henkilökuljetus,Pasila,2.456,www.helsingintaksipalvelu.fi,live,1959-06-12,3,2,6
+data,6,Finline Evro Trans Oy,2165647-1,52250.0,Logistiikkapalvelut,Savio,2.01,www.finline.fi,live,2008-01-21,3,2,6
+data,6,Nosto ja kuljetus A P V Oy,2310211-4,49410.0,Tieliikenteen tavarankuljetus,Tikkurila,0.736,www.nostojakuljetusapv.fi,live,2010-01-21,3,2,6
+data,6,Kuljetus Arto Järvimäki Oy,0788108-2,49410.0,Tieliikenteen tavarankuljetus,Savio,0.612,www.jarvimaki.com,live,1990-03-21,3,2,6
+data,6,Paul Rehn Oy Ab,0800576-2,49410.0,Tieliikenteen tavarankuljetus,Tikkurila,1.925,www.paulrehn.fi,live,1988-10-26,3,2,6
+data,6,Jääsaukko Oy,0808329-3,52100.0,Varastointi,Pasila,2.515,www.saukko.fi,live,1990-09-05,3,2,6
+data,6,Trans World Shipping Oy,1950025-9,52250.0,Logistiikkapalvelut,Kerava,0.29,www.tws.fi,live,2005-03-21,3,2,6
+data,6,Fenniarail Oy,2261575-1,49200.0,Raideliikenteen tavarankuljetus,Pasila,0.211,www.fenniarail.fi,live,2009-05-18,3,2,6
+data,6,Tuomarilan Pysäköintilaitos Oy,1810909-8,52212.0,Maksullinen pysäköinti,Pasila,2.497,www.kontuoy.fi,live,2003-02-21,3,2,6
+data,6,SOS International Oy,2083957-5,52219.0,Muu maaliikennettä palveleva toiminta,Pasila,0.939,https://www.sos.eu/fi/meistae/,live,2007-01-03,3,2,6
+data,6,RaLog Oy,1820357-8,52250.0,Logistiikkapalvelut,Kerava,0.636,www.ralog.fi,live,2003-05-07,3,2,6
+data,6,Exim Service Europe Oy,2267714-3,52250.0,Logistiikkapalvelut,Tikkurila,0.663,www.eximservice.fi,live,2009-07-03,3,2,6
+data,6,Taksi Helsinki Oy,0838031-9,52310.0,Rahtiliikennettä koskevat välityspalvelut,Pasila,0.352,https://taksihelsinki.fi/en/kela-taxi/,live,1990-11-21,3,2,6
+data,6,Lentoparkki Oy,1495885-0,52212.0,Maksullinen pysäköinti,Tikkurila,2.96,www.lentoparkki.fi,live,1998-10-08,3,2,6
+data,6,Suomen Turistiauto Oy,0151275-3,49310.0,Tieliikenteen säännöllinen henkilökuljetus,Lahti,0.907,www.lehtimakitilausajot.fi,live,1969-02-07,3,2,6
+data,6,A2B Turku Oy,0968725-9,49410.0,Tieliikenteen tavarankuljetus,Pasila,2.497,www.a2b.fi,live,1994-06-01,3,2,6
+data,6,Kaivolan Kuljetus Oy,0148902-0,49410.0,Tieliikenteen tavarankuljetus,Lahti,0.95,https://kaivolankuljetus.fi/,live,1970-12-23,3,2,6
+data,6,Kuljetus Reen Oy,0863090-4,49410.0,Tieliikenteen tavarankuljetus,Pasila,2.515,www.reen.fi,live,1991-06-05,3,2,6
+data,6,Vekka Group Oy,0146866-8,49310.0,Tieliikenteen säännöllinen henkilökuljetus,Lahti,0.907,www.vekkagroup.fi,live,1943-01-29,3,2,6
+data,6,R.A. Rajala Oy,1027555-0,49410.0,Tieliikenteen tavarankuljetus,Lahti,2.16,https://rarajala.fi/,live,1995-10-25,3,2,6
+data,6,Rolly Uusimaa Oy,1780028-2,49330.0,Kutsuttaessa saatavilla oleva henkilökuljetus,Tikkurila,1.511,www.rolly.fi,live,2002-09-30,3,2,6
+data,6,Airlog Group Oy,2298909-1,49410.0,Tieliikenteen tavarankuljetus,Pasila,1.847,www.airloggroup.fi,live,2009-12-02,3,2,6
+data,6,Ruohoparkki Oy,1107843-6,52212.0,Maksullinen pysäköinti,Tikkurila,0.663,www.oi.fi,live,1997-12-23,3,2,6
+data,6,Hämeen Kuljetuspiste Oy,0587607-9,49410.0,Tieliikenteen tavarankuljetus,Pasila,0.308,www.kuljetuspiste.com,live,1984-12-05,3,2,6
+data,6,Conceptum Logistics (Finland) Oy Ltd,2339338-8,52250.0,Logistiikkapalvelut,Pasila,2.12,www.conceptum-logistics.com,live,2010-06-30,3,2,6
+data,6,Malmin Pysäköintitalo Oy,0597314-3,52212.0,Maksullinen pysäköinti,Tikkurila,0.246,www.rettaisannointi.fi,live,1985-04-25,3,2,6
+data,6,Aimo Park Finland Oy,2208141-1,52212.0,Maksullinen pysäköinti,Pasila,0.672,www.aimopark.fi,live,2008-12-31,3,2,6
+data,6,Riverson Oy,1086267-5,52100.0,Varastointi,Pasila,0.663,riverson.fi,live,1996-10-23,3,2,6
+data,6,Posti Satamalogistiikka Oy,1090596-2,52250.0,Logistiikkapalvelut,Pasila,3.034,www.posti.com,live,1997-03-27,3,2,6
+data,6,Kuljetusliike Kai Laiso & Co,0624295-9,49330.0,Kutsuttaessa saatavilla oleva henkilökuljetus,Tikkurila,1.676,edustusajot.fi,live,1962-11-30,3,2,6
+data,6,Oy Tecmarin Ship Supply Ab,0625818-4,52250.0,Logistiikkapalvelut,Tikkurila,2.943,www.tecmarin.fi,live,1986-08-28,3,2,6
+data,6,Pynnönen International Oy,0632634-3,49410.0,Tieliikenteen tavarankuljetus,Kerava,2.126,www.pynnonen.fi,live,1986-03-20,3,2,6
+data,6,Lintulammenkadun Pysäköintilaitos oy,1708580-5,52212.0,Maksullinen pysäköinti,Tikkurila,0.246,www.rettaisannointi.fi,live,2001-07-09,3,2,6
+data,6,Rolly Helsinki Oy,1702534-3,52310.0,Rahtiliikennettä koskevat välityspalvelut,Tikkurila,1.511,www.rolly.fi,live,2001-09-30,3,2,6
+data,6,Itä-Pasilan Pysäköinti Oy,0502469-3,52212.0,Maksullinen pysäköinti,Pasila,0.247,www.pasilanpysakointi.fi,live,1982-12-23,3,2,6
+data,6,Posti Logistiikkaratkaisut Länsi-Suomi Oy,1744451-3,52250.0,Logistiikkapalvelut,Pasila,3.034,www.posti.com,live,2002-02-13,3,2,6
+data,6,Jatumi Oy,2335916-3,49410.0,Tieliikenteen tavarankuljetus,Lahti,0.92,https://www.jatumi.fi/,live,2010-06-08,3,2,6
+data,6,MH System Oy,2335216-4,49410.0,Tieliikenteen tavarankuljetus,Tikkurila,2.042,www.mhsystem.fi,live,2010-06-04,3,2,6
+data,6,LEMAN Oy,1999764-8,52250.0,Logistiikkapalvelut,Tikkurila,2.735,www.leman.dk,live,2005-11-16,3,2,6
+data,6,Rolly Raseborg Ab,2220954-2,49320.0,Tieliikenteen muu kuin säännöllinen henkilökuljetus,Tikkurila,1.511,www.rolly.fi,live,2008-09-29,3,2,6
+data,6,Tilataksi Koskinen Oy,1054432-7,49330.0,Kutsuttaessa saatavilla oleva henkilökuljetus,Lahti,1.48,www.tilataksikoskinen.fi,live,1996-06-24,3,2,6
+data,6,A to B Finland Oy,2330772-6,52250.0,Logistiikkapalvelut,Pasila,2.497,www.a2b.fi,live,2010-04-27,3,2,6
+data,6,ALS Logistics Oy,2047540-9,52250.0,Logistiikkapalvelut,Tikkurila,1.603,www.alslog.com,live,2006-07-25,3,2,6
+data,6,Kilon Osuus-Auto,0684427-1,49410.0,Tieliikenteen tavarankuljetus,Kerava,2.187,www.koa.fi,live,1987-12-09,3,2,6
+data,6,Alfa Mobility Finland Oy,2049536-2,49420.0,Muuttopalvelut,Pasila,0.939,www.alfamoving.com,live,2006-07-28,3,2,6
+data,6,Citysaukko Oy,0415102-5,49410.0,Tieliikenteen tavarankuljetus,Pasila,2.515,www.saukko.fi,live,1962-08-24,3,2,6
+data,6,Taksikuljetukset Harri Vuolle Oy,1904945-3,49330.0,Kutsuttaessa saatavilla oleva henkilökuljetus,Tikkurila,2.866,www.taksikuljetukset.fi,live,2004-07-20,3,2,6
+data,6,Strömbergin Pysäköinti Oy,1073232-8,52212.0,Maksullinen pysäköinti,Pasila,2.497,www.kontuoy.fi,live,1996-10-18,3,2,6
+data,6,Spedman Global Logistics Oy,0894922-9,52250.0,Logistiikkapalvelut,Pasila,2.181,www.spedman.com,live,1992-06-24,3,2,6
+data,6,Bussialan Kehittämispalvelut Oy,0954004-6,52219.0,Muu maaliikennettä palveleva toiminta,Pasila,2.617,www.bak.fi,live,1993-12-29,3,2,6
+data,6,Threeson OY,0884861-2,49410.0,Tieliikenteen tavarankuljetus,Lahti,1.48,http://www.threeson.fi/,live,1992-04-01,3,2,6
+data,6,John Nurminen Oy,2139209-0,52250.0,Logistiikkapalvelut,Pasila,0.375,https://www.johnnurminen.com/,live,2008-01-01,3,2,6
+data,6,EuroPark Finland Oy,1544350-9,52212.0,Maksullinen pysäköinti,Pasila,2.896,www.europark.fi,live,1998-10-30,3,2,6
+data,6,Pääkaupunkiseudun Junakalusto Oy,1874314-4,52219.0,Muu maaliikennettä palveleva toiminta,Pasila,0.395,www.junakalusto.fi,live,2004-03-03,3,2,6
+data,6,Movere Oy,0948460-3,52310.0,Rahtiliikennettä koskevat välityspalvelut,Lahti,1.785,https://www.movere.fi/,live,1993-06-30,3,2,6
+data,6,Power-Logistics Oy,0946759-8,49410.0,Tieliikenteen tavarankuljetus,Tikkurila,2.924,www.powerlogistics.fi,live,1993-08-18,3,2,6
+data,6,Balanced Logistics Oy,2298662-4,52250.0,Logistiikkapalvelut,Tikkurila,1.511,https://www.balancedlogistics.fi,live,2010-01-19,3,2,6
+data,6,KOA Lift Oy,2126169-9,49410.0,Tieliikenteen tavarankuljetus,Kerava,2.187,www.koa.fi,live,2007-07-12,3,2,6
+data,6,CharterCab Oy,1858719-6,49330.0,Kutsuttaessa saatavilla oleva henkilökuljetus,Pasila,0.884,www.chartercab.fi,live,2003-10-23,3,2,6
+data,5,DACHSER Finland Oy,2599717-7,52250.0,Logistiikkapalvelut,Savio,0.432,www.dachser.fi,live,2014-02-11,2,1,5
+data,5,Avain Parkki Oy,3238748-1,52212.0,Maksullinen pysäköinti,Pasila,2.304,www.avainasunnot.fi,live,2021-10-15,2,1,5
+data,5,Kuulotekniikka Hakala Oy,2235208-2,86990.0,Muualla luokittelematon muu terveyspalvelutoiminta,Pasila,1.164,www.kuulotekniikka.com,live,2009-04-30,2,2,5
+data,5,Magnus Malmberg Oy,1041135-6,71123.0,Rakennetekninen palvelu,Kerava,0.197,www.sipti.fi,live,1995-12-29,2,2,5
+data,5,A1 Arkkitehdit Oy,2326852-8,71110.0,Arkkitehtipalvelut,Lahti,2.185,www.a1arkkitehdit.fi,live,2010-04-29,2,2,5
+data,5,VarKul Oy,3252461-8,52250.0,Logistiikkapalvelut,Lahti,2.845,www.varkul.fi,live,2021-12-13,2,1,5
+data,5,Olars Mestarit Oy,2684823-7,49410.0,Tieliikenteen tavarankuljetus,Savio,1.36,https://www.olars.fi/,live,2015-04-23,2,1,5
+data,5,Postitalon Hammaslääkärit Oy,1982761-4,86230.0,Hammaslääkäripalvelut,Pasila,3.034,www.postitalonhammaslaakarit.fi,live,2005-09-13,2,2,5
+data,5,Launear Oy,2712552-4,49420.0,Muuttopalvelut,Savio,0.269,www.muuttotamminen.fi,live,2015-09-23,2,1,5
+data,5,Kiwa Oy,1787853-0,71202.0,Muu tekninen testaus ja analysointi,Pasila,2.12,www.kiwa.com/fi,live,2002-10-09,2,2,5
+data,5,Säiliöhepo Oy,2241416-7,71202.0,Muu tekninen testaus ja analysointi,Lahti,2.56,www.sailiohepo.fi,live,2009-04-30,2,2,5
+data,5,Etelä-Savon Mielenterveys Oy,1878248-5,86100.0,Terveydenhuollon laitospalvelut,Pasila,2.116,www.esperi.fi,live,2004-02-23,2,2,5
+data,5,Lundén Architecture Oy,2229148-6,71110.0,Arkkitehtipalvelut,Pasila,2.216,www.lunden.co,live,2008-11-07,2,2,5
+data,5,NCC Property Development Oy,1765519-3,71126.0,Muu rakennustekninen palvelu,Pasila,1.366,https://www.ncc.com/about-ncc/ncc-property-development/,live,2003-01-01,2,2,5
+data,5,Ankkurin Asukaspysäköinti Oy,3234527-3,52212.0,Maksullinen pysäköinti,Lahti,1.471,www.reim.fi,live,2021-11-01,2,1,5
+data,5,Open Ocean Capital Oy,2293434-9,64210.0,Holdingyhtiöiden toiminta,Pasila,3.062,https://openocean.vc/,live,2009-10-26,2,2,5
+data,5,Cormet Oy,1052574-0,71129.0,Muu tekninen palvelu,Tikkurila,2.866,www.cormet.fi,live,1996-05-07,2,2,5
+data,5,Fysio-Hoito Askeleet avoin yhtiö,1863572-5,86950.0,Fysioterapiapalvelut,Kerava,0.814,www.ratsastuspilates.fi,live,2003-12-17,2,2,5
+data,5,Ahma insinöörit Oy,1785621-9,71129.0,Muu tekninen palvelu,Pasila,2.32,www.ahmagroup.com,live,2002-10-11,2,2,5
+data,5,Helsingin kuivaustekniikka Oy,2321935-5,71126.0,Muu rakennustekninen palvelu,Tikkurila,2.866,www.hekutek.fi,live,2010-04-01,2,2,5
+data,5,Arkkitehtitoimisto Karin Krokfors Oy,1030707-3,71110.0,Arkkitehtipalvelut,Pasila,2.366,www.karinkrokfors.fi,live,1995-11-22,2,2,5
+data,5,Researchwise VPL Oy,0945358-3,86990.0,Muualla luokittelematon muu terveyspalvelutoiminta,Pasila,1.408,https://researchwise.beehiiv.com/,live,1993-06-16,2,2,5
+data,5,PDS-Suunnittelu Oy,0722846-2,71129.0,Muu tekninen palvelu,Pasila,1.474,https://www.pds.fi/,live,1989-04-19,2,2,5
+data,5,Studio Terra Oy,1028899-2,71110.0,Arkkitehtipalvelut,Pasila,1.289,www.studioterra.fi,live,1995-12-07,2,2,5
+data,5,Matti Eklund Oy,1032738-1,71126.0,Muu rakennustekninen palvelu,Kerava,0.305,https://mattieklund.fi/,live,1995-12-13,2,2,5
+data,5,Marjalinna Oy,1033587-5,86990.0,Muualla luokittelematon muu terveyspalvelutoiminta,Pasila,2.116,www.esperi.fi,live,1995-12-13,2,2,5
+data,5,Arkkitehtitoimisto Lehto Peltonen Valkama Oy,0713443-1,71110.0,Arkkitehtipalvelut,Pasila,0.939,www.lpv.fi,live,1988-09-14,2,2,5
+data,5,Planimo Oy,2318490-6,71123.0,Rakennetekninen palvelu,Savio,0.269,https://planimo.fi/,live,2010-03-01,2,2,5
+data,5,Maisemakonttori Oy,1974745-4,71121.0,Yhdyskuntasuunnittelu,Pasila,1.654,www.maisema.net,live,2005-07-14,2,2,5
+data,5,Halvat Huvit Oy,3319014-6,49330.0,Kutsuttaessa saatavilla oleva henkilökuljetus,Lahti,0.759,https://lahentaksi.fi,live,2022-10-19,2,1,5
+data,5,Insinööritoimisto Thelec Oy,1780321-3,71125.0,Sähkötekninen suunnittelu,Savio,0.269,https://www.thelec.fi/,live,2002-09-11,2,2,5
+data,5,Vuokraturva-sopimus Oy,2237926-9,64990.0,Muualla luokittelematon muu rahoituspalvelutoiminta pois lukien vakuutus- ja eläkevakuutustoiminta,Pasila,0.817,https://www.vuokraturva.fi/,live,2008-12-30,2,2,5
+data,5,Pihanne Oy,1035098-7,71121.0,Yhdyskuntasuunnittelu,Pasila,1.485,https://pihanne.fi/,live,1995-12-13,2,2,5
+data,5,Piha- ja puistosuunnittelu Pirttijärvi Oy,1977659-7,71121.0,Yhdyskuntasuunnittelu,Pasila,0.441,www.pihajapuistosuunnittelu.fi,live,2005-08-17,2,2,5
+data,5,Kuulo ja Apuvälinepalvelu Eerikkilä Oy,2235743-0,86990.0,Muualla luokittelematon muu terveyspalvelutoiminta,Tikkurila,0.605,www.kuulojaapuvalinepalvelu.fi,live,2008-12-12,2,2,5

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 """Build the curated LLM-analysis queue: the top-N live-website leads per category.
 
-Scoring (reused from score_leads.py) ranks companies on three axes
+Scoring (reused from apprscan.leads — same as the dashboard) ranks on three axes
 (webshop / pim / data). This takes the top N per axis that have a *live* website
 (website_status == 'live', from website_health.py) and writes them to
 ``out/lead_targets.csv`` — a short, high-value list to run the Ollama website
@@ -26,8 +26,8 @@ from pathlib import Path
 
 import pandas as pd
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))
-from score_leads import score  # noqa: E402
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
+from apprscan.leads import add_lead_scores  # noqa: E402
 
 _ROOT = Path(__file__).resolve().parents[1]
 CSV_IN = _ROOT / "out" / "companies.csv"
@@ -43,8 +43,9 @@ def main() -> None:
     ap.add_argument("--out", default=str(CSV_OUT))
     args = ap.parse_args()
 
-    df = score(pd.read_csv(args.inp, encoding="utf-8-sig"))
+    df = pd.read_csv(args.inp, encoding="utf-8-sig")
     df["best_website"] = df["website"].combine_first(df.get("found_website"))
+    df = add_lead_scores(df)  # same scoring as the dashboard (apprscan.leads)
     has_site = df["best_website"].notna() & (df["best_website"].astype(str).str.strip() != "")
     pool = df[has_site].copy()
     if args.status != "any" and "website_status" in pool.columns:
