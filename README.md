@@ -107,6 +107,14 @@ deployed app just reads the column.
 python scripts/road_distances.py
 ```
 
+### 3d. Website liveness (recommended)
+Probes each company's website and records `website_status` (`live` / `parked` /
+`unreachable`) — a quick "is this a real, active company" signal (no LLM). Cached
+in `data/website_health.sqlite`; the dashboard can filter to live sites only.
+```
+python scripts/website_health.py
+```
+
 ### 4. Analysis
 ```
 python scripts/analyze_companies.py
@@ -120,7 +128,8 @@ python -m apprscan scan --station Lahti --max-distance-km 1.0 --limit 50 --out o
 
 ## Key output: `out/companies.csv`
 Columns: `name`, `business_id`, `industry`, `toi_code`, `toi_description`, `nearest_station`,
-`distance_km`, `address`, `website`, `status`, `registered`, `lat`, `lon`, `geocode_quality`
+`distance_km`, `road_distance_km`, `address`, `website`, `status`, `registered`, `lat`, `lon`,
+`geocode_quality`, `website_status`
 
 Industry groups: `it`, `construction`, `wholesale`, `marketing`, `health`, `manufacturing`,
 `logistics`, `finance`, `retail`, `hospitality`, `education`, `engineering`, `staffing`,

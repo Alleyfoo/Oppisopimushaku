@@ -251,6 +251,12 @@ with st.sidebar:
 
     # Website toggle
     only_with_website = st.toggle("Vain yritykset joilla on verkkosivut", value=False)
+    only_live = st.toggle(
+        "Vain toimivat sivut",
+        value=False,
+        help="Näytä vain yritykset joiden verkkosivu vastaa ja näyttää oikealta "
+        "(ei kuollut tai parkkeerattu) — karkea merkki siitä että yritys on aktiivinen.",
+    )
 
     # Registration year
     min_year, max_year = int(df_raw["registered"].min()), int(
@@ -283,6 +289,8 @@ df = df[df["registered"].between(reg_range[0], reg_range[1], inclusive="both")]
 
 if only_with_website:
     df = df[df["best_website"].notna()]
+if only_live and "website_status" in df.columns:
+    df = df[df["website_status"] == "live"]
 
 # Train commute from the chosen origin: rail time + last-mile (walking road
 # distance, dist_km) + a fixed wait/access overhead so the estimate isn't faster
@@ -313,7 +321,15 @@ if df.empty:
 # Metric cards
 col1, col2, col3, col4, col5 = st.columns(5)
 col1.metric("Yrityksiä yhteensä", len(df))
-col2.metric("Joilla verkkosivut", df["best_website"].notna().sum())
+if "website_status" in df.columns:
+    _live = int((df["website_status"] == "live").sum())
+    col2.metric(
+        "Toimivia sivuja",
+        _live,
+        help="Verkkosivu vastaa ja näyttää oikealta (ei kuollut/parkkeerattu).",
+    )
+else:
+    col2.metric("Joilla verkkosivut", int(df["best_website"].notna().sum()))
 col3.metric("Eri toimialoja", df["industry"].nunique())
 col4.metric("Alueita", df["nearest_station"].nunique())
 _fastest = df["commute_min"].min()
@@ -580,8 +596,10 @@ with tab_table:
     else:
         source = df
 
-    llm_cols = [
-        c for c in ["llm_description", "llm_has_shop", "llm_is_hiring"] if c in source.columns
+    extra_cols = [
+        c
+        for c in ["website_status", "llm_description", "llm_has_shop", "llm_is_hiring"]
+        if c in source.columns
     ]
     display = source[
         [
@@ -595,7 +613,7 @@ with tab_table:
             "best_website",
             "registered",
         ]
-        + llm_cols
+        + extra_cols
     ].copy()
     display["commute_min"] = display["commute_min"].round(0).astype("Int64")
     base_cols = [
@@ -610,11 +628,12 @@ with tab_table:
         "Perustettu",
     ]
     rename_map = {
+        "website_status": "Sivun tila",
         "llm_description": "AI-kuvaus",
         "llm_has_shop": "Verkkokauppa",
         "llm_is_hiring": "Rekrytoi",
     }
-    display.columns = base_cols + [rename_map[c] for c in llm_cols]
+    display.columns = base_cols + [rename_map[c] for c in extra_cols]
     display["Toimiala"] = display["Toimiala"].map(lambda x: INDUSTRY_LABELS.get(x, x))
     display["Perustettu"] = display["Perustettu"].astype("Int64")
 
