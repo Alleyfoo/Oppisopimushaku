@@ -664,10 +664,18 @@ with tab_leads:
         "Data-analyysi": "s_data",
     }[lead_axis]
 
-    n_leads = st.slider("Näytä top-N", 5, 30, 10)
-    top = scored.sort_values([axis_col, "commute_min"], ascending=[False, True]).head(
-        n_leads
+    show_all = st.checkbox(
+        "Näytä kaikki",
+        value=False,
+        help="Näyttää ja lataa koko pisteytetyn listan, ei vain top-N.",
     )
+    if show_all:
+        top = scored.sort_values([axis_col, "commute_min"], ascending=[False, True])
+    else:
+        n_leads = st.slider("Näytä top-N", 5, 500, 30, step=5)
+        top = scored.sort_values([axis_col, "commute_min"], ascending=[False, True]).head(
+            n_leads
+        )
 
     lead_display = top[
         [
@@ -721,6 +729,8 @@ with tab_leads:
         },
         height=420,
     )
+
+    st.caption(f"{len(lead_display)} liidiä näkyvissä ja CSV-latauksessa.")
 
     csv_leads = lead_display.to_csv(index=False, encoding="utf-8-sig").encode(
         "utf-8-sig"
